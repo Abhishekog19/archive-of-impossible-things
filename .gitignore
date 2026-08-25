@@ -25,6 +25,7 @@ dist-ssr/
 # Editor files
 .vscode/*
 !.vscode/extensions.json
+.claude/settings.local.json
 .idea/
 .DS_Store
 *.suo

@@ -26,6 +26,11 @@ dist-ssr/
 .vscode/*
 !.vscode/extensions.json
 .claude/settings.local.json
+
+# Third-party agent skills (installed via `npx skills add`, not project source)
+.agents/
+.claude/skills/
+skills-lock.json
 .idea/
 .DS_Store
 *.suo
@@ -33,6 +38,11 @@ dist-ssr/
 *.njsproj
 *.sln
 *.sw?
+
+# Full-resolution visual reference set (~23 MB of PNGs, local only).
+# The committed record of the locked target is visual-reference-sheet.jpg —
+# downsampled, measurement-safe, referenced by look-target.md.
+concept/
 
 # Private project material
 # NEVER commit this file — contains hidden portfolio/game source material

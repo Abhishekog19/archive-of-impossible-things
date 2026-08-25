@@ -1,7 +1,7 @@
 # Archive of Impossible Things — Design Document (v5)
 
 *Last updated: 2026-08-24*
-*Status: concept, design laws, and production plan locked. Technical questions resolved (§10, §13). v1 scope set to 3 archives. **Personal-layer interview complete — 5 rounds.** Individual archive games intentionally NOT locked. **Step 0 complete** — scaffold built, stack verified, deployed. Next action: Step 1, movement and camera.*
+*Status: concept, design laws, and production plan locked. Technical questions resolved (§10, §13). v1 scope set to 3 archives. **Personal-layer interview complete — 5 rounds.** Individual archive games intentionally NOT locked. **Step 0 complete** — scaffold built, stack verified, deployed. **Visual direction locked 2026-08-25** against the reference set in `concept/`; schedule set in [build-roadmap.md](build-roadmap.md) — v1 target November 2027 at 12 hrs/week. Next action: M1, movement and camera.*
 
 **Companion documents.** This doc holds the concept and the laws. Three others hold the specifics:
 
@@ -10,6 +10,7 @@
 | [technical-production-spec.md](technical-production-spec.md) | Budgets, device tiers, memory discipline, asset pipeline |
 | [game-flow.md](game-flow.md) | What the player does, in order, with a clock running |
 | [look-target.md](look-target.md) | Camera, palette, fog and canopy as buildable numbers |
+| [build-roadmap.md](build-roadmap.md) | Milestones, deliverables, exit criteria, hours and dates |
 
 Where they conflict with this document, they are wrong and should be corrected — except for `look-target.md`'s numbers, which are *meant* to be revised by what happens on screen.
 
@@ -401,6 +402,25 @@ Restructured for the real constraint: 10–15 hrs/week, learning Three.js/R3F/ph
 
 Every step must end in something runnable and visible. No step is allowed to be pure plumbing with no on-screen payoff — that's the main defence against learning-curve stalls.
 
+**Scheduling lives in [build-roadmap.md](build-roadmap.md), not here.** This table stays the statement of *what gets built and why in that order*; the roadmap turns it into 13 dated milestones with hours, deliverables and exit criteria. Where the two disagree on dates or hours, the roadmap wins. The mapping is not one-to-one, because the roadmap splits the expensive steps:
+
+| §17 step | Roadmap milestone |
+|---|---|
+| 0 | M0 (complete) |
+| 1 | M1 *It moves* |
+| 2 | M2 *It runs on your phone* |
+| **2.5** | **M3 *It looks like the reference*** + M4 *The first 40 seconds* + M5 *The road* |
+| 3 | M6 *Things respond* |
+| 4 | M7 *The Archive stands* |
+| 5–6 | M8 *It remembers you* |
+| 7 | M9 *Five toys, three survive* |
+| 8 | M10 *One archive, end to end* |
+| 9 | M11 *Three archives* |
+| 10 | M12 *The reveal* |
+| 11 | M13 *Ship* |
+
+The one substantive change the roadmap makes to this table: **Step 2.5 becomes three milestones.** The v5 spike proves the pipeline on one segment; M4 and M5 are what turn a proven pipeline into the opening minutes of an actual game, and separating them is what makes the first two public releases possible.
+
 | Step | Build | Why now |
 |---|---|---|
 | 0 | Repo scaffold: Vite + React + R3F + rapier + zustand, `git init`, deploy-to-Vercel smoke test | Prove the whole chain end-to-end while it's trivial to debug |
@@ -421,7 +441,7 @@ Every step must end in something runnable and visible. No step is allowed to be 
 
 This is a rule taken directly from hackathon experience: *five impressive half-built features are useless if you can't demonstrate any one of them properly.* One complete flow first.
 
-**Where we are:** pre-Step-0. **The interview phase is complete (5 rounds).** The remaining ideation work is the two-pool collision process in §18 — which happens alongside building, not before it. **Immediate next action is Step 0.**
+**Where we are:** **Step 0 is complete** — scaffold built, stack verified, deployed. **The interview phase is complete (5 rounds).** **The visual direction is locked (2026-08-25)** against the reference set. The remaining ideation work is the two-pool collision process in §18 — which happens alongside building, not before it. **Immediate next action is Step 1 / M1: movement and camera**, gated on [build-roadmap.md](build-roadmap.md) §5's M1 exit criteria.
 
 **Step 2.5 acceptance criteria (v5):** a scripted, baked, KTX2-compressed outdoor canopy segment that (a) looks good enough to be proud of, (b) holds 60 fps on Iris Xe at DPR 1.25 **and 30 fps on a real mid-range phone**, (c) is ≤ 3 MB, (d) is under 100 draw calls. If foliage overdraw fails these, the fallback is not a return to v4's machinery aesthetic — it's *sparser* nature: open rock, fewer and larger plants, distance handled by fog rather than by canopy depth.
 
@@ -470,7 +490,10 @@ Fun and curiosity as the two primary design goals · personal storytelling indir
 **Locked after the Round 5 interview (v5):**
 **Law 15 — the player meets behaviour, not architecture** (§5), with its corollary that internal elegance the visitor never perceives is not worth time · **Step 8 is a vertical slice** — archive #1 runs all the way through to a changed hub and one real portfolio callback before archives #2 and #3 begin (§17) · **lock requirements early, then reserve protected time for ideas beyond them** — compliance with this document is not the same as being good (§16) · **watch for unprompted interaction, not compliments** — *"that looks good"* is the null result (§16) · **spend on what the player perceives** (§16).
 
-**Intentionally open (should emerge from prototypes, not be picked now):** Exact mini-games/mechanics · exact Archive order · whether the nine example exhibits (Scale, Gravity, Duplication, Time, Mirror, Sound, Garden, Observatory) survive — note **Scale/Miniature Island is now flagged as the one mobile-risky candidate**, since it's specified as a platforming space, and **Living Garden is upgraded from marginal to a leading candidate** by §9 (v5) · exact personal mapping per world · final character design · final Archive names · finale mechanic · whether all Archives are mandatory · exact ending dialogue · which archives get added after v1 · which capabilities each archive grants, and what the finale combines (follows from §8, but the specific verbs wait for the Step 7 toys) · **the traversal verb** that gives movement its skill ceiling.
+**Locked by the reference-image lock (2026-08-25):**
+**The visual direction**, measured against the user-supplied reference set in `concept/` rather than eyeballed. The §9 stylized-natural direction and [look-target.md](look-target.md) §3's palette both survived the comparison — the lock added exactly **one** value (sunlit stone `#cdccb6`) rather than forcing a repaint · **flat pale sky, no clouds, no gradient** (look-target §11 item 4, closed) — §5's fog-colour-equals-sky rule means a blue sky forces blue fog, which cools every distant surface and destroys the warm-light-against-cool-shade relationship · **what makes the reference set good is baked hard-edged shadow masses and dressing volume**, both of which this pipeline already produces at zero runtime cost, which is independent confirmation of §10's graphics thesis · **the schedule** — [build-roadmap.md](build-roadmap.md) sets 13 milestones, three public releases and a v1 target of **November 2027** at 12 hrs/week. The estimate rose from 450–550 hrs to **605–880** because the reference art raised the art bar, not because scope grew.
+
+ Exact mini-games/mechanics · exact Archive order · whether the nine example exhibits (Scale, Gravity, Duplication, Time, Mirror, Sound, Garden, Observatory) survive — note **Scale/Miniature Island is now flagged as the one mobile-risky candidate**, since it's specified as a platforming space, and **Living Garden is upgraded from marginal to a leading candidate** by §9 (v5) · exact personal mapping per world · final character design · final Archive names · finale mechanic · whether all Archives are mandatory · exact ending dialogue · which archives get added after v1 · which capabilities each archive grants, and what the finale combines (follows from §8, but the specific verbs wait for the Step 7 toys) · **the traversal verb** that gives movement its skill ceiling.
 
 **Open, but now with a concrete proposal awaiting sign-off:**
 
@@ -478,7 +501,9 @@ Fun and curiosity as the two primary design goals · personal storytelling indir
 |---|---|---|
 | §7's opening vocabulary | Delete the status text entirely rather than translate it | [game-flow.md](game-flow.md) §3 |
 | Exact v1 duration | 75–95 minutes | [game-flow.md](game-flow.md) header |
-| Camera, palette, fog, canopy dimensions | Specified numerically as starting values, explicitly meant to be revised by what appears on screen | [look-target.md](look-target.md) |
+| Camera, palette, fog, canopy dimensions | Numeric starting values, now checked against the reference set — palette and value ladder confirmed, camera and fog still unverified until something is on screen | [look-target.md](look-target.md) |
+| Road and sunlit foliage sit 7 luminance apart | Left unresolved deliberately; decide at M5 once the verge is real, by separating with the verge or pushing road darker | [look-target.md](look-target.md) §3 |
+| Character appearance against the reference | No reference image contains a figure. Silhouette-first CC0 rig, checked against the reference early rather than at M13 | [look-target.md](look-target.md) §11 item 7 |
 
 ---
 

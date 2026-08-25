@@ -1,13 +1,21 @@
 # Archive of Impossible Things — Design Document (v5)
 
 *Last updated: 2026-08-24*
-*Status: concept, design laws, and production plan locked. Technical questions resolved (§10, §13). v1 scope set to 3 archives. **Personal-layer interview complete — 5 rounds.** Individual archive games intentionally NOT locked. Next action: Step 0 repo scaffold.*
+*Status: concept, design laws, and production plan locked. Technical questions resolved (§10, §13). v1 scope set to 3 archives. **Personal-layer interview complete — 5 rounds.** Individual archive games intentionally NOT locked. **Step 0 complete** — scaffold built, stack verified, deployed. Next action: Step 1, movement and camera.*
 
-*Engineering companion: [technical-production-spec.md](technical-production-spec.md) — budgets, device tiers, memory discipline, asset pipeline.*
+**Companion documents.** This doc holds the concept and the laws. Three others hold the specifics:
+
+| Doc | Holds |
+|---|---|
+| [technical-production-spec.md](technical-production-spec.md) | Budgets, device tiers, memory discipline, asset pipeline |
+| [game-flow.md](game-flow.md) | What the player does, in order, with a clock running |
+| [look-target.md](look-target.md) | Camera, palette, fog and canopy as buildable numbers |
+
+Where they conflict with this document, they are wrong and should be corrected — except for `look-target.md`'s numbers, which are *meant* to be revised by what happens on screen.
 
 **⚠ v5 reverses a v4 decision.** §9's art direction has flipped from hard-surface/museum/machinery back to **stylized natural** — rock, soil, canopy, water, weathered structures — because Round 4 of the personal-layer interview established that the futuristic-mechanical look is a stated anti-goal, and re-examination showed v4's production argument was over-generalised. §9 carries the full reasoning, the corrected scripted-vs-sourced split, and the one real new risk (alpha overdraw). §5 gains Laws 13–14, §8 gains a two-layer traversal model, §12 restores the Nature kit, and §7's opening paragraph is flagged for a vocabulary pass.
 
-**v1 scope (new in v4): three archives, then ship.** Feasibility arithmetic at the real time budget (10–15 hrs/week, learning the stack while building) puts foundation at 150–250 hrs and each polished archive at 60–120 hrs — so 3 archives is ~9–11 months, and 9 archives is 1.5–2 years before ideation churn. The modular architecture in §11 was designed so an archive is a clean *delete*; it equally makes one a clean *addition*. Ship three, add more as updates. A live thing that grows beats a dormant branch. Feasibility arithmetic at the real time budget (10–15 hrs/week, learning the stack while building) puts foundation at 150–250 hrs and each polished archive at 60–120 hrs — so 3 archives is ~9–11 months, and 9 archives is 1.5–2 years before ideation churn. The modular architecture in §11 was designed so an archive is a clean *delete*; it equally makes one a clean *addition*. Ship three, add more as updates. A live thing that grows beats a dormant branch.
+**v1 scope (new in v4): three archives, then ship.** Feasibility arithmetic at the real time budget (10–15 hrs/week, learning the stack while building) puts foundation at 150–250 hrs and each polished archive at 60–120 hrs — so 3 archives is ~9–11 months, and 9 archives is 1.5–2 years before ideation churn. The modular architecture in §11 was designed so an archive is a clean *delete*; it equally makes one a clean *addition*. Ship three, add more as updates. A live thing that grows beats a dormant branch.
 
 ---
 
@@ -91,6 +99,8 @@ Idea 2 has been developed furthest and is the leading concrete world concept, bu
 **Opening feel:** No exposition dump. A mechanical structure wakes. The player stands inside something that feels like museum + laboratory + workshop + impossible architecture. Sample system lines: *"Visitor detected." "Archive integrity: 17%." "Curator status: UNKNOWN."* — the goal is immediate questions, not explanation.
 
 > **⚠ v5 revision needed — vocabulary, not fiction.** §9 (v5) rejects the technological register, and this paragraph is the densest concentration of it in the document: *"a mechanical structure wakes,"* *"laboratory,"* and machine-readable status strings all belong to the sci-fi look now ruled out. The *function* of the opening is right and unchanged — no exposition, immediate questions, a place that is clearly mid-something. What has to change is how it announces itself. A natural-register equivalent would state integrity through the environment rather than a readout: how far the growth has come, how much of a structure is still standing, what has been reclaimed. Law 13 applies — the impossible must arrive in natural vocabulary. **Left as an explicit open item rather than rewritten on the spot, because the opening is the single most-read minute of the game and deserves its own pass.**
+>
+> **→ That pass now exists.** [game-flow.md](game-flow.md) §3 proposes **deleting the text entirely** rather than translating it, on the grounds that a status readout is a machine describing itself — the exact register §9 rejects — while a structure half-eaten by moss carries the same information with no narrator. Awaiting sign-off; accepting it closes this item and the matching entry in §19.
 
 **The Archive as a real place, not a corridor:** a recognizable Central Archive hub with branches/wings, layers beneath the surface, and eventually a Deep Archive. The hub is one of the strongest elements to treat as locked.
 
@@ -460,8 +470,15 @@ Fun and curiosity as the two primary design goals · personal storytelling indir
 **Locked after the Round 5 interview (v5):**
 **Law 15 — the player meets behaviour, not architecture** (§5), with its corollary that internal elegance the visitor never perceives is not worth time · **Step 8 is a vertical slice** — archive #1 runs all the way through to a changed hub and one real portfolio callback before archives #2 and #3 begin (§17) · **lock requirements early, then reserve protected time for ideas beyond them** — compliance with this document is not the same as being good (§16) · **watch for unprompted interaction, not compliments** — *"that looks good"* is the null result (§16) · **spend on what the player perceives** (§16).
 
-**Intentionally open (should emerge from prototypes, not be picked now):**
-Exact mini-games/mechanics · exact Archive order · whether the nine example exhibits (Scale, Gravity, Duplication, Time, Mirror, Sound, Garden, Observatory) survive — note **Scale/Miniature Island is now flagged as the one mobile-risky candidate**, since it's specified as a platforming space, and **Living Garden is upgraded from marginal to a leading candidate** by §9 (v5) · exact personal mapping per world · final character design · final Archive names · finale mechanic · whether all Archives are mandatory · exact ending dialogue · exact duration · which archives get added after v1 · which capabilities each archive grants, and what the finale combines (follows from §8, but the specific verbs wait for the Step 7 toys) · **§7's opening vocabulary** — the fiction stands, the technological phrasing needs a pass under Law 13 · **the traversal verb** that gives movement its skill ceiling.
+**Intentionally open (should emerge from prototypes, not be picked now):** Exact mini-games/mechanics · exact Archive order · whether the nine example exhibits (Scale, Gravity, Duplication, Time, Mirror, Sound, Garden, Observatory) survive — note **Scale/Miniature Island is now flagged as the one mobile-risky candidate**, since it's specified as a platforming space, and **Living Garden is upgraded from marginal to a leading candidate** by §9 (v5) · exact personal mapping per world · final character design · final Archive names · finale mechanic · whether all Archives are mandatory · exact ending dialogue · which archives get added after v1 · which capabilities each archive grants, and what the finale combines (follows from §8, but the specific verbs wait for the Step 7 toys) · **the traversal verb** that gives movement its skill ceiling.
+
+**Open, but now with a concrete proposal awaiting sign-off:**
+
+| Item | Proposal | Where |
+|---|---|---|
+| §7's opening vocabulary | Delete the status text entirely rather than translate it | [game-flow.md](game-flow.md) §3 |
+| Exact v1 duration | 75–95 minutes | [game-flow.md](game-flow.md) header |
+| Camera, palette, fog, canopy dimensions | Specified numerically as starting values, explicitly meant to be revised by what appears on screen | [look-target.md](look-target.md) |
 
 ---
 

@@ -36,37 +36,103 @@ canvas {
   touch-action: none;
 }
 
-/* --- Step 0 status overlay (temporary) --- */
+/* --- M1 dev HUD ---
 
-.status-overlay {
+   Monospace and tabular-nums throughout, because the whole point of this panel
+   is that a number changing is visible. A proportional font reflows the row on
+   every digit change, which reads as motion where there is none. It is also
+   pointer-events: none so it can never eat a drag meant for the camera — except
+   the collapsed pill, which has to be clickable on a phone that has no H key.
+*/
+
+.hud,
+.hud-collapsed {
   position: fixed;
-  /* Respect notches and home indicators on phones. */
   top: max(0.75rem, env(safe-area-inset-top));
   left: max(0.75rem, env(safe-area-inset-left));
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-  padding: 0.7rem 0.9rem;
+  padding: 0.6rem 0.75rem;
   border: 1px solid rgb(255 255 255 / 0.12);
   border-radius: 0.5rem;
-  background: rgb(0 0 0 / 0.45);
+  background: rgb(0 0 0 / 0.5);
   backdrop-filter: blur(6px);
   font-family: ui-monospace, "Cascadia Code", Menlo, monospace;
-  font-size: 0.72rem;
-  line-height: 1.5;
+  font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.45;
   pointer-events: none;
   user-select: none;
 }
 
-.status-overlay strong {
-  margin-bottom: 0.25rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
+.hud {
+  min-width: 15rem;
 }
 
-.status-overlay .hint {
-  margin-top: 0.35rem;
-  color: rgb(232 230 223 / 0.55);
+.hud-collapsed {
+  min-width: 0;
+  color: rgb(232 230 223 / 0.5);
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.hud-title {
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #c8a05a;
+}
+
+.hud-group {
+  padding-top: 0.4rem;
+  margin-top: 0.4rem;
+  border-top: 1px solid rgb(255 255 255 / 0.08);
+}
+
+.hud-group:first-of-type {
+  padding-top: 0;
+  margin-top: 0;
+  border-top: 0;
+}
+
+.hud-heading {
+  margin-bottom: 0.2rem;
+  color: rgb(232 230 223 / 0.45);
+  letter-spacing: 0.03em;
+}
+
+.hud-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.hud-label {
+  color: rgb(232 230 223 / 0.6);
+}
+
+.hud-value {
+  color: #cfd3c4;
+}
+
+/* Over budget. Not red-on-black — that vibrates against the dark panel and is
+   the one colour a colour-blind reader is most likely to lose. Amber reads as
+   a warning at any acuity and is already in the §3 palette. */
+.hud-over {
+  color: #e0913f;
+  font-weight: 600;
+}
+
+.hud-budget {
+  color: rgb(232 230 223 / 0.35);
+  font-weight: 400;
+}
+
+.hud-hint {
+  margin-top: 0.55rem;
+  padding-top: 0.4rem;
+  border-top: 1px solid rgb(255 255 255 / 0.08);
+  color: rgb(232 230 223 / 0.4);
+  line-height: 1.6;
 }
 
 /* --- WebGL2 fallback --- */

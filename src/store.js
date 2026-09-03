@@ -1,4 +1,17 @@
 import { create } from 'zustand'
+import { TIERS } from './config/look'
+import {
+  PROBE,
+  detectAutoTier,
+  detectInitialTier,
+  persistAutoTier,
+  persistOverride,
+  tierBelow,
+} from './config/tiers'
+
+// Resolved once, at module load, so the first Canvas mount already renders at
+// the right cost. Order: override > saved > GPU hint > medium (tiers.js rule 1).
+const initialTier = detectInitialTier()
 
 /**
  * Global game state.
@@ -50,6 +63,53 @@ export const useGameStore = create((set, get) => ({
 
   hudVisible: true,
   toggleHud: () => set((s) => ({ hudVisible: !s.hudVisible })),
+
+  // --- Tiers (M2) --------------------------------------------------------------
+  //
+  // The policy lives in config/tiers.js; the state lives here so every consumer
+  // (Canvas dpr, fog density, camera far, the HUD, later the settings panel)
+  // reads one authority. tierSource exists for the HUD and for bug reports:
+  // "low / demoted" and "low / override" are different situations.
+
+  tier: initialTier.tier,
+  tierSource: initialTier.source,
+  tierOverride: initialTier.source === 'override' ? initialTier.tier : null,
+  // Resolution shed by the governor once there is no tier left below (or the
+  // tier is pinned), in DPR units. Never persisted -- it describes a thermal
+  // state, not the device.
+  dprDrop: 0,
+
+  demoteTier: () => {
+    const s = get()
+    if (s.tierOverride) return // rule 5: an override freezes the tier
+    const next = tierBelow(s.tier)
+    if (!next) return
+    persistAutoTier(next) // next session starts here instead of re-failing
+    set({ tier: next, tierSource: 'demoted', dprDrop: 0 })
+  },
+
+  shedDpr: () =>
+    set((s) => ({
+      dprDrop: Math.min(
+        s.dprDrop + PROBE.dprStep,
+        Math.max(0, TIERS[s.tier].dpr - PROBE.dprFloor),
+      ),
+    })),
+
+  // The manual override, cycled from the HUD (T) until the M2 settings panel
+  // lands: high -> medium -> low -> auto. Auto clears the pin and re-detects.
+  cycleTierOverride: () => {
+    const s = get()
+    const order = ['high', 'medium', 'low', null]
+    const next = order[(order.indexOf(s.tierOverride) + 1) % order.length]
+    persistOverride(next)
+    if (next) {
+      set({ tier: next, tierSource: 'override', tierOverride: next, dprDrop: 0 })
+    } else {
+      const auto = detectAutoTier()
+      set({ tier: auto.tier, tierSource: auto.source, tierOverride: null, dprDrop: 0 })
+    }
+  },
 
   // --- Dev stepping ----------------------------------------------------------
 

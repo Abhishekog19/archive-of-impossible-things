@@ -443,8 +443,20 @@ palette discipline, or the phone target. Those are the project.
 
 | | |
 |---|---|
-| **Current milestone** | M1 — It moves |
-| **Next session** | `ecctrl` + the `look-target.md §2` camera in a grey room |
-| **First gate** | Walk 90 seconds with no objective. Do you want to keep walking? |
-| **Open sign-offs** | Design doc §19: delete §7's status text; 75–95 min v1 duration |
+| **Current milestone** | M1 — It moves · **built, awaiting verification** |
+| **Next session** | Run [verification.md](verification.md) § M1 — one console line for checks 1–8, then five manual checks. Reply in the report format. |
+| **First gate** | Check 13: walk 90 seconds with no objective. Do you want to keep walking? Yours to answer; nothing measurable substitutes. |
+| **Then** | M2 — It runs on your phone. Opus 5 here for the tier-detection policy, then Antigravity on Sonnet 4.6 for everything reading it. See [model-plan.md](model-plan.md) §0. |
+| **Open sign-offs** | Design doc §19: delete §7's status text; 75–95 min v1 duration. `src/config/look.js`: the 6.2-vs-6.5 m canopy-underside derivation. |
+| **Known debt** | The camera can come closer than `CAMERA.minDistance` and cut through the character, deliberately, because a camera inside a wall is worse. Surfaced in the dev HUD as `too close`; the real fix is the M5 camera work. |
 | **Locked 2026-08-25** | Visual direction, against [visual-reference-sheet.jpg](visual-reference-sheet.jpg) |
+
+### Hours log
+
+Per §9 rule 1. The estimates are guesses; these are not. After M3 the ratio between
+the two columns is worth more than anything else in this document.
+
+| Milestone | Estimate | Actual | Notes |
+|---|---|---|---|
+| M1 | 30 | _to fill_ | |
+

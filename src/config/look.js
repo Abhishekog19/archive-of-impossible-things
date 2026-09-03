@@ -56,6 +56,14 @@ export const CAMERA = {
   // Camera collision: pull in, never clip. The margin keeps the near plane off
   // the surface we pulled in to.
   collisionMargin: 0.25,
+  // Not a floor — a threshold. Inside this the near plane starts cutting the
+  // capsule and you see through your own character. It was originally enforced
+  // as `max(minDistance, hit - margin)`, which quietly inverted the rule it was
+  // meant to serve: any wall closer than 0.9 m got the camera pushed straight
+  // through it. The wall now always wins and this number is reported by the dev
+  // HUD instead, so the artefact is visible rather than traded for a worse one.
+  // Raising the camera or fading the character when it can't get far enough
+  // back is the real answer, and it belongs with the M5 camera work.
   minDistance: 0.9,
 }
 

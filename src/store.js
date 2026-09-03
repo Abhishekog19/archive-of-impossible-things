@@ -50,4 +50,13 @@ export const useGameStore = create((set, get) => ({
 
   hudVisible: true,
   toggleHud: () => set((s) => ({ hudVisible: !s.hudVisible })),
+
+  // --- Dev stepping ----------------------------------------------------------
+
+  // The simulation pauses while the page is hidden, which is correct for the
+  // shipped game and wrong for a test that steps the loop by hand from a hidden
+  // pane — physics would be paused for exactly the frames the test is driving.
+  // DevProbe.manual() raises this to keep rapier running anyway. Dev only.
+  physicsForced: false,
+  setPhysicsForced: (physicsForced) => set({ physicsForced }),
 }))

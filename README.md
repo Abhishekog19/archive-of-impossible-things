@@ -6,21 +6,36 @@ work, and you have to figure out the rule before you can get out.
 It is also this developer's portfolio, but that part isn't the pitch and isn't
 the point of playing it.
 
-**Status: Step 0 of 11 — scaffold only.** There is no game here yet. What exists
-is a throwaway smoke-test scene that proves the whole stack runs end to end:
-rendering, physics, state, touch input, and a production build.
+**Status: M1 of 13 — it moves.** A grey test room with a character, a camera, and
+movement. No art yet; everything you can see gets deleted at M3. What exists is
+the thing the rest is built on: the `look-target.md` §2 camera, collision that
+pulls in rather than clipping, slopes and stairs that traverse cleanly, and a
+dev HUD watching the performance budgets from day one.
 
 ## Design documents
 
 The thinking happened before the code, and it's checked in:
 
 - [archive-of-impossible-things-design-doc.md](archive-of-impossible-things-design-doc.md)
-  — the concept, the laws it has to obey, the roadmap.
+  — the concept, the laws it has to obey, the architecture.
+- [game-flow.md](game-flow.md) — the 95 minutes, minute by minute, and the six
+  beats every archive is built from.
+- [look-target.md](look-target.md) — the visual target as numbers: camera,
+  palette, fog, road dimensions. Every constant in it lives once, in
+  [src/config/look.js](src/config/look.js), and scene code never writes a literal.
 - [technical-production-spec.md](technical-production-spec.md) — performance
   budgets, device tiers, the asset pipeline, and the known risks.
+- [build-roadmap.md](build-roadmap.md) — the 13 milestones, 742 hours, exit
+  criteria per milestone, and what gets cut first if it needs to be shorter.
 
-The design doc's §17 defines the eleven build steps and what has to be true
-before each one is considered done.
+And how the work itself is run:
+
+- [model-plan.md](model-plan.md) — which model builds which part, and why the
+  split is about what can be specified rather than what is difficult.
+- [working-rules.md](working-rules.md) — session discipline, the build→verify→report
+  loop, and the template for briefing work to a model with no project context.
+- [verification.md](verification.md) — what to run to prove a milestone passed
+  its exit criteria.
 
 ## Stack
 
@@ -39,8 +54,21 @@ npm install
 npm run dev
 ```
 
-Then open http://localhost:5173. Drag to orbit, tap a cube to push it. The
-overlay in the top-left reports which parts of the stack came up.
+Then open http://localhost:5173.
+
+**WASD** to move, **shift** to run, **space** to jump, **drag** to turn, **E** at
+the post. **H** toggles the dev HUD, **F** toggles fog.
+
+The HUD reports the `look-target.md` §10 budgets alongside the §2 camera numbers.
+The camera ones matter more than they look: the pitch, the 2.2 m camera height and
+the 6.5 m canopy underside are all *derived* from the camera offset rather than set
+directly, so displaying the live measurement is the only honest way to claim they
+still hold.
+
+In dev builds `window.__M1.report()` walks the test course under a stepped clock and
+prints M1's exit criteria as pass/fail — see [verification.md](verification.md). It
+returns numbers rather than screenshots because a number can be compared to a
+threshold and an impression cannot.
 
 ```bash
 npm run build && npm run preview   # production build, served locally

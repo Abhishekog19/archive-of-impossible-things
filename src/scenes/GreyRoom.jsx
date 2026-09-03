@@ -152,12 +152,22 @@ export default function GreyRoom({ playerRef }) {
         />
       ))}
 
-      {/* A dead-end slot. Walking in backs the camera into a wall, which is the
-          only way to prove "pull in, never clip" on a *lateral* surface — the
-          overhangs above only test it vertically. */}
-      <Slab position={[7, 1.5, 0]} size={[0.5, 3, 8]} color={PALETTE.stone} />
-      <Slab position={[10, 1.5, 0]} size={[0.5, 3, 8]} color={PALETTE.stone} />
-      <Slab position={[8.5, 1.5, -4.2]} size={[3.5, 3, 0.5]} color={PALETTE.stone} />
+      {/* A dead-end slot, 2.5 m across, behind the spawn. Walk in, turn around,
+          and the camera has nowhere to go — the only way to prove "pull in,
+          never clip" on a *lateral* surface. The overhangs above test it
+          vertically, and a vertical pull-in can pass while a sideways one clips.
+
+          Placed at +Z rather than out along the course because everything else
+          is already spoken for, and slot walls that intersect another collider
+          would corrupt the one thing this room exists to measure. The two
+          rejected spots, so they don't get retried: x ≈ 8 puts the walls
+          through the 8% ramp (which spans z −2.5…10 and is 4.5 m wide), and
+          x ≈ −9 puts them through the stairs (x −9.5…−6.5). Here, z starts at
+          10.25 — a quarter-metre clear of the ramp's far end — and the whole
+          slot sits inside the plaza, so it has a floor. */}
+      <Slab position={[3.5, 1.5, 12]} size={[0.5, 3, 3.5]} color={PALETTE.stone} />
+      <Slab position={[6.5, 1.5, 12]} size={[0.5, 3, 3.5]} color={PALETTE.stone} />
+      <Slab position={[5, 1.5, 13.9]} size={[3.5, 3, 0.5]} color={PALETTE.stone} />
 
       {/* Interactable + the thing it moves. */}
       <Post

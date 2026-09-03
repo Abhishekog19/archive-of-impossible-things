@@ -6,6 +6,7 @@ import FollowCamera from './player/FollowCamera'
 import Player from './player/Player'
 import GreyRoom from './scenes/GreyRoom'
 import DevHud from './ui/DevHud'
+import DevProbe from './ui/DevProbe'
 import PerfProbe from './ui/PerfProbe'
 import { useGameStore } from './store'
 
@@ -77,6 +78,8 @@ export default function App() {
   // scene (the post needs to know when the player is close).
   const playerRef = useRef(null)
   const visible = usePageVisible()
+  // Dev stepping overrides the visibility pause — see store.js.
+  const physicsForced = useGameStore((s) => s.physicsForced)
 
   if (!hasWebGL2()) {
     return (
@@ -111,10 +114,14 @@ export default function App() {
         <hemisphereLight args={[PALETTE.sky, PALETTE.ground, 2.2]} />
 
         <Suspense fallback={null}>
-          <Physics paused={!visible}>
+          <Physics paused={!visible && !physicsForced}>
             <GreyRoom playerRef={playerRef} />
             <Player ref={playerRef} />
             <FollowCamera bodyRef={playerRef} />
+            {/* Dev-only scene handle for stepping the loop and running the M1
+                audit. Inside <Physics> because it raycasts against the same
+                world the camera does; dropped from production by this branch. */}
+            {import.meta.env.DEV && <DevProbe playerRef={playerRef} />}
           </Physics>
         </Suspense>
 

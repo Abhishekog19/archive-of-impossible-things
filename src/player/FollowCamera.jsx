@@ -160,10 +160,21 @@ export default function FollowCamera({ bodyRef }) {
       body, // never collide with the player's own capsule
     )
     if (hit) {
-      const pulled = Math.max(
-        CAMERA.minDistance,
-        hit.timeOfImpact - CAMERA.collisionMargin,
-      )
+      // Never place the camera past what the ray hit. `minDistance` is a
+      // *preference*, not a floor that outranks the wall: written as
+      // `max(minDistance, toi - margin)` it silently pushes the camera through
+      // any surface closer than 0.9 m, which the audit caught as a camera
+      // embedded in the dead-end's back wall (clearance 0.00 m). M1's criterion
+      // is "pulls in and never clips", so the wall wins.
+      //
+      // The cost is real and accepted: inside 0.9 m the near plane starts
+      // cutting the capsule, so you see through your own character. That is the
+      // lesser artefact — a see-through character reads as a camera that got
+      // too close, while a camera inside a wall reads as the world falling
+      // apart. The proper fix is to raise the camera or fade the character when
+      // it can't get far enough back, and that belongs with the real camera
+      // work at M5, not here.
+      const pulled = Math.max(0, hit.timeOfImpact - CAMERA.collisionMargin)
       scratch.desired
         .copy(scratch.smoothedPivot)
         .addScaledVector(scratch.dir, pulled)

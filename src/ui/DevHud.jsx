@@ -16,9 +16,11 @@ import { perf } from './perf'
  * Sampled at 5 Hz. Anything faster is unreadable and costs renders.
  */
 
-/** A row that knows whether it is inside budget. */
-function Row({ label, value, budget, unit = '', invert = false }) {
-  const over = budget != null && (invert ? value < budget : value > budget)
+/** A row that knows whether it is inside budget. `alert` forces the over-budget
+ *  styling for a row whose limit isn't a plain numeric comparison. */
+function Row({ label, value, budget, unit = '', invert = false, alert = false }) {
+  const over =
+    alert || (budget != null && (invert ? value < budget : value > budget))
   return (
     <div className="hud-row">
       <span className="hud-label">{label}</span>
@@ -80,6 +82,17 @@ export default function DevHud() {
   // absolute height is supposed to move.
   const heightAboveFeet = cameraY - player.feetY
   const pulledIn = cameraDistance < CAMERA.distance - 0.02
+  // Inside minDistance the wall has won and the near plane is cutting the
+  // capsule — see the comment on CAMERA.minDistance. FollowCamera no longer
+  // clamps to it, so this row is the only place the threshold is still live: the
+  // artefact gets named on screen instead of being traded for a camera inside a
+  // wall. If this reads "too close" anywhere it shouldn't, that's the M5 camera
+  // work asking for attention.
+  const tooClose = cameraDistance < CAMERA.minDistance
+
+  let distanceNote = ''
+  if (tooClose) distanceNote = ' ← too close, character clipping'
+  else if (pulledIn) distanceNote = ' ← pulled in'
 
   return (
     <div className="hud">
@@ -100,9 +113,11 @@ export default function DevHud() {
         <Row label="target" value={CAMERA.worldHeight.toFixed(2)} unit=" m" />
         <Row
           label="distance"
-          value={`${cameraDistance.toFixed(2)}${pulledIn ? ' ← pulled in' : ''}`}
+          value={`${cameraDistance.toFixed(2)}${distanceNote}`}
           unit=" m"
+          alert={tooClose}
         />
+        <Row label="min useful" value={CAMERA.minDistance.toFixed(2)} unit=" m" />
         <Row label="pitch" value={CAMERA.derivedPitchDeg.toFixed(2)} unit="°" />
         <Row label="canopy floor" value={CANOPY_UNDERSIDE.toFixed(2)} unit=" m" />
       </div>

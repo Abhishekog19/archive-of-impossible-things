@@ -2,12 +2,14 @@ import { Suspense, useEffect, useRef, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { Physics } from '@react-three/rapier'
 import { CAMERA, FOG, PALETTE, TIERS } from './config/look'
+import { effectiveDpr } from './config/tiers'
 import FollowCamera from './player/FollowCamera'
 import Player from './player/Player'
 import GreyRoom from './scenes/GreyRoom'
 import DevHud from './ui/DevHud'
 import DevProbe from './ui/DevProbe'
 import PerfProbe from './ui/PerfProbe'
+import TierGovernor from './ui/TierGovernor'
 import { useGameStore } from './store'
 
 /**
@@ -37,11 +39,14 @@ function hasWebGL2() {
  */
 function Atmosphere() {
   const fogEnabled = useGameStore((s) => s.fogEnabled)
+  // Density is a tier value (look-target section 9); the store is the one
+  // authority on which tier this device is on -- see config/tiers.js.
+  const tier = useGameStore((s) => s.tier)
   return (
     <>
       <color attach="background" args={[PALETTE.sky]} />
       {fogEnabled && (
-        <fogExp2 attach="fog" args={[FOG.color, TIERS.medium.fogDensity]} />
+        <fogExp2 attach="fog" args={[FOG.color, TIERS[tier].fogDensity]} />
       )}
     </>
   )
@@ -80,6 +85,11 @@ export default function App() {
   const visible = usePageVisible()
   // Dev stepping overrides the visibility pause — see store.js.
   const physicsForced = useGameStore((s) => s.physicsForced)
+  // The detected/overridden tier and whatever resolution the governor has shed
+  // past it. Computed here and passed as a prop so <Canvas dpr> is the single
+  // authority on resolution -- TierGovernor never calls setDpr imperatively.
+  const tier = useGameStore((s) => s.tier)
+  const dprDrop = useGameStore((s) => s.dprDrop)
 
   if (!hasWebGL2()) {
     return (
@@ -96,13 +106,14 @@ export default function App() {
   return (
     <>
       <Canvas
-        // Medium tier, hard-coded. M2 adds detection and the override; picking
-        // the baseline now means the numbers in the HUD are the numbers the
-        // target device will see, not a flattering desktop reading.
-        dpr={[1, TIERS.medium.dpr]}
+        // Tier-driven (M2): detection order and the demote-only policy live in
+        // config/tiers.js; the governor inside the Canvas supplies the evidence.
+        dpr={effectiveDpr(tier, dprDrop)}
         // No `shadows`: the project budgets 0 real-time shadow maps
         // (technical-production-spec §4.2). Contact shadow is a blob decal later.
-        camera={{ fov: CAMERA.fov, near: 0.1, far: TIERS.medium.far }}
+        // `far` is initial only -- TierGovernor maintains it on tier change,
+        // matched to where the tier's fog is ~95% opaque (look-target section 5).
+        camera={{ fov: CAMERA.fov, near: 0.1, far: TIERS[tier].far }}
         gl={{ antialias: true }}
       >
         <Atmosphere />
@@ -126,6 +137,7 @@ export default function App() {
         </Suspense>
 
         <PerfProbe />
+        <TierGovernor />
       </Canvas>
 
       <DevHud />

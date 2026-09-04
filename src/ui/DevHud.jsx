@@ -51,6 +51,10 @@ export default function DevHud() {
   const toggleFog = useGameStore((s) => s.toggleFog)
   const hudVisible = useGameStore((s) => s.hudVisible)
   const toggleHud = useGameStore((s) => s.toggleHud)
+  const tier = useGameStore((s) => s.tier)
+  const tierSource = useGameStore((s) => s.tierSource)
+  const dprDrop = useGameStore((s) => s.dprDrop)
+  const cycleTierOverride = useGameStore((s) => s.cycleTierOverride)
 
   useEffect(() => {
     const id = setInterval(() => tick((n) => n + 1), 200)
@@ -61,10 +65,11 @@ export default function DevHud() {
     const onKey = (e) => {
       if (e.code === 'KeyH') toggleHud()
       if (e.code === 'KeyF') toggleFog()
+      if (e.code === 'KeyT') cycleTierOverride()
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [toggleHud, toggleFog])
+  }, [toggleHud, toggleFog, cycleTierOverride])
 
   if (!hudVisible) {
     // Clickable as well as keyable: a phone has no H key, and M2 tests on a
@@ -120,6 +125,12 @@ export default function DevHud() {
         <Row label="min useful" value={CAMERA.minDistance.toFixed(2)} unit=" m" />
         <Row label="pitch" value={CAMERA.derivedPitchDeg.toFixed(2)} unit="°" />
         <Row label="canopy floor" value={CANOPY_UNDERSIDE.toFixed(2)} unit=" m" />
+      </div>
+
+      <div className="hud-group">
+        <div className="hud-heading">tier</div>
+        <Row label="tier (T)" value={tier + ' / ' + tierSource} />
+        <Row label="dpr shed" value={dprDrop.toFixed(3)} alert={dprDrop > 0} />
       </div>
 
       <div className="hud-group">

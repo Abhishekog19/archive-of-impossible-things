@@ -41,6 +41,8 @@ const KEY_MAP = {
 const NO_JOYSTICK = { x: 0, y: 0 }
 
 export default function useMovementInput(controllerRef) {
+  // A quick tap can start and end between frames, especially on a slow phone.
+  const jumpQueued = useRef(false)
   // Held keys, by action name. A ref because this changes on every keypress and
   // must never cause a React render — input at 60 Hz through useState would
   // re-render the whole tree on each footstep.
@@ -76,6 +78,7 @@ export default function useMovementInput(controllerRef) {
       // which shows up later as "movement stops after clicking a button".
       e.preventDefault()
       held.current[action] = down
+      if (down && action === 'jump') jumpQueued.current = true
     }
     const onDown = onKey(true)
     const onUp = onKey(false)
@@ -85,6 +88,7 @@ export default function useMovementInput(controllerRef) {
     const onBlur = () => {
       for (const k of Object.keys(held.current)) held.current[k] = false
       resetTouchInput()
+      jumpQueued.current = false
     }
 
     window.addEventListener('keydown', onDown)
@@ -94,12 +98,17 @@ export default function useMovementInput(controllerRef) {
     const unsubscribe = useGameStore.subscribe((state, previous) => {
       if (state.settingsOpen !== previous.settingsOpen) onBlur()
     })
+    const unsubscribeJump = useButtonStore.subscribe(
+      (s) => !!s.buttons.jump,
+      (pressed) => { if (pressed) jumpQueued.current = true },
+    )
     return () => {
       window.removeEventListener('keydown', onDown)
       window.removeEventListener('keyup', onUp)
       window.removeEventListener('blur', onBlur)
       document.removeEventListener('visibilitychange', onBlur)
       unsubscribe()
+      unsubscribeJump()
     }
   }, [])
 
@@ -114,7 +123,8 @@ export default function useMovementInput(controllerRef) {
     f.leftward = k.leftward
     f.rightward = k.rightward
     const buttons = useButtonStore.getState().buttons
-    f.jump = k.jump || !!buttons.jump
+    f.jump = k.jump || !!buttons.jump || jumpQueued.current
+    jumpQueued.current = false
     f.run = k.run || !!buttons.run
     f.joystick = useJoystickStore.getState().joysticks.move ?? NO_JOYSTICK
 

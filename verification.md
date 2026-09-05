@@ -14,6 +14,9 @@ Phone URL: https://archive-impossible-things-m2.abhishekpandey989828.chatgpt.sit
 - Mobile browser: joystick moved 2.70 m in ~1.1 s; two-finger move/look produced
   -0.225 rad yaw; cancellation settled speed below 0.01 m/s after 1.2 s.
 - Keyboard remained active in the touch-enabled browser (~2.90 m/s walking).
+- Run reached ~5.38 m/s. Use raised the slab from 0.15 to 1.40 m once per press;
+  holding did not retrigger it. A quick Jump tap registered a ~0.36 m rise after
+  200 ms. Jump taps are buffered until a frame consumes them.
 - High and Low manual overrides survived reload; returning to Automatic works.
 - Settings paused the rigid body; portrait prompt visible; no horizontal overflow
   at 390×844. These are emulated functional checks, not phone performance proof.

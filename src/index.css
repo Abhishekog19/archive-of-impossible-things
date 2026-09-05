@@ -159,3 +159,82 @@ canvas {
   color: rgb(232 230 223 / 0.7);
   line-height: 1.6;
 }
+
+/* M2 controls stay inside the usable screen, including landscape notches. */
+.settings-toggle, .settings-panel button, .settings-panel select, .hud-close {
+  color: inherit;
+  font: inherit;
+  border: 1px solid #8f8877;
+  background: #25291f;
+  border-radius: 8px;
+  min-height: 44px;
+  padding: 8px 12px;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+button:focus-visible, select:focus-visible { outline: 2px solid #c8a05a; outline-offset: 3px; }
+.settings-toggle {
+  position: fixed;
+  z-index: 20;
+  right: max(12px, env(safe-area-inset-right));
+  top: max(12px, env(safe-area-inset-top));
+}
+.settings-panel {
+  color: #e8e6df;
+  background: #1c2018;
+  border: 1px solid #8f8877;
+  border-radius: 12px;
+  width: min(420px, calc(100vw - 48px));
+  max-height: calc(100dvh - 48px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  padding: 24px;
+  overflow-y: auto;
+  touch-action: pan-y;
+}
+.settings-panel::backdrop { background: rgb(0 0 0 / .65); }
+.settings-panel h2 { margin: 0 0 20px; font-size: 1.25rem; }
+.settings-panel label { display: block; margin-bottom: 8px; }
+.settings-panel select { width: 100%; }
+.settings-panel p { color: #cfd3c4; font-size: .875rem; line-height: 1.55; }
+.settings-panel button { width: 100%; margin-top: 8px; }
+.settings-panel .settings-done { background: #c8a05a; color: #12150f; }
+.touch-controls { position: fixed; inset: 0; pointer-events: none; user-select: none; }
+.movement-control {
+  position: absolute;
+  left: max(8px, env(safe-area-inset-left));
+  bottom: max(8px, env(safe-area-inset-bottom));
+  pointer-events: auto;
+  touch-action: none;
+}
+.touch-actions {
+  position: absolute;
+  right: max(12px, env(safe-area-inset-right));
+  bottom: max(24px, env(safe-area-inset-bottom));
+  display: grid;
+  grid-template-columns: repeat(2, 64px);
+  gap: 8px;
+  pointer-events: auto;
+  touch-action: none;
+}
+.touch-actions > :last-child { grid-column: 2; }
+.landscape-prompt { display: none; }
+.hud { z-index: 15; max-height: calc(100dvh - 180px); max-width: calc(100vw - 120px); overflow: auto; }
+.hud-close { pointer-events: auto; float: right; margin-left: 12px; padding: 0 10px; }
+.hud-collapsed { z-index: 15; min-height: 44px; }
+@media (orientation: portrait) {
+  .landscape-prompt {
+    display: block;
+    position: absolute;
+    top: max(68px, calc(env(safe-area-inset-top) + 56px));
+    left: 24px;
+    right: 24px;
+    text-align: center;
+    color: #e8e6df;
+    background: rgb(18 21 15 / .8);
+    border-radius: 8px;
+    padding: 12px;
+    font-size: .8rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #joystick-knob, #virtual-button-cap { transition: none !important; }
+}

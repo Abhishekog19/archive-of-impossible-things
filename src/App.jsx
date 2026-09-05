@@ -10,6 +10,8 @@ import DevHud from './ui/DevHud'
 import DevProbe from './ui/DevProbe'
 import PerfProbe from './ui/PerfProbe'
 import TierGovernor from './ui/TierGovernor'
+import MobileControls from './ui/MobileControls'
+import Settings from './ui/Settings'
 import { useGameStore } from './store'
 
 /**
@@ -21,7 +23,10 @@ import { useGameStore } from './store'
  */
 function hasWebGL2() {
   try {
-    return !!document.createElement('canvas').getContext('webgl2')
+    const gl = document.createElement('canvas').getContext('webgl2')
+    if (!gl) return false
+    gl.getExtension('WEBGL_lose_context')?.loseContext()
+    return true
   } catch {
     return false
   }
@@ -83,6 +88,8 @@ export default function App() {
   // scene (the post needs to know when the player is close).
   const playerRef = useRef(null)
   const visible = usePageVisible()
+  const [webglSupported] = useState(hasWebGL2)
+  const settingsOpen = useGameStore((s) => s.settingsOpen)
   // Dev stepping overrides the visibility pause — see store.js.
   const physicsForced = useGameStore((s) => s.physicsForced)
   // The detected/overridden tier and whatever resolution the governor has shed
@@ -91,7 +98,7 @@ export default function App() {
   const tier = useGameStore((s) => s.tier)
   const dprDrop = useGameStore((s) => s.dprDrop)
 
-  if (!hasWebGL2()) {
+  if (!webglSupported) {
     return (
       <div className="fallback">
         <h1>Archive of Impossible Things</h1>
@@ -125,7 +132,7 @@ export default function App() {
         <hemisphereLight args={[PALETTE.sky, PALETTE.ground, 2.2]} />
 
         <Suspense fallback={null}>
-          <Physics paused={!visible && !physicsForced}>
+          <Physics paused={(!visible || settingsOpen) && !physicsForced}>
             <GreyRoom playerRef={playerRef} />
             <Player ref={playerRef} />
             <FollowCamera bodyRef={playerRef} />
@@ -141,6 +148,8 @@ export default function App() {
       </Canvas>
 
       <DevHud />
+      <MobileControls />
+      <Settings />
     </>
   )
 }

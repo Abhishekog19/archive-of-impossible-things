@@ -47,7 +47,8 @@ export default function FollowCamera({ bodyRef }) {
   // Yaw is the only orbit axis. Kept in a ref rather than state: it changes
   // every pointer move and must never trigger a React render.
   const yaw = useRef(0)
-  const dragging = useRef(false)
+  const dragging = useRef(null)
+  const lastX = useRef(0)
 
   // Scratch objects, allocated once on the first frame. Allocating inside
   // useFrame is the classic R3F garbage-collection stutter — a new Vector3 60
@@ -71,27 +72,48 @@ export default function FollowCamera({ bodyRef }) {
 
     const onPointerDown = (e) => {
       if (e.button !== undefined && e.button !== 0) return
-      dragging.current = true
+      if (dragging.current !== null || useGameStore.getState().settingsOpen) return
+      dragging.current = e.pointerId
+      lastX.current = e.clientX
       domElement.setPointerCapture?.(e.pointerId)
     }
     const onPointerMove = (e) => {
-      if (!dragging.current) return
-      yaw.current -= e.movementX * SENSITIVITY
+      if (dragging.current !== e.pointerId) return
+      yaw.current -= (e.clientX - lastX.current) * SENSITIVITY
+      lastX.current = e.clientX
     }
     const onPointerUp = (e) => {
-      dragging.current = false
-      domElement.releasePointerCapture?.(e.pointerId)
+      if (dragging.current !== e.pointerId) return
+      dragging.current = null
+      if (domElement.hasPointerCapture(e.pointerId)) domElement.releasePointerCapture(e.pointerId)
+    }
+    const reset = () => {
+      const id = dragging.current
+      dragging.current = null
+      if (id !== null && domElement.hasPointerCapture(id)) domElement.releasePointerCapture(id)
     }
 
     domElement.addEventListener('pointerdown', onPointerDown)
     domElement.addEventListener('pointermove', onPointerMove)
     domElement.addEventListener('pointerup', onPointerUp)
     domElement.addEventListener('pointercancel', onPointerUp)
+    domElement.addEventListener('lostpointercapture', onPointerUp)
+    window.addEventListener('blur', reset)
+    document.addEventListener('visibilitychange', reset)
+    window.addEventListener('resize', reset)
+    const unsubscribe = useGameStore.subscribe((state, previous) => {
+      if (state.settingsOpen !== previous.settingsOpen) reset()
+    })
     return () => {
       domElement.removeEventListener('pointerdown', onPointerDown)
       domElement.removeEventListener('pointermove', onPointerMove)
       domElement.removeEventListener('pointerup', onPointerUp)
       domElement.removeEventListener('pointercancel', onPointerUp)
+      domElement.removeEventListener('lostpointercapture', onPointerUp)
+      window.removeEventListener('blur', reset)
+      document.removeEventListener('visibilitychange', reset)
+      window.removeEventListener('resize', reset)
+      unsubscribe()
     }
   }, [domElement])
 

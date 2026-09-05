@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { BUDGET, CAMERA, CANOPY_UNDERSIDE, ROAD } from '../config/look'
 import { useGameStore } from '../store'
 import { perf } from './perf'
+import { isUiTarget } from '../player/inputState'
 
 /**
  * The M1 dev HUD.
@@ -63,6 +64,7 @@ export default function DevHud() {
 
   useEffect(() => {
     const onKey = (e) => {
+      if (e.repeat || isUiTarget(e.target) || useGameStore.getState().settingsOpen) return
       if (e.code === 'KeyH') toggleHud()
       if (e.code === 'KeyF') toggleFog()
       if (e.code === 'KeyT') cycleTierOverride()
@@ -101,7 +103,7 @@ export default function DevHud() {
 
   return (
     <div className="hud">
-      <div className="hud-title">M1 · it moves</div>
+      <div className="hud-title">M2 · phone-ready <button className="hud-close" aria-label="Hide performance HUD" onClick={toggleHud}>×</button></div>
 
       <div className="hud-group">
         <Row label="fps" value={perf.fps.toFixed(0)} budget={BUDGET.fps} invert />

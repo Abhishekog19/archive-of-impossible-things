@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { TIERS } from '../config/look'
 import { PROBE } from '../config/tiers'
@@ -26,9 +26,23 @@ export default function TierGovernor() {
   const clock = useRef(0)
   const badTime = useRef(0)
   const holdUntil = useRef(PROBE.graceSeconds)
+  const skipFrame = useRef(false)
+
+  useEffect(() => {
+    const reset = () => {
+      badTime.current = 0
+      holdUntil.current = clock.current + PROBE.graceSeconds
+      skipFrame.current = true
+    }
+    reset()
+    document.addEventListener('visibilitychange', reset)
+    const unsubscribe = useGameStore.subscribe((state, previous) => {
+      if (state.settingsOpen !== previous.settingsOpen) reset()
+    })
+    return () => { document.removeEventListener('visibilitychange', reset); unsubscribe() }
+  }, [tier, tierOverride])
 
   useFrame((state, delta) => {
-    clock.current += delta
 
     // The far plane is a tier value (matched to where fog reaches ~95% opacity,
     // look-target section 5), so it moves with the tier. R3F only applies the
@@ -44,10 +58,12 @@ export default function TierGovernor() {
 
     // A hidden tab pauses physics and rAF; whatever perf.fps says around that
     // boundary is about the pause, not the device.
-    if (document.hidden) {
+    if (document.hidden || useGameStore.getState().settingsOpen || skipFrame.current) {
       badTime.current = 0
+      skipFrame.current = false
       return
     }
+    clock.current += delta
     if (clock.current < holdUntil.current) return
 
     const fps = perf.fps

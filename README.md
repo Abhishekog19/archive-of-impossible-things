@@ -6,10 +6,16 @@ work, and you have to figure out the rule before you can get out.
 It is also this developer's portfolio, but that part isn't the pitch and isn't
 the point of playing it.
 
-**Status: M1 of 13 — it moves.** A grey test room with a character, a camera, and
+**Status: M2 of 13 — mobile implementation built; real-phone verification pending.**
+Touch joystick, Run / Jump / Use, simultaneous keyboard input, quality settings,
+adaptive resolution, safe-area layout and a landscape prompt are implemented.
+See [verification.md](verification.md) for the final phone checks and existing M1
+audit issues. M3 art work starts after the phone gate passes.
+
+A grey test room with a character, a camera, and
 movement. No art yet; everything you can see gets deleted at M3. What exists is
 the thing the rest is built on: the `look-target.md` §2 camera, collision that
-pulls in rather than clipping, slopes and stairs that traverse cleanly, and a
+pulls in rather than clipping, slopes and stairs for traversal checks, and a
 dev HUD watching the performance budgets from day one.
 
 ## Design documents
@@ -58,6 +64,12 @@ Then open http://localhost:5173.
 
 **WASD** to move, **shift** to run, **space** to jump, **drag** to turn, **E** at
 the post. **H** toggles the dev HUD, **F** toggles fog.
+
+On a phone, use the left joystick and right action buttons; drag the scene to turn.
+Settings offers Automatic / High / Medium / Low and a performance HUD toggle.
+Keyboard and touch remain available together. Settings pause the simulation.
+
+M2 phone build: [Open the grey room](https://archive-impossible-things-m2.choice-snail-3432.chatgpt.site).
 
 The HUD reports the `look-target.md` §10 budgets alongside the §2 camera numbers.
 The camera ones matter more than they look: the pitch, the 2.2 m camera height and

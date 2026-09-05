@@ -11,12 +11,15 @@ platform?**
 
 ## 0. Right now
 
-> **M1 · It moves** — Opus 5, Claude Code. Build complete, awaiting your
-> verification pass (see [verification.md](verification.md)).
+> **M2 · It runs on your phone** — implementation built on 2026-09-05.
+> Touch controls, settings persistence, mobile layout and the existing quality
+> governor are connected. User will run the actual-phone checks at the end;
+> see [verification.md](verification.md) § M2. Prior M1 stair/camera audit failures
+> are documented there and reproduced on the previous commit.
 >
-> **Next: M2 · It runs on your phone.** Opus 5 in Claude Code for the tier-detection
-> policy (~4 hrs), then Antigravity on Sonnet 4.6 for everything that reads it
-> (~14 hrs). Do not start the Antigravity half until the tier config file exists.
+> **Next: M3 · It looks like the reference.** Start with one test cube through
+> the bake/export/load pipeline, then build the stone chamber kit. No M3 art
+> or game-content expansion was included in M2.
 
 This section is the one I keep current. If it disagrees with the table below, this
 section is right — the table is the plan, this is the state.

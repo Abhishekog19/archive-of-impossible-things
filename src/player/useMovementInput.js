@@ -1,5 +1,8 @@
 import { useEffect, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
+import { useButtonStore, useJoystickStore } from 'ecctrl/input'
+import { useGameStore } from '../store'
+import { isUiTarget, resetTouchInput } from './inputState'
 
 /**
  * The input layer. This exists because ecctrl 2.x has none.
@@ -35,6 +38,7 @@ const KEY_MAP = {
   ShiftLeft: 'run',
   ShiftRight: 'run',
 }
+const NO_JOYSTICK = { x: 0, y: 0 }
 
 export default function useMovementInput(controllerRef) {
   // Held keys, by action name. A ref because this changes on every keypress and
@@ -65,6 +69,7 @@ export default function useMovementInput(controllerRef) {
     const onKey = (down) => (e) => {
       const action = KEY_MAP[e.code]
       if (!action) return
+      if (down && (isUiTarget(e.target) || useGameStore.getState().settingsOpen)) return
       // Space scrolls the page and arrow keys scroll it too. Harmless on a
       // locked-overflow body, but it also steals the key from a focused element,
       // which shows up later as "movement stops after clicking a button".
@@ -78,15 +83,22 @@ export default function useMovementInput(controllerRef) {
     // walks forever into a wall until you come back and tap W again.
     const onBlur = () => {
       for (const k of Object.keys(held.current)) held.current[k] = false
+      resetTouchInput()
     }
 
     window.addEventListener('keydown', onDown)
     window.addEventListener('keyup', onUp)
     window.addEventListener('blur', onBlur)
+    document.addEventListener('visibilitychange', onBlur)
+    const unsubscribe = useGameStore.subscribe((state, previous) => {
+      if (state.settingsOpen !== previous.settingsOpen) onBlur()
+    })
     return () => {
       window.removeEventListener('keydown', onDown)
       window.removeEventListener('keyup', onUp)
       window.removeEventListener('blur', onBlur)
+      document.removeEventListener('visibilitychange', onBlur)
+      unsubscribe()
     }
   }, [])
 
@@ -100,10 +112,16 @@ export default function useMovementInput(controllerRef) {
     f.backward = k.backward
     f.leftward = k.leftward
     f.rightward = k.rightward
-    f.jump = k.jump
-    f.run = k.run
+    const buttons = useButtonStore.getState().buttons
+    f.jump = k.jump || !!buttons.jump
+    f.run = k.run || !!buttons.run
+    f.joystick = useJoystickStore.getState().joysticks.move ?? NO_JOYSTICK
 
-    // M2 merges the touch joystick in here, before the single call below.
+    if (document.hidden || useGameStore.getState().settingsOpen) {
+      f.forward = f.backward = f.leftward = f.rightward = f.jump = f.run = false
+      f.joystick = NO_JOYSTICK
+    }
+
     controller.setMovement(f)
   })
 

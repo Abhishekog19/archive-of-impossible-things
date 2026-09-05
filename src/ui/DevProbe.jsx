@@ -227,13 +227,13 @@ export default function DevProbe({ playerRef }) {
       /** Point the camera along a yaw, in degrees, by dragging the canvas. */
       turn(deg) {
         const el = gl.domElement
-        // FollowCamera reads movementX and turns 0.0045 rad/px.
+        // FollowCamera reads clientX differences, shared by mouse and touch.
         const px = -((deg * Math.PI) / 180) / 0.0045
         el.dispatchEvent(
           new PointerEvent('pointerdown', { pointerId: 1, button: 0, bubbles: true }),
         )
         el.dispatchEvent(
-          new PointerEvent('pointermove', { pointerId: 1, movementX: px, bubbles: true }),
+          new PointerEvent('pointermove', { pointerId: 1, clientX: px, bubbles: true }),
         )
         el.dispatchEvent(new PointerEvent('pointerup', { pointerId: 1, bubbles: true }))
         handle.step(2)

@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { TIERS } from './config/look'
 import {
   PROBE,
+  TIER_ORDER,
   detectAutoTier,
   detectInitialTier,
   persistAutoTier,
@@ -61,8 +62,10 @@ export const useGameStore = create((set, get) => ({
   fogEnabled: true,
   toggleFog: () => set((s) => ({ fogEnabled: !s.fogEnabled })),
 
-  hudVisible: true,
+  hudVisible: !window.matchMedia('(any-pointer: coarse)').matches,
   toggleHud: () => set((s) => ({ hudVisible: !s.hudVisible })),
+  settingsOpen: false,
+  setSettingsOpen: (settingsOpen) => set({ settingsOpen }),
 
   // --- Tiers (M2) --------------------------------------------------------------
   //
@@ -96,12 +99,8 @@ export const useGameStore = create((set, get) => ({
       ),
     })),
 
-  // The manual override, cycled from the HUD (T) until the M2 settings panel
-  // lands: high -> medium -> low -> auto. Auto clears the pin and re-detects.
-  cycleTierOverride: () => {
-    const s = get()
-    const order = ['high', 'medium', 'low', null]
-    const next = order[(order.indexOf(s.tierOverride) + 1) % order.length]
+  setTierOverride: (next) => {
+    if (next !== null && !TIER_ORDER.includes(next)) return
     persistOverride(next)
     if (next) {
       set({ tier: next, tierSource: 'override', tierOverride: next, dprDrop: 0 })
@@ -109,6 +108,10 @@ export const useGameStore = create((set, get) => ({
       const auto = detectAutoTier()
       set({ tier: auto.tier, tierSource: auto.source, tierOverride: null, dprDrop: 0 })
     }
+  },
+  cycleTierOverride: () => {
+    const order = [...TIER_ORDER, null]
+    get().setTierOverride(order[(order.indexOf(get().tierOverride) + 1) % order.length])
   },
 
   // --- Dev stepping ----------------------------------------------------------

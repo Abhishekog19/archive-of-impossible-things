@@ -1,5 +1,60 @@
 # Verification
 
+## M2 · It runs on your phone — 2026-09-05
+
+**Implementation built; actual-phone acceptance pending.** Phone verification is
+reserved for the user, as requested. This remains a grey-room technical milestone:
+no archive art, progression, story, or portfolio reveal has been added.
+
+Phone URL: https://archive-impossible-things-m2.choice-snail-3432.chatgpt.site
+
+### Completed checks
+
+- ESLint and production build pass. Compressed build assets total ~1.16 MB.
+- Mobile browser: joystick moved 2.70 m in ~1.1 s; two-finger move/look produced
+  -0.225 rad yaw; cancellation settled speed below 0.01 m/s after 1.2 s.
+- Keyboard remained active in the touch-enabled browser (~2.90 m/s walking).
+- High and Low manual overrides survived reload; returning to Automatic works.
+- Settings paused the rigid body; portrait prompt visible; no horizontal overflow
+  at 390×844. These are emulated functional checks, not phone performance proof.
+- No application errors in the mobile checks.
+- The existing tier governor supplies sustained-FPS demotion and DPR shedding;
+  a second AdaptiveDpr writer is deliberately not added. Tier, fog, far plane and
+  canvas resolution continue to read the same policy. Hidden/settings time is
+  excluded from governor evidence, with a grace period on resume.
+
+### Final phone checklist
+
+1. Open the URL on your actual phone without signing in. **Expected:** playable
+   grey room, joystick, Run / Jump / Use and Settings. Failure: load/access issue.
+2. Rotate portrait → landscape → portrait. **Expected:** prompt only in portrait;
+   all controls reachable, no page scrolling, no controls under the notch.
+3. Move with one thumb and drag the scene with another. Hold Run, tap Jump, then
+   release everything. **Expected:** faster movement, jump, then stop; no stuck input.
+4. Approach the grey post until it lights; tap Use. **Expected:** slab rises once;
+   another tap lowers it. Holding Use must not repeatedly toggle it.
+5. Hold movement, switch apps for 15 seconds, return. Open/close Settings and rotate
+   while moving. **Expected:** no continued input or fall through the floor.
+6. Settings → Low → reload. **Expected:** Low still selected. Repeat High, then
+   select Automatic. Failure: settings persistence or override wiring.
+7. In Automatic, enable the performance HUD, close Settings, and walk for **three
+   continuous minutes**. **Expected:** ≥30 FPS throughout; do not count time in
+   Settings or another app. Report phone/browser, lowest FPS and final tier.
+
+Reply `M2 ALL PASS`, or `M2 CHECK <n>: FAIL — <evidence>`.
+
+### Existing M1 audit debt (reproduced on previous commit)
+
+Baseline `2bd4c09` and this M2 build return **6/8** on the settled M1 audit:
+check 5 samples ~0.32 m on stairs against the unchanged 0.25 m threshold, and
+check 6 can fall to ~2.03 m against 2.20 ±0.15 m. The September 3 movement change
+raised walk speed to 3.0 m/s; the older 8/8 statement below predates that change.
+Do not interpret it as a current pass. M2 preserves that movement tuning.
+The dev camera-turn helper now uses clientX differences to match mouse/touch input.
+Wait until the character is grounded before running the audit.
+
+---
+
 You verify; I build. This file is what to run and what a good answer looks like.
 
 The protocol is in [working-rules.md](working-rules.md) §3. The short form: I build a

@@ -6,8 +6,8 @@ Companion to [archive-of-impossible-things-design-doc.md](archive-of-impossible-
 **This document is the schedule.** Milestones, deliverables, exit criteria, hours,
 dates. It is the one file to open when the question is *what am I doing today*.
 
-**Status:** written 2026-08-25, the day the visual direction was locked against the
-reference set. M0 is complete. M1 starts next session. The locked target is
+**Status:** updated 2026-09-05. M0 is complete; M1 is built; M2 mobile implementation
+is built, with real-phone verification pending. The locked target is
 [visual-reference-sheet.jpg](visual-reference-sheet.jpg); full-resolution originals
 live in the gitignored `concept/` folder on the authoring machine only.
 
@@ -443,12 +443,13 @@ palette discipline, or the phone target. Those are the project.
 
 | | |
 |---|---|
-| **Current milestone** | M1 — It moves · **built, awaiting verification** |
-| **Next session** | Run [verification.md](verification.md) § M1 — one console line for checks 1–8, then five manual checks. Reply in the report format. |
-| **First gate** | Check 13: walk 90 seconds with no objective. Do you want to keep walking? Yours to answer; nothing measurable substitutes. |
-| **Then** | M2 — It runs on your phone. Opus 5 here for the tier-detection policy, then Antigravity on Sonnet 4.6 for everything reading it. See [model-plan.md](model-plan.md) §0. |
+| **Current milestone** | M2 — It runs on your phone · **implementation built; phone verification pending** |
+| **Next session** | Run [verification.md](verification.md) § M2 on the actual phone using the deployed URL. |
+| **First gate** | Three continuous minutes at ≥30 FPS, touch flow, and quality override surviving reload. User will verify at the end. |
+| **Then** | M3 — It looks like the reference. Prove the single-cube bake/export pipeline before the stone kit. |
 | **Open sign-offs** | Design doc §19: delete §7's status text; 75–95 min v1 duration. `src/config/look.js`: the 6.2-vs-6.5 m canopy-underside derivation. |
 | **Known debt** | The camera can come closer than `CAMERA.minDistance` and cut through the character, deliberately, because a camera inside a wall is worse. Surfaced in the dev HUD as `too close`; the real fix is the M5 camera work. |
+| **Existing audit failures** | Previous commit and M2 both report stair step ~0.32 m versus 0.25 m and camera-height tolerance failures following the faster M1 walk speed. See verification.md; thresholds and movement tuning were not changed in M2. |
 | **Locked 2026-08-25** | Visual direction, against [visual-reference-sheet.jpg](visual-reference-sheet.jpg) |
 
 ### Hours log

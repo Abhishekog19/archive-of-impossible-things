@@ -4,6 +4,9 @@ import { RigidBody } from '@react-three/rapier'
 import * as THREE from 'three'
 import { CANOPY_UNDERSIDE, PALETTE, ROAD } from '../config/look'
 import NoisyRoad from './NoisyRoad'
+import { useButtonStore } from 'ecctrl/input'
+import { useGameStore } from '../store'
+import { isUiTarget } from '../player/inputState'
 
 /**
  * M1's grey test room. Every piece here exists to answer one exit criterion,
@@ -94,16 +97,24 @@ function Post({ position, playerRef, onToggle, active }) {
 
   useEffect(() => {
     const onKey = (e) => {
-      if (e.code === 'KeyE' && nearRef.current) onToggle()
+      if (e.code === 'KeyE' && !e.repeat && !isUiTarget(e.target) && nearRef.current && !useGameStore.getState().settingsOpen) onToggle()
     }
     window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
+    const unsubscribe = useButtonStore.subscribe(
+      (s) => !!s.buttons.interact,
+      (pressed, previous) => {
+        if (pressed && !previous && nearRef.current && !useGameStore.getState().settingsOpen) onToggle()
+      },
+    )
+    return () => { window.removeEventListener('keydown', onKey); unsubscribe() }
   }, [onToggle])
 
   return (
     <RigidBody type="fixed" colliders="cuboid" position={position}>
       {/* Tapping also works, so the smoke test covers the touch path too. */}
-      <mesh position={[0, 0.6, 0]} onPointerDown={onToggle}>
+      <mesh position={[0, 0.6, 0]} onClick={() => {
+        if (nearRef.current && !useGameStore.getState().settingsOpen) onToggle()
+      }}>
         <boxGeometry args={[0.4, 1.2, 0.4]} />
         <meshStandardMaterial
           color={near || active ? PALETTE.daylight : PALETTE.stone}

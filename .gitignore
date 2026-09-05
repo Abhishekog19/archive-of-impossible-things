@@ -1,4 +1,6 @@
 # Logs
+.verification/
+.playwright-mcp/
 logs
 *.log
 npm-debug.log*

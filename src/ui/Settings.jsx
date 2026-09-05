@@ -14,7 +14,11 @@ export default function Settings() {
 
   useEffect(() => {
     if (open) { resetTouchInput(); dialog.current.showModal() }
-    else dialog.current.close()
+    else if (dialog.current.open) {
+      dialog.current.close()
+      // Resume keyboard play immediately, without leaving Space on Settings.
+      document.querySelector('canvas')?.focus()
+    }
   }, [open])
 
   return (

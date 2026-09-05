@@ -113,6 +113,7 @@ export default function App() {
   return (
     <>
       <Canvas
+        onCreated={({ gl }) => { gl.domElement.tabIndex = -1 }}
         // Tier-driven (M2): detection order and the demote-only policy live in
         // config/tiers.js; the governor inside the Canvas supplies the evidence.
         dpr={effectiveDpr(tier, dprDrop)}

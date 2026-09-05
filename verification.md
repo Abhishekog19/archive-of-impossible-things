@@ -6,7 +6,7 @@
 reserved for the user, as requested. This remains a grey-room technical milestone:
 no archive art, progression, story, or portfolio reveal has been added.
 
-Phone URL: https://archive-impossible-things-m2.choice-snail-3432.chatgpt.site
+Phone URL: https://archive-impossible-things-m2.abhishekpandey989828.chatgpt.site
 
 ### Completed checks
 
@@ -18,6 +18,8 @@ Phone URL: https://archive-impossible-things-m2.choice-snail-3432.chatgpt.site
 - Settings paused the rigid body; portrait prompt visible; no horizontal overflow
   at 390×844. These are emulated functional checks, not phone performance proof.
 - No application errors in the mobile checks.
+- Controlled 20 FPS evidence demoted Automatic to Low; pinned High remained High
+  and shed 0.125 DPR. This validates policy wiring, not actual-device throughput.
 - The existing tier governor supplies sustained-FPS demotion and DPR shedding;
   a second AdaptiveDpr writer is deliberately not added. Tier, fog, far plane and
   canvas resolution continue to read the same policy. Hidden/settings time is

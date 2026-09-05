@@ -70,6 +70,7 @@ export default function useMovementInput(controllerRef) {
       const action = KEY_MAP[e.code]
       if (!action) return
       if (down && (isUiTarget(e.target) || useGameStore.getState().settingsOpen)) return
+      if (down && e.code === 'Space' && e.target instanceof Element && e.target.closest('button')) return
       // Space scrolls the page and arrow keys scroll it too. Harmless on a
       // locked-overflow body, but it also steals the key from a focused element,
       // which shows up later as "movement stops after clicking a button".

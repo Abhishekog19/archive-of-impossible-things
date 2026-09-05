@@ -69,7 +69,7 @@ On a phone, use the left joystick and right action buttons; drag the scene to tu
 Settings offers Automatic / High / Medium / Low and a performance HUD toggle.
 Keyboard and touch remain available together. Settings pause the simulation.
 
-M2 phone build: [Open the grey room](https://archive-impossible-things-m2.choice-snail-3432.chatgpt.site).
+M2 phone build: [Open the grey room](https://archive-impossible-things-m2.abhishekpandey989828.chatgpt.site).
 
 The HUD reports the `look-target.md` §10 budgets alongside the §2 camera numbers.
 The camera ones matter more than they look: the pitch, the 2.2 m camera height and

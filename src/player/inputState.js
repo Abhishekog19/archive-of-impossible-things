@@ -6,5 +6,5 @@ export function resetTouchInput() {
 }
 
 export function isUiTarget(target) {
-  return target instanceof Element && !!target.closest('button, select, input, textarea, dialog, [contenteditable="true"]')
+  return target instanceof Element && !!target.closest('select, input, textarea, dialog, [contenteditable="true"]')
 }

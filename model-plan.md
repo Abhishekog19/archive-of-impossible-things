@@ -11,6 +11,16 @@ platform?**
 
 ## 0. Right now
 
+**Updated September 6, 2026:** the user has prioritized an environment milestone
+targeting September 30. Planning and Blender 5.2.1 LTS setup are complete;
+Phase 1 has not started. Follow [environment-september-plan.md](environment-september-plan.md)
+for phase dates, review-hour caps and scope, and [art-pipeline.md](art-pipeline.md)
+for setup commands. The user has about one hour daily plus longer weekend sessions.
+The historical platform split below is not a requirement to switch tools during
+this work. Phone refinement is deferred at the user's request.
+
+Previous milestone handoff, retained for context:
+
 > **M2 · It runs on your phone** — implementation built on 2026-09-05.
 > Touch controls, settings persistence, mobile layout and the existing quality
 > governor are connected. User will run the actual-phone checks at the end;

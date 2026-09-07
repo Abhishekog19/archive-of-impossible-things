@@ -1,4 +1,7 @@
 # Logs
+.artifacts/
+*.blend1
+*.blend2
 .verification/
 .playwright-mcp/
 logs
@@ -30,7 +33,10 @@ dist-ssr/
 .claude/settings.local.json
 
 # Third-party agent skills (installed via `npx skills add`, not project source)
-.agents/
+.agents/*
+!.agents/skills/
+.agents/skills/*
+!.agents/skills/archive-world-builder/
 .claude/skills/
 skills-lock.json
 .idea/

@@ -40,7 +40,7 @@ function Row({ label, value, budget, unit = '', invert = false, alert = false })
   )
 }
 
-export default function DevHud() {
+export default function DevHud({ hub = false }) {
   const [, tick] = useState(0)
   // Selected as separate primitives on purpose. A selector returning a new
   // object — `(s) => ({ y: s.cameraY })` — hands zustand v5 a fresh identity on
@@ -103,7 +103,7 @@ export default function DevHud() {
 
   return (
     <div className="hud">
-      <div className="hud-title">M2 · phone-ready <button className="hud-close" aria-label="Hide performance HUD" onClick={toggleHud}>×</button></div>
+      <div className="hud-title">{hub ? 'Phase 1 · hub blockout' : 'M2 · test course'} <button className="hud-close" aria-label="Hide performance HUD" onClick={toggleHud}>×</button></div>
 
       <div className="hud-group">
         <Row label="fps" value={perf.fps.toFixed(0)} budget={BUDGET.fps} invert />
@@ -149,7 +149,7 @@ export default function DevHud() {
       </div>
 
       <div className="hud-hint">
-        WASD move · shift run · space jump · drag to turn · E at the post
+        WASD move · shift run · space jump · drag to turn {hub ? '' : '· E at the post'}
         <br />
         H hud · F fog {fogEnabled ? 'on' : 'off'}
       </div>

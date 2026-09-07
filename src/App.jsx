@@ -6,6 +6,7 @@ import { effectiveDpr } from './config/tiers'
 import FollowCamera from './player/FollowCamera'
 import Player from './player/Player'
 import GreyRoom from './scenes/GreyRoom'
+import HubBlockout from './scenes/HubBlockout'
 import DevHud from './ui/DevHud'
 import DevProbe from './ui/DevProbe'
 import PerfProbe from './ui/PerfProbe'
@@ -42,7 +43,7 @@ function hasWebGL2() {
  * `far` is matched to the distance at which that fog is ~95% opaque — drawing
  * past it would be drawing things fog has already erased.
  */
-function Atmosphere() {
+function Atmosphere({ hub = false }) {
   const fogEnabled = useGameStore((s) => s.fogEnabled)
   // Density is a tier value (look-target section 9); the store is the one
   // authority on which tier this device is on -- see config/tiers.js.
@@ -51,7 +52,7 @@ function Atmosphere() {
     <>
       <color attach="background" args={[PALETTE.sky]} />
       {fogEnabled && (
-        <fogExp2 attach="fog" args={[FOG.color, TIERS[tier].fogDensity]} />
+        hub ? <fog attach="fog" args={[FOG.color, 35, 150]} /> : <fogExp2 attach="fog" args={[FOG.color, TIERS[tier].fogDensity]} />
       )}
     </>
   )
@@ -84,6 +85,9 @@ function usePageVisible() {
 }
 
 export default function App() {
+  const params = new URLSearchParams(window.location.search)
+  const greyroom = params.get('scene') === 'greyroom'
+  const reference = !greyroom && params.get('view') === 'reference'
   // The ecctrl handle, shared by the camera (needs the body to follow) and the
   // scene (the post needs to know when the player is close).
   const playerRef = useRef(null)
@@ -121,22 +125,22 @@ export default function App() {
         // (technical-production-spec §4.2). Contact shadow is a blob decal later.
         // `far` is initial only -- TierGovernor maintains it on tier change,
         // matched to where the tier's fog is ~95% opaque (look-target section 5).
-        camera={{ fov: CAMERA.fov, near: 0.1, far: TIERS[tier].far }}
+        camera={{ fov: reference ? 53.13 : CAMERA.fov, near: 0.1, far: greyroom ? TIERS[tier].far : 180 }}
         gl={{ antialias: true }}
       >
-        <Atmosphere />
+        <Atmosphere hub={!greyroom} />
 
         {/* Temporary lighting. The shipped game has zero runtime lights and
             bakes everything (spec §4.1); §4 allows exactly one hemisphere light
             in the blockout, which is what this is. Warm above, cool below —
             the cheapest possible stand-in for warm light against cool shade. */}
-        <hemisphereLight args={[PALETTE.sky, PALETTE.ground, 2.2]} />
+        <hemisphereLight args={[PALETTE.sky, PALETTE.ground, greyroom ? 2.2 : 1.6]} />
 
         <Suspense fallback={null}>
           <Physics paused={(!visible || settingsOpen) && !physicsForced}>
-            <GreyRoom playerRef={playerRef} />
-            <Player ref={playerRef} />
-            <FollowCamera bodyRef={playerRef} />
+            {greyroom ? <GreyRoom playerRef={playerRef} /> : <HubBlockout reference={reference} />}
+            {!reference && <Player ref={playerRef} recoverFalls={!greyroom} />}
+            {!reference && <FollowCamera bodyRef={playerRef} />}
             {/* Dev-only scene handle for stepping the loop and running the M1
                 audit. Inside <Physics> because it raycasts against the same
                 world the camera does; dropped from production by this branch. */}
@@ -145,12 +149,12 @@ export default function App() {
         </Suspense>
 
         <PerfProbe />
-        <TierGovernor />
+        <TierGovernor farOverride={greyroom ? undefined : 180} />
       </Canvas>
 
-      <DevHud />
-      <MobileControls />
-      <Settings />
+      {!reference && <DevHud hub={!greyroom} />}
+      {!reference && <MobileControls />}
+      {!reference && <Settings />}
     </>
   )
 }

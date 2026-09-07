@@ -3,6 +3,10 @@
 Companion to [archive-of-impossible-things-design-doc.md](archive-of-impossible-things-design-doc.md) (what the game is),
 [game-flow.md](game-flow.md) (what the player does) and [look-target.md](look-target.md) (what it looks like).
 
+**September 2026 execution override:** [environment-september-plan.md](environment-september-plan.md)
+owns the current phase schedule and September 30 hub deliverable. This document
+retains the long-term game milestones; its original dates are not the September commitment.
+
 **This document is the schedule.** Milestones, deliverables, exit criteria, hours,
 dates. It is the one file to open when the question is *what am I doing today*.
 
@@ -443,10 +447,11 @@ palette discipline, or the phone target. Those are the project.
 
 | | |
 |---|---|
-| **Current milestone** | M2 — It runs on your phone · **implementation built; phone verification pending** |
-| **Next session** | Run [verification.md](verification.md) § M2 on the actual phone using the deployed URL. |
-| **First gate** | Three continuous minutes at ≥30 FPS, touch flow, and quality override surviving reload. User will verify at the end. |
-| **Then** | M3 — It looks like the reference. Prove the single-cube bake/export pipeline before the stone kit. |
+| **Current milestone** | September environment · Phase 0 setup complete; **Phase 1 not started**. See environment-september-plan.md. |
+| **Next session** | On the user's instruction, begin Phase 1 hub layout and scale, scheduled Sep 6–8 with a 5-hour working/review cap. |
+| **First gate** | Walkable hub blockout with REF4 composition, branch paths and tower placement; test in-browser before detail. |
+| **Then** | Phase 2: prove a finished corner's materials, baking and browser transfer by Sep 11. Month-end scope: polished hub plus short canopy approach. |
+| **Phone status** | User reports mechanics work but portrait controls feel crowded. Phone redesign and full-world phone acceptance deferred until after environment production. |
 | **Open sign-offs** | Design doc §19: delete §7's status text; 75–95 min v1 duration. `src/config/look.js`: the 6.2-vs-6.5 m canopy-underside derivation. |
 | **Known debt** | The camera can come closer than `CAMERA.minDistance` and cut through the character, deliberately, because a camera inside a wall is worse. Surfaced in the dev HUD as `too close`; the real fix is the M5 camera work. |
 | **Existing audit failures** | Previous commit and M2 both report stair step ~0.32 m versus 0.25 m and camera-height tolerance failures following the faster M1 walk speed. See verification.md; thresholds and movement tuning were not changed in M2. |

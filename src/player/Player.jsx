@@ -57,7 +57,7 @@ const BOB = {
 }
 
 /** Feeds ecctrl runtime state into the store for the dev HUD. */
-function StateProbe({ controllerRef }) {
+function StateProbe({ controllerRef, recoverFalls }) {
   const setPlayerDebug = useGameStore((s) => s.setPlayerDebug)
   // Throttled: the HUD is text, and re-rendering React text 60 times a second
   // to show a number that changes in the third decimal is pure waste.
@@ -65,7 +65,12 @@ function StateProbe({ controllerRef }) {
 
   useFrame((_, delta) => {
     const c = controllerRef.current
-    if (!c) return
+    if (!c?.body) return
+    if (recoverFalls && c.body.translation().y < -12) {
+      c.body.setTranslation({ x: SPAWN[0], y: SPAWN[1], z: SPAWN[2] }, true)
+      c.body.setLinvel({ x: 0, y: 0, z: 0 }, true)
+      c.body.setAngvel({ x: 0, y: 0, z: 0 }, true)
+    }
     acc.current += delta
     if (acc.current < 0.1) return
     acc.current = 0
@@ -127,7 +132,7 @@ function BodyMotion({ controllerRef, groupRef }) {
   return null
 }
 
-const Player = forwardRef(function Player(_props, ref) {
+const Player = forwardRef(function Player({ recoverFalls = false }, ref) {
   const controllerRef = useRef(null)
   const bodyGroupRef = useRef(null)
 
@@ -176,7 +181,7 @@ const Player = forwardRef(function Player(_props, ref) {
         </group>
       </Ecctrl>
 
-      <StateProbe controllerRef={controllerRef} />
+      <StateProbe controllerRef={controllerRef} recoverFalls={recoverFalls} />
       <BodyMotion controllerRef={controllerRef} groupRef={bodyGroupRef} />
     </>
   )

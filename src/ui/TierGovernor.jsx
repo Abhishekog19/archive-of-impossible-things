@@ -17,7 +17,7 @@ import { perf } from './perf'
  * instead (rules 4/5). Every action is followed by a cooldown, and hidden-tab
  * frames are discarded -- the visibility pause makes their deltas meaningless.
  */
-export default function TierGovernor() {
+export default function TierGovernor({ farOverride }) {
   const tier = useGameStore((s) => s.tier)
   const tierOverride = useGameStore((s) => s.tierOverride)
   const demoteTier = useGameStore((s) => s.demoteTier)
@@ -50,7 +50,7 @@ export default function TierGovernor() {
     // and per-frame mutation belongs here, not in an effect. The camera comes
     // from the frame state rather than useThree so nothing returned by a hook
     // is written to (react-hooks/immutability).
-    const far = TIERS[tier].far
+    const far = farOverride ?? TIERS[tier].far
     if (state.camera.far !== far) {
       state.camera.far = far
       state.camera.updateProjectionMatrix()

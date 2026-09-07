@@ -6,11 +6,19 @@ work, and you have to figure out the rule before you can get out.
 It is also this developer's portfolio, but that part isn't the pitch and isn't
 the point of playing it.
 
-**Status: M2 of 13 — mobile implementation built; real-phone verification pending.**
+**Current priority: September environment milestone — planning and Blender setup complete; Phase 1 not started.**
+The dated scope, time limits and September 30 target are in
+[environment-september-plan.md](environment-september-plan.md).
+Blender commands and verified setup results are in [art-pipeline.md](art-pipeline.md).
+The immediate deliverable is the polished crossroads hub and a short canopy approach.
+Phone refinement is deferred; the broader archive game follows later.
+
+**M2 status: mobile implementation built; full phone acceptance pending.**
 Touch joystick, Run / Jump / Use, simultaneous keyboard input, quality settings,
 adaptive resolution, safe-area layout and a landscape prompt are implemented.
 See [verification.md](verification.md) for the final phone checks and existing M1
-audit issues. M3 art work starts after the phone gate passes.
+audit issues. The user has prioritized environment production ahead of the remaining
+phone gate; the September plan now governs execution order.
 
 A grey test room with a character, a camera, and
 movement. No art yet; everything you can see gets deleted at M3. What exists is

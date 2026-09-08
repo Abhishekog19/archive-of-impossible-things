@@ -4,6 +4,7 @@ Authored coordinates are browser X/Y/Z; Blender receives X/-Z/Y.
 Only generated hub-blockout outputs are replaced. No user scene is loaded.
 """
 import bpy
+import bmesh
 import math
 import random
 from pathlib import Path
@@ -91,7 +92,7 @@ def road_height(x, z):
 def road_distance(x, z):
     # Centreline segments and half widths; also used to keep vegetation off routes.
     routes = [((0,9),(0,29),3.5), ((-6,-8),(-12,-22),2.8),
-              ((-12,-22),(-12,-44),2.8), ((8,-5),(17,-15),3),
+              ((-12,-22),(-12,-44),2.8), ((8,-5),(20.6,-19),3),
               ((0,-10),(0,-17),2)]
     nearest = (999, 0)
     for (ax,az),(bx,bz),width in routes:
@@ -111,13 +112,15 @@ def terrain_height(x,z):
     natural=0.7+1.1*math.sin(x*0.16)*math.cos(z*0.11)+0.5*math.sin(z*0.3)
     # A continuous eroded valley separates the broken spur from its far bank.
     channel=21+3*math.sin((-z-17)*0.07)
-    if z<-17:
-        cut=max(0,1-abs(x-channel)/6)
-        natural-=12*min(1,(-z-17)/5)*cut
     shoulder=max(0,min(1,(d-0.5)/4))
     value=(h-0.22)*(1-shoulder)+natural*shoulder
     blend=max(0,min(1,(r-13.4)/4))
-    return -0.2*(1-blend)+value*blend
+    value=-0.2*(1-blend)+value*blend
+    # Apply the cut after road shoulders, so a shoulder cannot fill the gap.
+    if z < -20:
+        cut=max(0,1-abs(x-channel)/7)
+        value-=12*min(1,(-z-20)/3)*cut
+    return value
 
 def ribbon(name, points, width):
     vertices=[]
@@ -161,10 +164,13 @@ for radius in (0.7, 2.2, 4.1, 6.0):
 ribbon('Arrival slope',[(0,z) for z in range(9,30)],7)
 ribbon('Left path mouth',[(-6-6*t/14,-8-t) for t in range(15)],5.6)
 ribbon('Canopy approach',[(-12,z) for z in range(-22,-45,-1)],5.6)
-ribbon('Right branch',[(8+0.9*t,-5-t) for t in range(11)],6)
-solid_box('Far broken bridge', (24, -1, -24), (5, 1.2, 9), edge, -0.55)
-# Fallen masonry ends the traversable right spur before the gap.
-solid_box('Broken branch barrier', (17, 0.8, -15), (5.5, 1.6, 1.3), edge, -0.55)
+ribbon('Right branch',[(8+0.9*t,-5-t) for t in range(15)],6)
+solid_box('Far broken bridge', (29, -0.75, -33), (5, 1.5, 8), stone, -0.73)
+# A waist-low broken parapet exposes the ravine from the gameplay camera.
+solid_box('Overlook parapet',(20.6,0.35,-19),(6.1,0.7,0.85),edge,-0.73)
+for side,height in [(-1,1.35),(1,1.8)]:
+    solid_box('Overlook side pier',(20.6+side*2.1,height/2,-19+side*1.9),
+              (0.85,height,0.9),stone,-0.73)
 solid_box('Overgrown path mouth', (0, -0.44, -15), (4, 0.8, 7), stone)
 solid_box('Overgrown branch roots', (0, 0.7, -17), (4.5, 1.4, 1.2), bark)
 solid_box('Approach end rocks', (-12, 3, -44), (6, 2.7, 2), edge)
@@ -176,8 +182,10 @@ for z in range(-23,-65,-5):
         mass('Ravine cliff',(x,h-3,z),(2.3,5,3.6),edge)
 
 # Broken columns frame the plaza without cluttering the circular centre.
+# The column at (-7,-10) is now authored in the Phase 2 corner asset.
 for x,z,h in [(-10,7,4.2),(10,6,2.4),(-12,-3,2.2),(-7,-10,4.0),
                (7,-9,4.8),(14,-9,2.6),(-15,-20,2.8),(-8,-27,2.3)]:
+    before=set(bpy.context.scene.objects)
     solid_box('Column base', (x,0.2,z), (2,0.4,2), edge)
     # Broad broken profiles, not surface weathering: stepped-off block courses.
     for j in range(math.ceil(h/0.65)):
@@ -191,6 +199,11 @@ for x,z,h in [(-10,7,4.2),(10,6,2.4),(-12,-3,2.2),(-7,-10,4.0),
         rx,rz=x+random.uniform(-1.5,1.5),z+random.uniform(-1.5,1.5)
         if road_distance(rx,rz)[0]>0:
             solid_box('Fallen masonry',(rx,0.25,rz),(0.7,0.5,1),edge,random.uniform(-1,1))
+    if (x,z)==(-7,-10):
+        # Consume the original random choices so replacing this asset doesn't
+        # rearrange the established forest and all subsequent blockout geometry.
+        for obj in set(bpy.context.scene.objects)-before:
+            bpy.data.objects.remove(obj,do_unlink=True)
 
 # Ruined wall shoulders frame the island; clear openings remain walkable.
 for x,z in [(-5,-16),(6,-16),(-17,-23),(-7,-29)]:
@@ -249,7 +262,7 @@ for i in range(65):
     angle=random.uniform(0,math.tau)
     radius=random.uniform(14,23)
     x,z=math.cos(angle)*radius,math.sin(angle)*radius
-    if abs(x)<5 or (x < -7 and z < -6) or (x>7 and z<-4):
+    if road_distance(x,z)[0]<2.4 or abs(x)<5 or (x < -7 and z < -6) or (x>7 and z<-4):
         continue
     mass('Understory proxy',(x,0.7,z),(2.5,1.6,2.3),random.choice(leaves))
 
@@ -261,13 +274,58 @@ for i in range(150):
     mass('Woodland shoulder',(x,terrain_height(x,z)+0.8,z),
          (random.uniform(2,4),random.uniform(1.2,2.8),random.uniform(2,4)),random.choice(leaves))
 
-# Natural boulder perimeter bounds the current playable area, including the arrival.
-for x,z in [(x,z) for x in range(-29,34,3) for z in (-48,30)]+[(x,z) for x in (-29,33) for z in range(-45,30,3)]:
-    y=terrain_height(x,z)
-    mass('Boundary outcrop',(x,y+1.7,z),(2.4,3.1,2.6),edge)
-    box('Collision',(x,y+2,z),(3.4,5,3.4),collision)
+# Continuous stratified profiles replace the row of identical pointed boulders.
+# Closed visible meshes also supply collision, so the boundary matches its shape.
+def ridge(points, normal):
+    vertices=[]
+    for i,(x,z) in enumerate(points):
+        shift=1.2*math.sin(i*0.87)+0.45*math.cos(i*2.1)
+        x+=normal[0]*shift
+        z+=normal[1]*shift
+        base=terrain_height(x,z)
+        height=3.4+1.4*(0.5+0.5*math.sin(i*0.63))+0.35*math.cos(i*1.7)
+        ledge=0.48+0.1*math.sin(i*1.3)
+        toe=-2.2+0.65*math.cos(i*1.7)
+        for offset,y in [(-3.3,base-0.3),(toe,base+0.45),
+                         (-0.8,base+height*ledge),(0.8,base+height*ledge+0.15),
+                         (1.3,base+height),(3.5,base+height+0.4),(5,base-0.3)]:
+            vertices.append((x+normal[0]*offset,y,z+normal[1]*offset))
+    faces=[]
+    stride=7
+    for i in range(len(points)-1):
+        for j in range(stride):
+            a=stride*i+j
+            b=stride*i+(j+1)%stride
+            faces.append((a,b,b+stride,a+stride))
+    faces.extend([tuple(reversed(range(stride))),tuple(range(len(vertices)-stride,len(vertices)))])
+    obj=surface('Woodland rock ridge',vertices,faces,edge)
+    bm=bmesh.new()
+    bm.from_mesh(obj.data)
+    bmesh.ops.recalc_face_normals(bm,faces=list(bm.faces))
+    bm.to_mesh(obj.data)
+    bm.free()
+    proxy=obj.copy()
+    proxy.data=obj.data.copy()
+    proxy.data.materials.clear()
+    proxy.data.materials.append(collision)
+    proxy.name='Collision'
+    bpy.context.collection.objects.link(proxy)
+
+ridge([(-29,z) for z in range(-51,34,3)],(-1,0))
+ridge([(33,z) for z in range(-51,34,3)],(1,0))
+ridge([(x,-48) for x in range(-32,37,3)],(0,-1))
+ridge([(x,30) for x in range(-32,37,3)],(0,1))
 
 # Tower silhouette sits above the distant crown line, toward frame right.
+# Clear coarse shrubs from the footprint of the representative art corner.
+for obj in list(bpy.context.scene.objects):
+    if obj.name.startswith(('Understory proxy','Woodland shoulder','Island understory')):
+        bounds=[obj.matrix_world @ Vector(v) for v in obj.bound_box]
+        xs=[p.x for p in bounds]
+        zs=[-p.y for p in bounds]
+        if min(xs)<-3.5 and max(xs)>-12.5 and min(zs)<-4 and max(zs)>-14:
+            bpy.data.objects.remove(obj,do_unlink=True)
+
 box('Tower shaft',(24,13,-74),(3.5,24,3.5),stone)
 for x in (22.6,25.4):
     for z in (-75.4,-72.6):
@@ -304,5 +362,5 @@ for mat in list(bpy.data.materials):
     joined.name='Collision' if mat==collision else mat.name.replace(' ','_')
     bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
 
-bpy.ops.export_scene.gltf(filepath=str(EXPORT),export_format='GLB',export_cameras=True)
+bpy.ops.export_scene.gltf(filepath=str(EXPORT),export_format='GLB',export_cameras=True,export_texcoords=False)
 print(f'BLOCKOUT_EXPORTED {EXPORT.stat().st_size} bytes')

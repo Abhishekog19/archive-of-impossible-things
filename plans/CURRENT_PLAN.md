@@ -1,7 +1,7 @@
 # Current plan — Archive of Impossible Things
 
-Status: Phase 1 in progress; September 7 terrain/composition session complete.
-Final layout review is September 8.
+Status: Phase 1 production/checks complete. Phase 2 first session completed early
+on September 8 at the user's request; material/lighting benchmark ready for review.
 Target: September 30, 2026; about one hour daily plus
 longer weekend sessions. Recheck remaining capacity when production begins.
 
@@ -74,12 +74,68 @@ September 7 verification:
   boulder boundaries still look repetitive, and the broken-spur obstruction
   limits the ravine view at player height; include these in September 8 review.
 
-Next session (September 8): final Phase 1 layout review. Compare reference and
-gameplay views with the user, settle plaza/approach scale, and address any route
-readability issues. Main remaining visual mismatches belong to later art work:
-untextured paving, crude foliage masses, plain tower silhouette, uniform surface
-lighting, and missing canopy shadows. Phase 2 starts with one representative
-finished corner to prove stone, vegetation, materials and lighting in-browser.
+## September 8 — Phase 1 layout gate
 
-Keep material/bake proof for Phase 2. Real-phone UX and thermal testing remain
+- Kept the 26 m plaza, 30 m canopy strip, camera framing and tower placement from
+  the layout the user liked. Cleared understory back from the path mouths.
+- Replaced the repeated boundary-boulder row with continuous, irregular stepped
+  rock profiles; visible ridge geometry also supplies collision.
+- Extended the right spur to an overlook, lowered its parapet, moved the far bridge
+  fragment across the gap, and prevented road shoulders from filling the ravine.
+- Compared REF4 against `.artifacts/hub-sep08-reference.png` and reviewed hub,
+  canopy, ravine and west gameplay screenshots with the same filename prefix.
+  The route split and gap read more clearly. Boundary shapes are still coarse;
+  the canopy end remains a placeholder rock block. Neither is final art.
+- All 17 waypoint segments passed, including both return routes. Sampled grounding:
+  99.6% arrival/canopy, 100% right spur. Overgrown mouth, four boundary approaches
+  and fall recovery passed. Plaza jump rose 1.60 m and landed; camera pulled to
+  1.83 m beside the canopy-end obstruction and returned to 4 m in the open.
+  This is a bounded smoke check, not exhaustive jump/boundary/camera acceptance.
+- GLB: 5,815,328 bytes. Reference view: 8 draw calls / 44,772 rendered triangles,
+  brief live sample about 60 FPS at DPR 1.25. No sustained Iris Xe or phone claim.
+- Build and lint passed; reference/gameplay navigation produced no application
+  errors. Blender saved the editable source and exported successfully despite
+  its nonblocking thumbnail-write warning. Route evidence:
+  `.artifacts/hub-routes-sep08.json`. Private file remains ignored and untracked;
+  content was not accessed. Blender MCP setup was untouched.
+
+## Phase 2 first session — brought forward to September 8
+
+- Added an 8 × 9 m benchmark at the left-path junction: chipped paving with seam
+  depth, bevelled broken masonry, a branching tree with buttress roots, leaf sprays,
+  ground foliage and fallen stone. Replaced one matching blockout column; preserved
+  deterministic forest placement and cleared overlapping coarse shrubs.
+- `npm run blender:corner` creates `art/source/hub-corner.blend` and
+  `public/models/hub-corner.glb`. The source packs the atlas and retains hidden
+  editable authoring objects; unhide them to edit, and save manual work separately.
+- Proved full-colour DIFFUSE bake (colour + direct + indirect light, 24 CPU samples),
+  UV0, embedded 1024px JPEG and sRGB loading through GLB. `HubCorner` uses an unlit
+  material so runtime lighting does not illuminate the baked result twice.
+  Fine foliage uses opaque geometry and vertex tinting in a second draw call;
+  its shadows are baked into the static surfaces. No realtime shadows added.
+- Iteration fixed shrub overlap, leaf atlas artifacts, excessive stone mottling
+  and export size. Corner GLB dropped from 3,564,488 to 1,333,884 bytes. Removed
+  unused UVs from the untextured blockout export: now 4,444,632 bytes.
+- Final corner browser view: 10 draw calls / 56,104 triangles, approximately
+  60 FPS in a short live sample at actual DPR 1.25. A previous CPU-busy sample
+  triggered adaptive DPR reduction; this is not sustained Iris Xe acceptance.
+- All 17 hub segments passed with 100% sampled ground contact. Dedicated corner
+  walk covered about 8 m and returned grounded; blocked paths and recovery pass.
+  Build/lint pass and final browser navigation has zero application errors.
+- Compared `.artifacts/corner-final.png`, `corner-gameplay.png` and
+  `hub-phase2-reference.png` against REF4 and surface/forest reference direction.
+  Source/export report: `.artifacts/blender/corner-report.json`.
+- Review links: `?start=corner` starts beside the benchmark; `?view=corner` is its
+  static camera; `?view=reference` shows the whole hub. The default remains roaming.
+
+Next work: finish the Phase 2 visual proof before kit production. Improve masonry
+breaks/moss placement, layered canopy volume, warm/cool contrast and dappled shadows;
+review JPEG/UV softness at player distance. The rectangular sample edge is temporary
+and will be blended into the dressed hub during composition. Prove reusable
+vegetation instancing separately; this static merged benchmark does not prove it.
+Phase 2 retains its three-session cap (originally September 9–11); the first session
+was brought forward, not added to capacity. Final visual quality is not approved,
+and the approximate 80% reference target has not been reached.
+
+Real-phone UX and thermal testing remain
 deferred to the end. No Archive gameplay or game insertion has been built.

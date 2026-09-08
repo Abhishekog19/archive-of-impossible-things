@@ -20,6 +20,7 @@ import useMovementInput from './useMovementInput'
  */
 
 const SPAWN = [0, 2, 6]
+const CORNER_SPAWN = [-8, 2, -4]
 
 // --- Movement feel (check 13 returned NO, 2026-09-03) ------------------------
 //
@@ -132,7 +133,7 @@ function BodyMotion({ controllerRef, groupRef }) {
   return null
 }
 
-const Player = forwardRef(function Player({ recoverFalls = false }, ref) {
+const Player = forwardRef(function Player({ recoverFalls = false, cornerStart = false }, ref) {
   const controllerRef = useRef(null)
   const bodyGroupRef = useRef(null)
 
@@ -143,7 +144,7 @@ const Player = forwardRef(function Player({ recoverFalls = false }, ref) {
     <>
       <Ecctrl
         ref={controllerRef}
-        position={SPAWN}
+        position={cornerStart ? CORNER_SPAWN : SPAWN}
         capsuleHalfHeight={CHARACTER.capsuleHalfHeight}
         capsuleRadius={CHARACTER.capsuleRadius}
         floatHeight={CHARACTER.floatHeight}

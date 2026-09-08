@@ -1,6 +1,6 @@
-# Blender pipeline — Phase 0
+# Blender pipeline
 
-Verified September 5, 2026. No environment production has begun.
+Setup verified September 5, 2026; environment production updated September 8.
 
 ## Installed runtime
 
@@ -8,8 +8,8 @@ Verified September 5, 2026. No environment production has begun.
 - Embedded Python **3.13.13**.
 - Background Python and Cycles CPU rendering verified.
 - glTF export/import verified: 1 metre test cube, one material, two UV layers.
-- No Blender MCP connector is required or configured. Scripts use the installed
-  Blender executable. Existing user preferences are not modified.
+- Blender MCP is installed and working. Production scripts use the installed
+  Blender executable with isolated settings; MCP setup is not modified.
 
 ## Commands
 
@@ -18,6 +18,8 @@ From the project root:
 ```text
 npm run blender:version
 npm run blender:setup
+npm run blender:blockout
+npm run blender:corner
 ```
 
 The runner searches the Blender Foundation installation directory. Set BLENDER_PATH
@@ -49,9 +51,17 @@ Private personal source material remains outside every export and deployment.
 
 ## Not yet proven
 
-Lightmap bake quality, browser UV/material binding, vegetation instancing, actual
-Iris Xe environment performance, reference similarity and phone performance have
-not been tested by this setup check. Phase 2 proves the visual pipeline in-browser.
+Phase 2 now proves a full-colour diffuse bake through UV0 and an embedded 1K JPEG
+into R3F MeshBasicMaterial. Foliage uses separate vertex-tinted opaque geometry.
+`art/source/hub-corner.blend` packs the bake and retains hidden editable originals;
+`public/models/hub-corner.glb` contains only runtime meshes and collision.
+Keep the generated sources in Git with their generators; their current compressed
+sizes are small enough for regular Git. Rebuilds replace these named generated
+files, so save manually edited versions separately.
+
+Separate lightmap-channel binding, reusable vegetation instancing, sustained Iris Xe
+performance, final reference quality and phone performance remain unproven.
+See `plans/CURRENT_PLAN.md` for the benchmark and next visual review priorities.
 
 Blender modifiers and procedural materials must become supported exported geometry
 and image textures, or have an explicit browser implementation. Static lightmapped

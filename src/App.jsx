@@ -87,7 +87,9 @@ function usePageVisible() {
 export default function App() {
   const params = new URLSearchParams(window.location.search)
   const greyroom = params.get('scene') === 'greyroom'
-  const reference = !greyroom && params.get('view') === 'reference'
+  const cornerView = !greyroom && params.get('view') === 'corner'
+  const reference = !greyroom && (params.get('view') === 'reference' || cornerView)
+  const cornerStart = !greyroom && params.get('start') === 'corner'
   // The ecctrl handle, shared by the camera (needs the body to follow) and the
   // scene (the post needs to know when the player is close).
   const playerRef = useRef(null)
@@ -138,8 +140,8 @@ export default function App() {
 
         <Suspense fallback={null}>
           <Physics paused={(!visible || settingsOpen) && !physicsForced}>
-            {greyroom ? <GreyRoom playerRef={playerRef} /> : <HubBlockout reference={reference} />}
-            {!reference && <Player ref={playerRef} recoverFalls={!greyroom} />}
+            {greyroom ? <GreyRoom playerRef={playerRef} /> : <HubBlockout reference={reference} cornerView={cornerView} />}
+            {!reference && <Player ref={playerRef} recoverFalls={!greyroom} cornerStart={cornerStart} />}
             {!reference && <FollowCamera bodyRef={playerRef} />}
             {/* Dev-only scene handle for stepping the loop and running the M1
                 audit. Inside <Physics> because it raycasts against the same

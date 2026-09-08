@@ -6,7 +6,7 @@ work, and you have to figure out the rule before you can get out.
 It is also this developer's portfolio, but that part isn't the pitch and isn't
 the point of playing it.
 
-**Current priority: September environment milestone — planning and Blender setup complete; Phase 1 not started.**
+**Current priority: September environment milestone — hub blockout complete; Phase 2 material/lighting benchmark in progress.**
 The dated scope, time limits and September 30 target are in
 [environment-september-plan.md](environment-september-plan.md).
 Blender commands and verified setup results are in [art-pipeline.md](art-pipeline.md).
@@ -20,11 +20,11 @@ See [verification.md](verification.md) for the final phone checks and existing M
 audit issues. The user has prioritized environment production ahead of the remaining
 phone gate; the September plan now governs execution order.
 
-A grey test room with a character, a camera, and
-movement. No art yet; everything you can see gets deleted at M3. What exists is
-the thing the rest is built on: the `look-target.md` §2 camera, collision that
-pulls in rather than clipping, slopes and stairs for traversal checks, and a
-dev HUD watching the performance budgets from day one.
+The default scene is the roamable hub blockout with a baked art benchmark at the
+left-path junction. Use `?start=corner` to begin beside it, `?view=corner` for its
+static review camera, or `?view=reference` for the complete hub composition.
+`?scene=greyroom` retains the original movement test course. See
+[the current plan](plans/CURRENT_PLAN.md) for completed work and visual limitations.
 
 ## Design documents
 
@@ -77,7 +77,8 @@ On a phone, use the left joystick and right action buttons; drag the scene to tu
 Settings offers Automatic / High / Medium / Low and a performance HUD toggle.
 Keyboard and touch remain available together. Settings pause the simulation.
 
-M2 phone build: [Open the grey room](https://archive-impossible-things-m2.abhishekpandey989828.chatgpt.site).
+Hosted progress: [Explore the environment](https://archive-impossible-things-m2.abhishekpandey989828.chatgpt.site/?start=corner).
+The original phone course remains at `?scene=greyroom`; phone refinement is pending.
 
 The HUD reports the `look-target.md` §10 budgets alongside the §2 camera numbers.
 The camera ones matter more than they look: the pitch, the 2.2 m camera height and

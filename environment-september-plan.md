@@ -4,10 +4,13 @@ Created September 5, 2026. Target delivery: September 30, 2026, Asia/Calcutta.
 
 ## Status and authority
 
-**Phase 0: Blender setup complete. Phase 1: IN PROGRESS (September 6).**
-The user authorized scheduled production on September 6 and 7. Both daily
-sessions completed; see `plans/CURRENT_PLAN.md` for evidence and remaining layout
-work. Later phases do not start automatically from these dates.
+**Phase 0: Blender setup complete. Phase 1: production/checks complete (September 8).**
+The September 6–8 sessions are complete; layout is ready for user review.
+See `plans/CURRENT_PLAN.md` for comparison evidence and remaining art limitations.
+Phase 2's first session was brought forward to September 8 by the user; the initial
+material/lighting benchmark is built and verified. Two review/iteration sessions
+remain inside its original three-session allocation. Later phases do not start
+automatically from dates.
 
 This plan changes the immediate execution order of build-roadmap.md. That roadmap
 continues to describe the eventual three-archive game and portfolio reveal; this
@@ -153,5 +156,6 @@ playable distant landscape.
 | Phase | Actual working/review time | Result |
 |---|---|---|
 | 0 | Not timed; do not invent hours | Blender 5.2.1 LTS setup verified |
-| 1 | September 6–7 sessions not time-tracked | Blockout plus terrain/forest/ruin composition and connected route checks complete; September 8 layout gate remains open |
-| 2–7 | Not started | Await completion of preceding gates |
+| 1 | September 6–8 sessions not time-tracked | Layout production and 17 route-segment checks complete; reference/gameplay comparison recorded, user review pending; final art remains later work |
+| 2 | First session brought forward to September 8; time not tracked | Bake/UV/GLB/R3F benchmark implemented and checked; final art gate and instancing proof remain |
+| 3–7 | Not started | Await completion of preceding gates |

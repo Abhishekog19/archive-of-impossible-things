@@ -1,7 +1,10 @@
 # Current plan — Archive of Impossible Things
 
-Status: Phase 1 production/checks complete. Phase 2 first session completed early
-on September 8 at the user's request; material/lighting benchmark ready for review.
+Status: Phase 2 session 2 completed September 9, advanced from September 10.
+Session 1 ran September 8; the final proof session is now September 10, with
+September 11 held for recovered review/contingency. Later phases and September 30
+delivery remain unchanged. The first benchmark failed the user's naturalness and
+texture-quality review; improve this corner before expanding the kit.
 Target: September 30, 2026; about one hour daily plus
 longer weekend sessions. Recheck remaining capacity when production begins.
 
@@ -128,14 +131,47 @@ September 7 verification:
 - Review links: `?start=corner` starts beside the benchmark; `?view=corner` is its
   static camera; `?view=reference` shows the whole hub. The default remains roaming.
 
-Next work: finish the Phase 2 visual proof before kit production. Improve masonry
-breaks/moss placement, layered canopy volume, warm/cool contrast and dappled shadows;
-review JPEG/UV softness at player distance. The rectangular sample edge is temporary
-and will be blended into the dressed hub during composition. Prove reusable
-vegetation instancing separately; this static merged benchmark does not prove it.
-Phase 2 retains its three-session cap (originally September 9–11); the first session
-was brought forward, not added to capacity. Final visual quality is not approved,
-and the approximate 80% reference target has not been reached.
+## September 9 — Phase 2 second session, advanced one day
+
+- Reworked the same corner: variable fractured slabs, narrower joints, sharper
+  wall courses and a broken column crown; curved roots, branched leaf clusters,
+  sheltered moss patches and 24 fern instances along the shoulders.
+- Split the bake into 2048px paving and 1024px architecture atlases. Removed buried
+  slab undersides from the bake/export. Grain and directional bark relief are
+  baked into colour; no runtime normal maps or realtime shadows were added.
+- Warmer sun, cooler sky fill and a new sun direction produce visible canopy
+  shadows across the paving. Two 40-sample CPU bakes export through UV0/sRGB.
+  Final corner GLB: 2,001,884 bytes; editable packed source: 5,718,856 bytes.
+- Browser confirms 24 ferns in one InstancedMesh. Gameplay: 14 draw calls,
+  59,318 triangles, 3 textures; static corner: 12 calls / 58,994 triangles.
+  A 15-second live sample held 59.8–60.2 FPS on Iris Xe, Medium, actual DPR 1.25,
+  at a 1536 × 674 CSS viewport. Earlier loading/busy samples were lower. This
+  does not replace the three-minute traversal/thermal acceptance test.
+- All 17 hub waypoint segments passed with 100% sampled ground contact.
+  Corner walk covered 11.7 m and returned; jump rose 1.60 m and landed.
+  Camera pulled to 0.41 m beside the wall and returned to 4 m in open space.
+  Blocked routes, four boundary approaches and fall recovery passed. These are
+  bounded smoke checks, not exhaustive collision/camera acceptance.
+- Build/lint pass; browser reports no application errors (two existing dependency
+  warnings). Blender's thumbnail-write warning did not prevent save/export.
+- At a 390 × 844 mobile viewport the scene loads, the character is grounded and
+  there is no horizontal overflow. Real-phone controls/thermals remain pending.
+- Compared REF4 with `.artifacts/hub-sep09-reference.png`, and REF2/REF6 surface
+  direction with `corner-sep09-final.png` and `corner-sep09-gameplay.png` in the
+  same folder. Route evidence: `.artifacts/hub-routes-sep09.json`.
+
+Next: September 10, Phase 2's final proof session. Fix the largest remaining
+differences before kit production: leaf clusters still look spiky rather than
+broad canopy masses; masonry is too regularly stacked; moss lacks convincing
+edge growth; and the sample boundary/light treatment needs a coherent transition
+into the hub. Check close-view texture clarity again. Whole-hub dressing remains
+Phase 4. Final visual quality is not approved and the approximate 80% target has
+not been reached. September 11 is review/contingency, not an extra committed session.
+
+Deployment performance issue: the user reports 60 FPS on ChatGPT Sites versus
+15–30 FPS on the supplied Vercel deployment. That Vercel URL redirected automated
+inspection to login; build/settings/device parity and root cause remain unverified.
+Today's local result does not resolve that report.
 
 Real-phone UX and thermal testing remain
 deferred to the end. No Archive gameplay or game insertion has been built.

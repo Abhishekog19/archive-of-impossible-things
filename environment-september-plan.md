@@ -8,9 +8,11 @@ Created September 5, 2026. Target delivery: September 30, 2026, Asia/Calcutta.
 The September 6–8 sessions are complete; layout is ready for user review.
 See `plans/CURRENT_PLAN.md` for comparison evidence and remaining art limitations.
 Phase 2's first session was brought forward to September 8 by the user; the initial
-material/lighting benchmark is built and verified. Two review/iteration sessions
-remain inside its original three-session allocation. Later phases do not start
-automatically from dates.
+material/lighting benchmark is built and verified. September 9 completed the
+second session originally scheduled for September 10. Phase 2 is scheduled for
+September 8–10; September 11 is recovered review/contingency time. Keep later
+weekend production windows and the September 30 deadline unchanged: one early
+session does not add capacity or waive the visual gate.
 
 This plan changes the immediate execution order of build-roadmap.md. That roadmap
 continues to describe the eventual three-archive game and portfolio reveal; this
@@ -72,7 +74,7 @@ silently move every later date. Cut the listed scope or explicitly revise the ta
 |---|---|---:|---|---|
 | 0 — Tooling | Sep 5 | Setup only | Blender runner, empty metric template, disposable render/export test | Background Python, CPU render and GLB round-trip pass |
 | 1 — Layout and scale | Sep 6–8 | 5 h | Hub/path blockout in Blender and browser; landmarks/tree masses; reference and gameplay cameras | Walk every intended route; plaza/paths/tower read like REF4; no detailed assets yet |
-| 2 — Material and lighting proof | Sep 9–11 | 3 h | One representative finished corner: paving, wall, tree/root, foliage; UV/bake/export/browser proof | Browser appearance is recognizably related to the reference; no missing maps; capture actual draw/triangle/FPS costs |
+| 2 — Material and lighting proof | Sep 8–10 (advanced one day) | 3 h | One representative finished corner: paving, wall, tree/root, foliage; UV/bake/export/browser proof | Browser appearance is recognizably related to the reference; no missing maps; capture actual draw/triangle/FPS costs |
 | 3 — Reusable asset kit | Sep 12–16 | 9 h | Small coherent stone/terrain/vegetation kit, shared textures, export conventions, simple colliders | Variants survive export and repeat without obvious uniformity; no sprawling asset library |
 | 4 — Hub composition | Sep 17–21 | 9 h | Dressed hub, three branch mouths, tower framing and canopy approach | Whole committed area is traversable; scenery reads from gameplay viewpoints, not just the reference camera |
 | 5 — Traversal and atmosphere | Sep 22–25 | 4 h | Camera/stair fixes, character grounding, coherent light/shade, restrained wind/fog; optional basic ambience | No falls through surfaces, persistent clipping, stuck movement or missing return route |
@@ -119,7 +121,7 @@ playable distant landscape.
 
 - Sep 8: if the hub does not read correctly, simplify route lengths and terrain.
   Do not add detail to hide a composition problem.
-- Sep 11: if baking/UV transfer consumes the cap, compare a simpler full-colour
+- Sep 10 (advanced from Sep 11): if baking/UV transfer consumes the cap, compare a simpler full-colour
   bake or vertex-colour treatment in-browser. Accept a fallback only if its visual
   result is good enough; otherwise explicitly revise scope/date before mass production.
 - Sep 16: if the kit is late, reduce asset families and reuse good variants. Preserve
@@ -157,5 +159,5 @@ playable distant landscape.
 |---|---|---|
 | 0 | Not timed; do not invent hours | Blender 5.2.1 LTS setup verified |
 | 1 | September 6–8 sessions not time-tracked | Layout production and 17 route-segment checks complete; reference/gameplay comparison recorded, user review pending; final art remains later work |
-| 2 | First session brought forward to September 8; time not tracked | Bake/UV/GLB/R3F benchmark implemented and checked; final art gate and instancing proof remain |
+| 2 | Sep 8 not timed; Sep 9 production/verification about 25 minutes of agent wall time, excluding delivery and user review | Second corner iteration and instancing verified; final visual gate remains Sep 10, with Sep 11 recovered for review/contingency |
 | 3–7 | Not started | Await completion of preceding gates |

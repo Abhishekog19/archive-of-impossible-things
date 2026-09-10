@@ -8,9 +8,10 @@ Created September 5, 2026. Target delivery: September 30, 2026, Asia/Calcutta.
 The September 6–8 sessions are complete; layout is ready for user review.
 See `plans/CURRENT_PLAN.md` for comparison evidence and remaining art limitations.
 Phase 2's first session was brought forward to September 8 by the user; the initial
-material/lighting benchmark is built and verified. September 9 completed the
-second session originally scheduled for September 10. Phase 2 is scheduled for
-September 8–10; September 11 is recovered review/contingency time. Keep later
+material/lighting benchmark is built and verified. The three production sessions
+finished September 8–10, one day ahead of their original dates. Technical export
+and runtime checks pass; visual approval remains open. September 11 is recovered
+review/contingency time, before the conditional Phase 3 start. Keep later
 weekend production windows and the September 30 deadline unchanged: one early
 session does not add capacity or waive the visual gate.
 
@@ -159,5 +160,5 @@ playable distant landscape.
 |---|---|---|
 | 0 | Not timed; do not invent hours | Blender 5.2.1 LTS setup verified |
 | 1 | September 6–8 sessions not time-tracked | Layout production and 17 route-segment checks complete; reference/gameplay comparison recorded, user review pending; final art remains later work |
-| 2 | Sep 8 not timed; Sep 9 production/verification about 25 minutes of agent wall time, excluding delivery and user review | Second corner iteration and instancing verified; final visual gate remains Sep 10, with Sep 11 recovered for review/contingency |
+| 2 | Sep 8 not timed; Sep 9 about 25 minutes and Sep 10 about 35 minutes of agent production/verification wall time, excluding final publication and user review | Three sessions complete; export, instancing and three-minute corner performance proof pass. Visual approval remains open for Sep 11 review before kit production |
 | 3–7 | Not started | Await completion of preceding gates |

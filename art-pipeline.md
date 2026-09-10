@@ -1,6 +1,6 @@
 # Blender pipeline
 
-Setup verified September 5, 2026; environment production updated September 8.
+Setup verified September 5, 2026; environment production updated September 10.
 
 ## Installed runtime
 
@@ -49,18 +49,23 @@ binary sources will be versioned/backed up before accumulating them; do not sile
 ignore the only editable copy. Generated diagnostics/configuration stay local.
 Private personal source material remains outside every export and deployment.
 
-## Not yet proven
+## Phase 2 proof status
 
-Phase 2 now proves a full-colour diffuse bake through UV0 and an embedded 1K JPEG
-into R3F MeshBasicMaterial. Foliage uses separate vertex-tinted opaque geometry.
+Phase 2 proves full-colour diffuse bakes through UV0 into R3F MeshBasicMaterial:
+embedded 2K paving and 1K architecture JPEGs, sRGB, with filtering capped at 4x.
+Small surface relief is baked into colour; these unlit materials do not apply
+runtime normal-map lighting. Canopy foliage uses vertex-tinted opaque geometry.
+Twenty-four exported fern markers drive one shared R3F InstancedMesh. Authoring
+copies supply baked static shadows without separate runtime plant draw calls.
 `art/source/hub-corner.blend` packs the bake and retains hidden editable originals;
 `public/models/hub-corner.glb` contains only runtime meshes and collision.
 Keep the generated sources in Git with their generators; their current compressed
 sizes are small enough for regular Git. Rebuilds replace these named generated
 files, so save manually edited versions separately.
 
-Separate lightmap-channel binding, reusable vegetation instancing, sustained Iris Xe
-performance, final reference quality and phone performance remain unproven.
+Separate lightmap-channel binding, full-world sustained performance acceptance,
+final reference quality and real-phone performance remain unproven. Corner-only
+measurements and visual limitations are recorded in the current plan.
 See `plans/CURRENT_PLAN.md` for the benchmark and next visual review priorities.
 
 Blender modifiers and procedural materials must become supported exported geometry

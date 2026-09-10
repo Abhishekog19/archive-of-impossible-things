@@ -1,10 +1,10 @@
 # Current plan — Archive of Impossible Things
 
-Status: Phase 2 session 2 completed September 9, advanced from September 10.
-Session 1 ran September 8; the final proof session is now September 10, with
-September 11 held for recovered review/contingency. Later phases and September 30
-delivery remain unchanged. The first benchmark failed the user's naturalness and
-texture-quality review; improve this corner before expanding the kit.
+Status: Phase 2's three production sessions are complete (September 8–10).
+The export/rendering proof passes; final visual approval remains open. September 11
+is the recovered review/contingency day. Review the corner before repeating its
+assets across the hub. Phase 3 remains September 12–16, conditional on that review;
+the September 30 deadline is unchanged.
 Target: September 30, 2026; about one hour daily plus
 longer weekend sessions. Recheck remaining capacity when production begins.
 
@@ -160,13 +160,45 @@ September 7 verification:
   direction with `corner-sep09-final.png` and `corner-sep09-gameplay.png` in the
   same folder. Route evidence: `.artifacts/hub-routes-sep09.json`.
 
-Next: September 10, Phase 2's final proof session. Fix the largest remaining
-differences before kit production: leaf clusters still look spiky rather than
-broad canopy masses; masonry is too regularly stacked; moss lacks convincing
-edge growth; and the sample boundary/light treatment needs a coherent transition
-into the hub. Check close-view texture clarity again. Whole-hub dressing remains
-Phase 4. Final visual quality is not approved and the approximate 80% target has
-not been reached. September 11 is review/contingency, not an extra committed session.
+## September 10 — Phase 2 final production/proof session
+
+- Replaced spear-shaped sprays with rounded overlapping leaves, shaded lower
+  layers and an uneven upper crown. Broke the upper wall silhouette, baked moss
+  into lower stone faces and added shallow fragments around the sample perimeter.
+  Two browser iterations corrected the first pass's flat umbrella silhouette and
+  moss patches that no longer followed the eroded wall tops.
+- Retained 2K/1K atlases and 24 ferns in one instance batch. Corner GLB is
+  1,904,484 bytes; packed editable Blender source is 5,943,158 bytes. Smooth leaf
+  normals and shared per-leaf colours reduce duplicate exported vertices.
+- Browser filtering is capped at the supported value up to 4x, with a 1x fallback.
+  Both maps load as sRGB. Gameplay at the corner: 14 draws / 65,226 triangles;
+  static camera: 12 draws / 64,902 triangles. No realtime shadows or extra atlases.
+- A completed 180-second production-build keyboard traversal through the corner
+  averaged 60.06 FPS from actual animation-frame timestamps on Iris Xe. All 177
+  one-second observations were visible, grounded and at DPR 1.25 (Medium); viewport
+  1536 × 730 CSS pixels. Counts stayed at 14 draws / 14 geometries / 3 textures.
+  This is a corner performance proof, not full-world/phone thermal acceptance.
+  The earlier interrupted development-server run is excluded from this result.
+- Build and lint pass. All 17 route segments and the corner walk pass with 100%
+  sampled grounding. Corner jump rises 1.58 m and lands; camera pulls to 0.39 m by
+  the wall and returns to 4 m in open space. Four boundary approaches, the blocked
+  path and fall recovery pass. These remain bounded collision checks.
+- Production navigation has zero application errors; two existing dependency
+  warnings remain. A 390 × 844 viewport loads without horizontal overflow. Real
+  phone input and thermal checks stay deferred. Blender MCP setup was untouched;
+  the private source file remains ignored and untracked, checked by metadata only.
+- Evidence: `.artifacts/corner-sep10-final.png`, `corner-sep10-gameplay.png`,
+  `hub-sep10-reference.png`, `hub-routes-sep10.json` and
+  `corner-sep10-live-performance.json`. Compare REF4 for hub composition and
+  REF2/REF6 for stone surfaces, vegetation masses and lighting.
+
+Next: September 11 review/contingency. The technical pipeline is proven, but the
+corner is not a final-quality approval or an 80% similarity claim. Remaining gaps:
+masonry edges still feel too regular, moss needs finer directional edge growth,
+leaf lighting is simplified, and the lit corner still meets an undressed hub.
+Whole-hub dressing remains Phase 4. Approve the usable material/foliage direction
+before kit production; if it is rejected, use the recovered day to resolve the
+largest mismatch and explicitly reconsider scope before multiplying the assets.
 
 Deployment performance issue: the user reports 60 FPS on ChatGPT Sites versus
 15–30 FPS on the supplied Vercel deployment. That Vercel URL redirected automated

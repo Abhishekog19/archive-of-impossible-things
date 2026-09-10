@@ -1,4 +1,5 @@
 import { useGLTF } from '@react-three/drei'
+import { useThree } from '@react-three/fiber'
 import { RigidBody } from '@react-three/rapier'
 import { DoubleSide } from 'three'
 import { useLayoutEffect, useMemo, useRef } from 'react'
@@ -25,6 +26,18 @@ function Ferns({ nodes }) {
 // the temporary hub hemisphere from lighting it twice; glTF supplies UV0 + sRGB.
 export default function HubCorner() {
   const { nodes, materials } = useGLTF('/models/hub-corner.glb')
+  const gl = useThree((state) => state.gl)
+  useLayoutEffect(() => {
+    // Preserve paving detail at shallow gameplay angles without larger atlases.
+    // Four samples cap the filtering cost on integrated and mobile GPUs.
+    const anisotropy = Math.max(1, Math.min(4, gl.capabilities.getMaxAnisotropy()))
+    for (const material of [materials.Corner_Paving, materials.Corner_Baked]) {
+      if (material.map.anisotropy !== anisotropy) {
+        material.map.anisotropy = anisotropy
+        material.map.needsUpdate = true
+      }
+    }
+  }, [gl, materials])
   return (
     <group position={[-8, 0, -9]}>
       <mesh geometry={nodes.Corner_Paving.geometry}>

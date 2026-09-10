@@ -32,7 +32,7 @@ colliders = []
 foliage = []
 floor_objects = []
 
-def material(name, dark, light, scale=5):
+def material(name, dark, light, scale=5, growth=False):
     m = bpy.data.materials.new(name)
     m.use_nodes = True
     n, links = m.node_tree.nodes, m.node_tree.links
@@ -50,6 +50,34 @@ def material(name, dark, light, scale=5):
     ramp.color_ramp.elements[1].color = (*light, 1)
     links.new(noise.outputs['Fac'], ramp.inputs[0])
     links.new(ramp.outputs[0], p.inputs['Base Color'])
+    if growth:
+        # Damp lower masonry carries irregular growth; the dry upper face stays
+        # limestone. Bake this mask so runtime needs no extra material/shader.
+        position = n.new('ShaderNodeSeparateXYZ')
+        links.new(coord.outputs['Position'], position.inputs[0])
+        height = n.new('ShaderNodeMapRange')
+        height.inputs['From Min'].default_value = .15
+        height.inputs['From Max'].default_value = 1.9
+        height.inputs['To Min'].default_value = 1
+        height.inputs['To Max'].default_value = 0
+        links.new(position.outputs['Z'], height.inputs['Value'])
+        islands = n.new('ShaderNodeTexNoise')
+        islands.inputs['Scale'].default_value = 3.8
+        islands.inputs['Detail'].default_value = 3
+        links.new(coord.outputs['Position'], islands.inputs['Vector'])
+        boundary = n.new('ShaderNodeValToRGB')
+        boundary.color_ramp.elements[0].position = .43
+        boundary.color_ramp.elements[1].position = .58
+        links.new(islands.outputs['Fac'], boundary.inputs[0])
+        mask = n.new('ShaderNodeMath')
+        mask.operation = 'MULTIPLY'
+        links.new(height.outputs['Result'], mask.inputs[0])
+        links.new(boundary.outputs[0], mask.inputs[1])
+        blend = n.new('ShaderNodeMixRGB')
+        blend.inputs[2].default_value = (.105,.16,.038,1)
+        links.new(mask.outputs[0], blend.inputs[0])
+        links.new(ramp.outputs[0], blend.inputs[1])
+        links.new(blend.outputs[0], p.inputs['Base Color'])
     if name.startswith('Warm limestone'):
         grain = n.new('ShaderNodeTexNoise')
         grain.inputs['Scale'].default_value = 32
@@ -71,6 +99,9 @@ def material(name, dark, light, scale=5):
 stone = [material('Warm limestone '+str(i),
                  (0.39+i*.025, .40+i*.018, .30),
                  (.57+i*.035, .55+i*.025, .39+i*.02), .9) for i in range(3)]
+masonry = [material('Warm limestone sheltered '+str(i),
+                    (.39+i*.025,.40+i*.018,.30),
+                    (.57+i*.035,.55+i*.025,.39+i*.02), .9, growth=True) for i in range(3)]
 moss = material('Moss in seams', (.055,.095,.026), (.23,.31,.065), 11)
 bark = material('Bark planes', (.09,.105,.06), (.32,.29,.16), 15)
 leaf_mats = [material('Leaf '+str(i), (.05+i*.018,.105+i*.023,.035),
@@ -164,28 +195,46 @@ while y<4.1:
         x+=width
     y+=depth
 
+# Loose, shallow remnants break up the straight sample perimeter. They sit on
+# the existing hub collision plane and taper out into the undressed terrain.
+for i in range(22):
+    front=i<12
+    x=random.uniform(-4.15,4.15) if front else random.choice([-1,1])*random.uniform(4.0,4.65)
+    y=random.uniform(-5.65,-4.25) if front else random.uniform(-3.7,3.7)
+    radius=random.uniform(.16,.48)
+    points=[]
+    for j in range(6):
+        a=j*math.tau/6
+        r=radius*random.uniform(.7,1.1)
+        points.append((x+math.cos(a)*r,y+math.sin(a)*r*.7))
+    slab(points,random.uniform(.035,.075),random.choice(stone))
+
 # Masonry follows one side of the path; the cap breaks down toward the plaza.
 for row in range(5):
-    y=-1.2+(row%2)*.28+max(0,row-2)*.35
-    end=3.9-max(0,row-2)*.4
+    y=-1.2+(row%2)*.19+max(0,row-1)*.40
+    end=3.9-max(0,row-1)*.35
     while y<end-.2:
         length=min(random.uniform(.65,1.25),end-y)
         x=-3.5+random.uniform(-.07,.07)
         top=.56+row*.51
-        cube('Eroded wall course',(x,y+length/2,top-.24),
-             (.7,length-.025,.48),random.choice(stone),random.uniform(.014,.03),
-             random.uniform(-.035,.035),solid=True)
-        if row==0 or random.random()<.45:
+        block=cube('Eroded wall course',(x,y+length/2,top-.24),
+                   (.7+random.uniform(-.06,.08),length-.025,.48),random.choice(masonry),
+                   random.uniform(.015,.045),random.uniform(-.065,.065),solid=True)
+        if row>=3:
+            for v in block.data.vertices:
+                if v.co.z>.1:
+                    v.co.z-=max(0,v.co.y+length*.18)*random.uniform(.15,.6)
+        if row<=2 and (row==0 or random.random()<.45):
             patch('Moss on sheltered wall ledge',(x,y+length*.45,top+.008),random.uniform(.18,.38),moss)
         y+=length
 
 # Replace the corresponding blockout column at world (-7,-10).
-cube('Column plinth',(1,1,.22),(1.7,1.7,.35),stone[0],.025,solid=True)
+cube('Column plinth',(1,1,.22),(1.7,1.7,.35),masonry[0],.025,solid=True)
 for i in range(4):
     cube('Column course',(1+random.uniform(-.035,.035),1,.78+i*.71),
-         (1.04,1.07,.69),random.choice(stone),.022,
+         (1.04,1.07,.69),random.choice(masonry),.032,
          random.uniform(-.025,.025),solid=True)
-cap=cube('Fractured column crown',(1.03,1,3.30),(.94,1.05,.72),stone[0],.02,solid=True)
+cap=cube('Fractured column crown',(1.03,1,3.30),(.94,1.05,.72),masonry[0],.02,solid=True)
 for v in cap.data.vertices:
     if v.co.z>0:
         v.co.z-=max(0,v.co.x+.25)*.7
@@ -228,18 +277,27 @@ for i in range(7):
          [.25,.20,.09,.008],bark,8)
 
 def leaves(name, center, radius, count, mat):
-    verts,faces=[],[]
+    verts,faces,tints=[],[],[]
     for _ in range(count):
         a=random.uniform(0,math.tau)
         r=radius*math.sqrt(random.random())
-        p=Vector((center[0]+math.cos(a)*r,center[1]+math.sin(a)*r,
-                  center[2]+random.uniform(-.65,.65)*radius))
-        tilt=random.uniform(-.55,.7)
-        u=Vector((math.cos(a),math.sin(a),tilt)).normalized()*random.uniform(.17,.30)
-        v=Vector((-math.sin(a),math.cos(a),0))*random.uniform(.085,.14)
+        # Rounded leaves occupy an ellipsoid, with shaded lower layers rather
+        # than a single flat umbrella. Silhouette gaps expose the branch forks.
+        dome=math.sqrt(max(0,1-(r/radius)**2))
+        layer=random.uniform(-.65,.75)
+        p=Vector((center[0]+math.cos(a)*r,center[1]+math.sin(a)*r*.82,
+                  center[2]+dome*radius*layer))
+        heading=a+random.uniform(-1.5,1.5)
+        tilt=random.uniform(-.7,.4)
+        u=Vector((math.cos(heading),math.sin(heading),tilt)).normalized()*random.uniform(.19,.29)
+        v=Vector((-math.sin(heading),math.cos(heading),0))*random.uniform(.13,.19)
         k=len(verts)
-        verts.extend([tuple(p-u),tuple(p+v),tuple(p+Vector((0,0,.035))),tuple(p-v),tuple(p+u)])
-        faces.extend([(k,k+1,k+2),(k,k+2,k+3),(k+1,k+4,k+2),(k+2,k+4,k+3)])
+        verts.append(tuple(p+Vector((0,0,.025))))
+        for j in range(8):
+            angle=j*math.tau/8
+            verts.append(tuple(p+u*math.cos(angle)+v*math.sin(angle)))
+            faces.append((k,k+j+1,k+(j+1)%8+1))
+        tints.append(random.uniform(.88,1.08)*(.73+.32*layer))
     o=mesh(name,verts,faces,mat)
     visuals.remove(o)
     foliage.append(o)
@@ -247,9 +305,9 @@ def leaves(name, center, radius, count, mat):
     # Broad leaf colour planes stay crisp at every distance without alpha cards
     # or thousands of tiny UV islands stealing resolution from the stone bake.
     for poly in o.data.polygons:
-        tint=random.uniform(.7,1.14)
-        up=max(0,poly.normal.z)
-        base=(.055+.085*up,.105+.12*up,.025+.03*up)
+        poly.use_smooth=True
+        tint=tints[poly.index//8]
+        base=(.115,.185,.042)
         for index in poly.loop_indices:
             colors.data[index].color=(*(c*tint for c in base),1)
     return o
@@ -263,7 +321,11 @@ for i in range(7):
     for j in range(3):
         tip=(end[0]+random.uniform(-.9,.9),end[1]+random.uniform(-.9,.9),end[2]+random.uniform(-.4,.6))
         limb('Leaf-bearing twig',[fork,end,tip],[.055,.025,.003],bark,5)
-        leaves('Layered leaf spray',tip,random.uniform(.8,1.15),70,leaf_mats[i%3])
+        leaves('Layered broadleaf crown',tip,random.uniform(.8,1.15),60,leaf_mats[i%3])
+
+for tip in [(2.0,3.1,7.3),(3.25,3.4,7.65),(2.9,2.1,7.2)]:
+    limb('Upper crown fork',[(3.2,3.2,5),(2.6,3.1,6.6),tip],[.15,.08,.01],bark,7)
+    leaves('Upper broadleaf crown',tip,1.05,60,leaf_mats[1])
 
 # One authored fern prototype. Blender copies cast into the bake; exported marker
 # transforms are consumed by one R3F InstancedMesh, not one draw per plant.
@@ -316,7 +378,7 @@ for i in range(24):
     fern_markers.append(marker)
 for i in range(12):
     x,y=-3+random.uniform(-.2,.5),random.uniform(-3.5,3.6)
-    cube('Fallen wall stone',(x,y,.2),(random.uniform(.3,.6),.45,.32),random.choice(stone),.06,random.uniform(-1,1))
+    cube('Fallen wall stone',(x,y,.2),(random.uniform(.3,.8),.45,.32),random.choice(masonry),.04,random.uniform(-1,1))
 
 # Warm directional illumination and a cool sky become image data, not runtime lights.
 scene.world.use_nodes=True

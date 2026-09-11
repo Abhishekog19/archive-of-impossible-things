@@ -10,8 +10,10 @@ See `plans/CURRENT_PLAN.md` for comparison evidence and remaining art limitation
 Phase 2's first session was brought forward to September 8 by the user; the initial
 material/lighting benchmark is built and verified. The three production sessions
 finished September 8–10, one day ahead of their original dates. Technical export
-and runtime checks pass; visual approval remains open. September 11 is recovered
-review/contingency time, before the conditional Phase 3 start. Keep later
+and runtime checks pass; visual approval remains open. September 11's recovered
+review/contingency session is complete: irregular paving, chipped masonry and
+directional moss were refined and verified in-browser. Phase 3 remains conditional
+on review of that revised corner. Keep later
 weekend production windows and the September 30 deadline unchanged: one early
 session does not add capacity or waive the visual gate.
 
@@ -161,4 +163,5 @@ playable distant landscape.
 | 0 | Not timed; do not invent hours | Blender 5.2.1 LTS setup verified |
 | 1 | September 6–8 sessions not time-tracked | Layout production and 17 route-segment checks complete; reference/gameplay comparison recorded, user review pending; final art remains later work |
 | 2 | Sep 8 not timed; Sep 9 about 25 minutes and Sep 10 about 35 minutes of agent production/verification wall time, excluding final publication and user review | Three sessions complete; export, instancing and three-minute corner performance proof pass. Visual approval remains open for Sep 11 review before kit production |
+| Recovered review day | Sep 11 about 20 minutes of agent production/verification wall time, excluding final publication and user review | Two art iterations; build/lint, 17 route segments and corner traversal pass. One-minute Iris Xe regression averages 59.75 FPS. Revised corner awaits visual review; Phase 3 remains Sep 12–16, deadline Sep 30 |
 | 3–7 | Not started | Await completion of preceding gates |

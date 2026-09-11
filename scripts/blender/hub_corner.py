@@ -4,6 +4,7 @@ Local metre coordinates use Blender Z-up. R3F places the GLB at (-8, 0, -9).
 Rebuild replaces only these generated corner outputs; source objects stay editable.
 """
 import bpy
+import bmesh
 import math
 import random
 import json
@@ -64,7 +65,11 @@ def material(name, dark, light, scale=5, growth=False):
         islands = n.new('ShaderNodeTexNoise')
         islands.inputs['Scale'].default_value = 3.8
         islands.inputs['Detail'].default_value = 3
-        links.new(coord.outputs['Position'], islands.inputs['Vector'])
+        streaks = n.new('ShaderNodeVectorMath')
+        streaks.operation = 'MULTIPLY'
+        streaks.inputs[1].default_value = (1.2,1.2,.4)
+        links.new(coord.outputs['Position'], streaks.inputs[0])
+        links.new(streaks.outputs[0], islands.inputs['Vector'])
         boundary = n.new('ShaderNodeValToRGB')
         boundary.color_ramp.elements[0].position = .43
         boundary.color_ramp.elements[1].position = .58
@@ -73,9 +78,13 @@ def material(name, dark, light, scale=5, growth=False):
         mask.operation = 'MULTIPLY'
         links.new(height.outputs['Result'], mask.inputs[0])
         links.new(boundary.outputs[0], mask.inputs[1])
+        edge = n.new('ShaderNodeMapRange')
+        edge.inputs['From Min'].default_value = .25
+        edge.inputs['From Max'].default_value = .40
+        links.new(mask.outputs[0], edge.inputs['Value'])
         blend = n.new('ShaderNodeMixRGB')
         blend.inputs[2].default_value = (.105,.16,.038,1)
-        links.new(mask.outputs[0], blend.inputs[0])
+        links.new(edge.outputs['Result'], blend.inputs[0])
         links.new(ramp.outputs[0], blend.inputs[1])
         links.new(blend.outputs[0], p.inputs['Base Color'])
     if name.startswith('Warm limestone'):
@@ -132,6 +141,18 @@ def cube(name, at, size, mat, bevel=0, yaw=0, solid=False):
         bpy.context.collection.objects.link(c)
         colliders.append(c)
     if bevel:
+        if name in ('Eroded wall course','Column course') and random.random()<.55:
+            # Remove a real exposed corner before bevelling. Keep the earlier
+            # collision copy simple so decorative chips cannot snag movement.
+            bm=bmesh.new()
+            bm.from_mesh(o.data)
+            bmesh.ops.bisect_plane(bm,geom=list(bm.verts)+list(bm.edges)+list(bm.faces),
+                                  dist=.00001,plane_co=(size[0]/2-.10,-size[1]/2+.12,size[2]/2-.09),
+                                  plane_no=(1,-1,1),clear_outer=True,clear_inner=False)
+            bmesh.ops.holes_fill(bm,edges=[e for e in bm.edges if e.is_boundary],sides=0)
+            bmesh.ops.recalc_face_normals(bm,faces=list(bm.faces))
+            bm.to_mesh(o.data)
+            bm.free()
         # Small unequal chips and skewed faces replace the uniformly rounded blocks.
         for vertex in o.data.vertices:
             vertex.co += Vector((random.uniform(-.035,.035),random.uniform(-.035,.035),random.uniform(-.025,.025)))
@@ -153,12 +174,76 @@ def patch(name, center, radius, mat, count=11):
     return mesh(name,verts,[(0,i+1,(i+1)%count+1) for i in range(count)],mat)
 
 def slab(poly, height, mat):
+    # Recess a few points along each edge; neighbouring stones keep their own
+    # broken outlines instead of sharing perfectly machined straight seams.
+    rng=random.Random(round(sum(x*31+y*17 for x,y in poly)*1000))
+    chipped=[]
+    for a,b in zip(poly,poly[1:]+poly[:1]):
+        chipped.append(a)
+        dx,dy=b[0]-a[0],b[1]-a[1]
+        length=math.hypot(dx,dy)
+        if length>.45:
+            for t in (.28,.53,.76):
+                inset=rng.uniform(.004,.035)
+                chipped.append((a[0]+dx*t-dy/length*inset,a[1]+dy*t+dx/length*inset))
+    poly=chipped
     n=len(poly)
     verts=[(x,y,z) for z in (-.025,height) for x,y in poly]
     # Buried undersides need neither runtime triangles nor precious atlas space.
     faces=[tuple(range(n,2*n))]
     faces += [(i,(i+1)%n,(i+1)%n+n,i+n) for i in range(n)]
     floor_objects.append(mesh('Fractured limestone slab',verts,faces,mat))
+
+def clip_cell(poly, nx, ny, limit):
+    """Intersect a convex stone cell with nx*x + ny*y <= limit."""
+    result=[]
+    for a,b in zip(poly,poly[1:]+poly[:1]):
+        da=nx*a[0]+ny*a[1]-limit
+        db=nx*b[0]+ny*b[1]-limit
+        if da<=0:
+            result.append(a)
+        if (da<0<db) or (db<0<da):
+            t=da/(da-db)
+            result.append((a[0]+t*(b[0]-a[0]),a[1]+t*(b[1]-a[1])))
+    return result
+
+def flagstones():
+    # Jittered Voronoi cells interlock without long row seams or repeated
+    # bevelled rectangles. Their shared boundaries keep the joint width honest.
+    rng=random.Random(8311)
+    seeds=[(-3.6+x*1.18+rng.uniform(-.36,.36),
+            -3.9+y*1.15+rng.uniform(-.34,.34)) for y in range(8) for x in range(7)]
+    domain=[(-3.9,-4.2),(-2.9,-4.45),(2.8,-4.3),(4,-3.9),
+            (4.05,3.5),(3.3,4.35),(-3.1,4.4),(-4.05,3.8)]
+    for x,y in seeds:
+        poly=domain[:]
+        for ox,oy in seeds:
+            if (x,y)==(ox,oy):
+                continue
+            nx,ny=ox-x,oy-y
+            poly=clip_cell(poly,nx,ny,(ox*ox+oy*oy-x*x-y*y)/2)
+            if not poly:
+                break
+        if len(poly)<3:
+            continue
+        # Offset all edges into the convex cell for 3–6 cm total seam width.
+        inset=poly[:]
+        gap=rng.uniform(.018,.03)
+        for a,b in zip(poly,poly[1:]+poly[:1]):
+            nx,ny=b[1]-a[1],a[0]-b[0]
+            inset=clip_cell(inset,nx,ny,nx*a[0]+ny*a[1]-gap*math.hypot(nx,ny))
+        if len(inset)<3:
+            continue
+        height=rng.uniform(.105,.145)
+        chosen=stone[rng.randrange(len(stone))]
+        slab(inset,height,chosen)
+        # Growth follows selected joints and spills onto a few sheltered edges.
+        if abs(x)>2.2 or rng.random()<.28:
+            index=rng.randrange(len(inset))
+            a,b=inset[index],inset[(index+1)%len(inset)]
+            for t in (.18,.43,.7):
+                at=(a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,height+.004)
+                floor_objects.append(patch('Joint edge moss',at,rng.uniform(.055,.15),moss,9))
 
 # Smooth collision is independent of the broken paving and irregular moss edge.
 bed=cube('Corner floor collider',(0,0,-.08),(8,9,.28),moss,solid=True)
@@ -168,32 +253,8 @@ outline=[(-4,-4.3),(-2.2,-4.55),(-.5,-4.1),(1.6,-4.45),(3.75,-4.1),
          (4.05,-1.8),(3.9,1),(4.2,3.8),(2.7,4.4),(.2,4.5),(-2.8,4.35),(-4.1,2),(-3.9,-1)]
 floor_objects.append(mesh('Eroded seam bed',[(x,y,.065) for x,y in outline],
                           [tuple(range(len(outline)))],moss))
-y=-4.25
-while y<4.1:
-    depth=min(random.uniform(.85,1.5),4.45-y)
-    x=-3.95+random.uniform(-.13,.13)
-    while x<3.65:
-        width=min(random.uniform(.85,1.9),4-x)
-        gap=random.uniform(.025,.065)
-        x0,x1=x+gap,x+width-gap
-        y0,y1=y+gap+random.uniform(-.055,.055),y+depth-gap+random.uniform(-.055,.055)
-        cuts=[random.uniform(.06,min(.24,width*.22)) for _ in range(4)]
-        poly=[(x0+cuts[0],y0),(x1-cuts[1],y0+random.uniform(-.08,.08)),
-              (x1,y0+cuts[1]),(x1,y1-cuts[2]),(x1-cuts[2],y1),
-              (x0+cuts[3],y1+random.uniform(-.035,.035)),(x0,y1-cuts[3]),(x0,y0+cuts[0])]
-        height=random.uniform(.095,.14)
-        chosen=random.choice(stone)
-        if random.random()<.38 and width>1.1:
-            # A fracture through a large plate creates genuinely separate pieces.
-            split=x0+width*random.uniform(.35,.6)
-            slab([poly[0],(split-.012,y0),(split+.13,y1),*poly[5:]],height,chosen)
-            slab([(split+.018,y0),*poly[1:5],(split+.16,y1)],height-.008,chosen)
-        else:
-            slab(poly,height,chosen)
-        if abs(x)>2.4 or random.random()<.14:
-            floor_objects.append(patch('Moss creeping over joint',(x0+.05,(y0+y1)/2,height+.003),random.uniform(.10,.3),moss))
-        x+=width
-    y+=depth
+flagstones()
+random.seed(8312)  # Keep the remaining scene stable while tuning paving cells.
 
 # Loose, shallow remnants break up the straight sample perimeter. They sit on
 # the existing hub collision plane and taper out into the undressed terrain.

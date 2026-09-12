@@ -21,6 +21,11 @@ import useMovementInput from './useMovementInput'
 
 const SPAWN = [0, 2, 6]
 const CORNER_SPAWN = [-8, 2, -4]
+const WORLD_SPAWNS = {
+  forest: [-12, 3.5, -43], canopy: [-12, 3.5, -67],
+  exterior: [-12, 3.5, -98], interior: [-12, 3.5, -116],
+  cavern: [-12, -5.5, -174],
+}
 
 // --- Movement feel (check 13 returned NO, 2026-09-03) ------------------------
 //
@@ -133,7 +138,7 @@ function BodyMotion({ controllerRef, groupRef }) {
   return null
 }
 
-const Player = forwardRef(function Player({ recoverFalls = false, cornerStart = false }, ref) {
+const Player = forwardRef(function Player({ recoverFalls = false, cornerStart = false, start }, ref) {
   const controllerRef = useRef(null)
   const bodyGroupRef = useRef(null)
 
@@ -144,7 +149,7 @@ const Player = forwardRef(function Player({ recoverFalls = false, cornerStart = 
     <>
       <Ecctrl
         ref={controllerRef}
-        position={cornerStart ? CORNER_SPAWN : SPAWN}
+        position={cornerStart ? CORNER_SPAWN : Object.hasOwn(WORLD_SPAWNS, start) ? WORLD_SPAWNS[start] : SPAWN}
         capsuleHalfHeight={CHARACTER.capsuleHalfHeight}
         capsuleRadius={CHARACTER.capsuleRadius}
         floatHeight={CHARACTER.floatHeight}

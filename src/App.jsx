@@ -14,6 +14,7 @@ import TierGovernor from './ui/TierGovernor'
 import MobileControls from './ui/MobileControls'
 import Settings from './ui/Settings'
 import { useGameStore } from './store'
+import worldViews from './config/world-views.json'
 
 /**
  * Does this browser support WebGL2?
@@ -88,7 +89,8 @@ export default function App() {
   const params = new URLSearchParams(window.location.search)
   const greyroom = params.get('scene') === 'greyroom'
   const cornerView = !greyroom && params.get('view') === 'corner'
-  const reference = !greyroom && (params.get('view') === 'reference' || cornerView)
+  const view = params.get('view')
+  const reference = !greyroom && (Object.hasOwn(worldViews, view) || cornerView)
   const cornerStart = !greyroom && params.get('start') === 'corner'
   // The ecctrl handle, shared by the camera (needs the body to follow) and the
   // scene (the post needs to know when the player is close).
@@ -140,8 +142,8 @@ export default function App() {
 
         <Suspense fallback={null}>
           <Physics paused={(!visible || settingsOpen) && !physicsForced}>
-            {greyroom ? <GreyRoom playerRef={playerRef} /> : <HubBlockout reference={reference} cornerView={cornerView} />}
-            {!reference && <Player ref={playerRef} recoverFalls={!greyroom} cornerStart={cornerStart} />}
+            {greyroom ? <GreyRoom playerRef={playerRef} /> : <HubBlockout reference={reference} cornerView={cornerView} view={view} legacy={params.get('scene') === 'hub'} />}
+            {!reference && <Player ref={playerRef} recoverFalls={!greyroom} cornerStart={cornerStart} start={greyroom ? undefined : params.get('start')} />}
             {!reference && <FollowCamera bodyRef={playerRef} />}
             {/* Dev-only scene handle for stepping the loop and running the M1
                 audit. Inside <Physics> because it raycasts against the same

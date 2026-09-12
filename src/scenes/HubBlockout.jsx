@@ -3,16 +3,18 @@ import { useGLTF } from '@react-three/drei'
 import { useThree } from '@react-three/fiber'
 import { RigidBody } from '@react-three/rapier'
 import HubCorner from './HubCorner'
+import worldViews from '../config/world-views.json'
 
-export default function HubBlockout({ reference = false, cornerView = false }) {
-  const { nodes } = useGLTF('/models/hub-blockout.glb')
+export default function HubBlockout({ reference = false, cornerView = false, view = 'reference', legacy = false }) {
+  const { nodes } = useGLTF(legacy ? '/models/hub-blockout.glb' : '/models/world-blockout.glb')
   const camera = useThree((s) => s.camera)
   useEffect(() => {
     if (!reference) return
-    camera.position.set(...(cornerView ? [-8, 5, 1] : [0, 13, 30]))
-    camera.lookAt(...(cornerView ? [-8, 1.9, -10] : [0, 4, -8]))
+    const pose = worldViews[view] || worldViews.reference
+    camera.position.set(...(cornerView ? [-8, 5, 1] : pose.position))
+    camera.lookAt(...(cornerView ? [-8, 1.9, -10] : pose.target))
     camera.updateProjectionMatrix()
-  }, [camera, reference, cornerView])
+  }, [camera, reference, cornerView, view])
 
   return (
     <>

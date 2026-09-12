@@ -103,7 +103,7 @@ export default function DevHud({ hub = false }) {
 
   return (
     <div className="hud">
-      <div className="hud-title">{hub ? 'Phase 1 · hub blockout' : 'M2 · test course'} <button className="hud-close" aria-label="Hide performance HUD" onClick={toggleHud}>×</button></div>
+      <div className="hud-title">{hub ? 'World layout · blockout' : 'M2 · test course'} <button className="hud-close" aria-label="Hide performance HUD" onClick={toggleHud}>×</button></div>
 
       <div className="hud-group">
         <Row label="fps" value={perf.fps.toFixed(0)} budget={BUDGET.fps} invert />

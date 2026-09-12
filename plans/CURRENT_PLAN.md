@@ -1,14 +1,17 @@
 # Current plan — Archive of Impossible Things
 
-Status: Phase 2's three production sessions are complete (September 8–10).
-The export/rendering proof passes; final visual approval remains open. September 11's
-recovered review/contingency session is complete. Review the revised corner before
-repeating its assets across the hub. Phase 3 remains September 12–16, conditional on that review;
-the September 30 deadline is unchanged.
-Target: September 30, 2026; about one hour daily plus
-longer weekend sessions. Recheck remaining capacity when production begins.
+Status (revised September 12): complete connected environment scope now covers
+REF4/5/6/7/8/10. The September 30 deadline and former future phase dates are superseded.
+Expected finish: October 25, 2026; planning range October 18–November 1, assuming
+one hour per weekday and three hours per weekend day. Reforecast September 22.
+Phase A (September 12–15) is underway: September 12's first connected layout pass
+is implemented and checked. Next session: refine route/area proportions, archive
+silhouette and cavern framing against references; Phase A visual approval is open.
+Existing hub layout and corner technical proof remain reusable; final visual
+approval is open. Final character movement/physics and games follow environment
+completion. Existing movement supports inspection; author collision-ready geometry now.
 
-Scope and dated time caps: [September plan](../environment-september-plan.md).
+Scope, dates and acceleration strategy: [connected environment plan](../environment-september-plan.md).
 Visual target: [look target](../look-target.md), primary concept `concept/REF4.png`.
 Pipeline conventions: [art pipeline](../art-pipeline.md). Its historical MCP status
 is outdated: Blender MCP is installed and working; no setup changes are needed.
@@ -16,13 +19,62 @@ This milestone takes priority over the older full-game roadmap.
 
 | Step | Completion evidence |
 |---|---|
-| 1. Hub blockout | Plaza, three path mouths, tower and short canopy approach have readable scale and traversable routes. |
+| 1. Whole-world blockout | Hub, forest sections, archive exterior/interior and cavern have clear scale and connected inspection routes. |
 | 2. Camera/composition | Matched reference screenshot establishes plaza/path/tree/landmark proportions; gameplay camera reads clearly. |
 | 3. Art/detail pass | Terrain/ruins → vegetation → materials → lighting/fog → detail; fix the largest 3–5 visual mismatches per iteration. |
 | 4. Optimization/export | Reusable assets and simple colliders export to GLB; textures, draw calls and visible geometry meet existing budgets. |
 | 5. R3F loading | Browser loads GLB with correct scale, materials and lighting; representative export is proven early. |
-| 6. Rapier + ecctrl roaming | Existing character moves across all intended routes; grounding, slopes, stairs and camera collision work. |
+| 6. Integration readiness | Separate collision proxies and usable stairs/slopes/clearances; existing controller aids inspection. Final movement/physics integration follows environment delivery. |
 | 7. Browser/mobile testing | Reference-versus-screenshot review, build/lint and measured Iris Xe traversal pass; mobile viewport checks, then user-led real-phone control/thermal verification at the end. |
+
+## September 12 — Phase A first session
+
+- Added a separate editable `art/source/world-blockout.blend` and
+  `public/models/world-blockout.glb` (4,101,244 bytes). Rebuild with
+  `npm run blender:world`. The hub generator can now supply its editable scene
+  in memory, avoiding an intermediate export; the user's hub source is never loaded
+  or overwritten. Its pre-existing edit remains unchanged and outside our commits.
+- Connected hub → existing approach → deeper canopy → archive courtyard/facade
+  → open hall → descent → cavern shore. The forest road is about 5.6 m wide,
+  the hall about 30 × 28 m, and the cavern about 50 m across. These are provisional
+  layout dimensions. The 33 m descent drops 9.15 m (about 15.5 degrees); reduce or
+  reshape it during layout review if needed, before final physics work.
+- Reserved four empty future-game anchors in Blender/GLB, at browser coordinates:
+  hub [5,0,5], forest [-23,1.65,-68], hall [-19,1.65,-127], cavern [-33,-7.5,-195].
+  No game mechanics or game interfaces were added.
+- Six provisional comparison cameras: `?view=reference`, `forest`, `canopy`,
+  `exterior`, `interior`, `cavern` (each latter value uses `?view=`). Inspection
+  spawns use `?start=forest|canopy|exterior|interior|cavern`; `?start=corner` remains.
+  Default loads the connected world. `?scene=hub` retains the earlier hub export;
+  the greyroom test course is retained.
+- Iterations fixed overlapping forest/courtyard ground, opened the north boundary,
+  adjusted cavern camera/wall radii, corrected cavern material colour export and
+  closed the visible shoreline gap. Water is an opaque study surface, not a final
+  water effect; all new areas remain untextured blockouts with temporary lighting.
+- Build/lint pass. Final controller smoke check reached all 22 outward and 22
+  return checkpoints with 100% sampled grounding, including forest/hall clearings
+  and cavern shelf. This proves the sampled route, not exhaustive boundaries,
+  camera collision or final movement/physics acceptance. The pool is not walkable;
+  entering it falls into the existing recovery behavior until later integration.
+- Six short, stationary production-build frame samples (three seconds per location)
+  ranged 57.71–60.35 FPS, Medium/DPR 1.25 at 1536 × 864. Sampled draws ranged 6–16,
+  with at most 65,035 triangles. These are smoke observations, not sustained
+  whole-world or phone acceptance. Archive loads grounded at 390 × 844 without
+  horizontal overflow. Production navigation reports zero application errors;
+  the two existing dependency warnings remain. Vercel parity is still unresolved.
+- Comparison evidence: `.artifacts/world-sep12-{reference,forest,canopy,exterior,
+  interior,cavern}.png`; route evidence `.artifacts/world-routes-sep12.json`.
+  Use REF4/5/6/7/8/10 respectively. No similarity percentage or visual approval claimed.
+- Largest remaining layout mismatches: overly straight forest route and even tree
+  spacing; box-like archive facade and straight root proxies; oversized/uniform
+  hall arcades; cavern still reads as a bowl, and the comparison framing does not
+  yet capture both overhead opening and shore as in REF10. Address in remaining
+  Phase A sessions, before fine detail. Terrain margins/descent enclosure also
+  need composition review. World loading remains one coarse GLB; zone loading is
+  scheduled for Phase B. No final atmosphere, optimized detailed world or finished
+  environment is claimed. October forecast is unchanged.
+
+The entries below are historical evidence; superseded dates/scope are not active instructions.
 
 ## September 6 evidence
 
@@ -222,16 +274,14 @@ September 7 verification:
   it is excluded from today's commits. Private material remains ignored and
   untracked, verified using Git metadata only. Blender MCP setup was untouched.
 
-Next: September 12 begins the planned reusable-kit window, conditional on review
-of this revised corner. Start with a small coherent stone/masonry set within the
-existing family caps; prove repetition/export before adding more variants. The
-recovered review day has now been used, so rejected direction requires an explicit
-scope/date reassessment rather than silently moving later phases.
+Historical next-step proposal, superseded September 12: the former hub-only plan
+put reusable-kit production next. The expanded plan now begins with whole-world
+layout, then shared-kit production and technical risk prototypes.
 
 The corner is not final-quality approval or an 80% similarity claim. Largest
 remaining visual gaps: paving faces still have simplified relief, moss boundaries
 need more organic breakup, leaf lighting is simplified, and the lit corner meets
-an undressed hub. Whole-hub dressing remains Phase 4; do not multiply unresolved
+an undressed hub. Hub/forest dressing is now Phase C; do not multiply unresolved
 material/foliage choices across the world before review.
 
 Deployment performance issue: the user reports 60 FPS on ChatGPT Sites versus

@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "blender:world": "node scripts/blender/run.cjs world",
     "blender:corner": "node scripts/blender/run.cjs corner",
     "blender:blockout": "node scripts/blender/run.cjs blockout",
     "blender:version": "node scripts/blender/run.cjs version",

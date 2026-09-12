@@ -11,8 +11,9 @@ from pathlib import Path
 from mathutils import Vector
 
 ROOT = Path(__file__).resolve().parents[2]
-SOURCE = ROOT / 'art/source/hub-blockout.blend'
-EXPORT = ROOT / 'public/models/hub-blockout.glb'
+asset_name = 'world-blockout' if globals().get('WORLD_LAYOUT', False) else 'hub-blockout'
+SOURCE = ROOT / f'art/source/{asset_name}.blend'
+EXPORT = ROOT / f'public/models/{asset_name}.glb'
 random.seed(41)
 bpy.ops.object.select_all(action='SELECT')
 bpy.ops.object.delete(use_global=False)
@@ -346,21 +347,23 @@ bpy.context.scene.render.resolution_y=941
 for o in bpy.context.scene.objects:
     if o.type=='MESH' and o.data.materials and o.data.materials[0]==collision:
         o.hide_render=True
-bpy.ops.wm.save_as_mainfile(filepath=str(SOURCE))
+if not globals().get('WORLD_LAYOUT', False):
+    bpy.ops.wm.save_as_mainfile(filepath=str(SOURCE))
 
-# Merge by material to keep the study inexpensive in WebGL.
-for mat in list(bpy.data.materials):
-    objects=[o for o in bpy.context.scene.objects if o.type=='MESH' and o.data.materials and o.data.materials[0]==mat]
-    if not objects:
-        continue
-    bpy.ops.object.select_all(action='DESELECT')
-    for o in objects:
-        o.select_set(True)
-    bpy.context.view_layer.objects.active=objects[0]
-    bpy.ops.object.join()
-    joined=bpy.context.object
-    joined.name='Collision' if mat==collision else mat.name.replace(' ','_')
-    bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
+    # The world generator continues with editable objects in memory. Standalone
+    # hub generation keeps its original save/export behavior.
+    for mat in list(bpy.data.materials):
+        objects=[o for o in bpy.context.scene.objects if o.type=='MESH' and o.data.materials and o.data.materials[0]==mat]
+        if not objects:
+            continue
+        bpy.ops.object.select_all(action='DESELECT')
+        for o in objects:
+            o.select_set(True)
+        bpy.context.view_layer.objects.active=objects[0]
+        bpy.ops.object.join()
+        joined=bpy.context.object
+        joined.name='Collision' if mat==collision else mat.name.replace(' ','_')
+        bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
 
-bpy.ops.export_scene.gltf(filepath=str(EXPORT),export_format='GLB',export_cameras=True,export_texcoords=False)
-print(f'BLOCKOUT_EXPORTED {EXPORT.stat().st_size} bytes')
+    bpy.ops.export_scene.gltf(filepath=str(EXPORT),export_format='GLB',export_cameras=True,export_texcoords=False)
+    print(f'BLOCKOUT_EXPORTED {EXPORT.stat().st_size} bytes')

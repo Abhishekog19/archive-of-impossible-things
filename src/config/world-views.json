@@ -1,0 +1,80 @@
+{
+  "reference": {
+    "position": [
+      0,
+      13,
+      30
+    ],
+    "target": [
+      0,
+      4,
+      -8
+    ],
+    "ref": "REF4"
+  },
+  "forest": {
+    "position": [
+      -12,
+      4,
+      -43
+    ],
+    "target": [
+      -12,
+      6,
+      -64
+    ],
+    "ref": "REF5"
+  },
+  "canopy": {
+    "position": [
+      -12,
+      4,
+      -67
+    ],
+    "target": [
+      -12,
+      7,
+      -89
+    ],
+    "ref": "REF6"
+  },
+  "exterior": {
+    "position": [
+      8,
+      9,
+      -88
+    ],
+    "target": [
+      -12,
+      10,
+      -113
+    ],
+    "ref": "REF7"
+  },
+  "interior": {
+    "position": [
+      -12,
+      4,
+      -116
+    ],
+    "target": [
+      -12,
+      8,
+      -140
+    ],
+    "ref": "REF8"
+  },
+  "cavern": {
+    "position": [
+      -26,
+      -4,
+      -178
+    ],
+    "target": [
+      -12,
+      -2,
+      -201
+    ],
+    "ref": "REF10"
+  }
+}

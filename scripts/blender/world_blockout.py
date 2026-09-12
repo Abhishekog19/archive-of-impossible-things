@@ -78,6 +78,13 @@ def road(points, width, name='Connected paving'):
         verts.extend([(p[0]-dz/length*width/2,p[1],p[2]+dx/length*width/2),
                       (p[0]+dz/length*width/2,p[1],p[2]-dx/length*width/2)])
     return mesh(name,verts,[(2*i,2*i+2,2*i+3,2*i+1) for i in range(len(points)-1)],stone,True)
+def root_curve(points, radius):
+    """Broad bent root silhouette; surface/bark detail belongs to the art pass."""
+    for i,(a,b) in enumerate(zip(points,points[1:])):
+        branch('Wrapping facade root',a,b,radius*(1-i/(len(points)+1)),bark,True)
+def forest_x(z):
+    t=max(0,min(1,(-z-42)/52))
+    return -12+3.8*math.sin(t*math.tau)*math.sin(t*math.pi)
 def arch(x,y,z,width=5,height=7,depth=1.2):
     r=width/2
     spring=y+height-r
@@ -109,47 +116,52 @@ for o in list(bpy.context.scene.objects):
 
 # REF5/6: the existing approach flows into a second, more enclosed forest section.
 box('Forest extension ground',(-12,.90,-76),(42,1.4,70),earth,True)
-road([(-12,1.65,z) for z in range(-42,-102,-2)],5.6)
+road([(forest_x(z),1.65,z) for z in range(-42,-96,-2)],5.6)
 for z in range(-48,-95,-7):
     for side in (-1,1):
-        x=-12+side*random.uniform(5.2,8)
+        x=forest_x(z)+side*random.uniform(5.2,8)
+        tree_z=z+random.uniform(-1.8,1.8)
         h=random.uniform(10,15)
-        branch('Deep canopy trunk',(x,1.65,z),(x+side*.8,h,z-1),.65,bark,True)
+        branch('Deep canopy trunk',(x,1.65,tree_z),(x+side*.8,h,tree_z-1),.65,bark,True)
         for dx in (-2,1,3):
-            mass('Deep canopy crown',(x+dx,h,z),(4,2.3,4.7),random.choice(leaves))
+            mass('Deep canopy crown',(x+dx,h,tree_z),(4,2.3,4.7),random.choice(leaves))
         if z%3:
             box('Forest ruin remnant',(x+side*2,3,z),(1.5,2.7,2),stone,True)
     # Shoulders conceal the flat study boundary without filling the walking lane.
     for x in (-28,3):
         mass('Forest shoulder',(x,3,z),(5,3,5),earth)
 box('Forest game clearing',(-23,1.4,-68),(10,.5,9),stone,True)
-road([(-12,1.65,-68),(-23,1.65,-68)],3)
+road([(forest_x(-68),1.65,-68),(-23,1.65,-68)],3)
 
 # REF7: a readable exterior courtyard and tree-wrapped facade, not a solid box.
 box('Archive courtyard',(-12,1.10,-103),(30,1,22),earth,True)
 road([(-12,1.65,-94),(-12,1.65,-113)],7)
-for x in (-22,-2):
-    box('Archive facade wing',(x,7.65,-113),(12,12,2),stone,True)
+for x,h in [(-24,6),(-19.5,10),(-4.5,9),(0,5)]:
+    box('Stepped archive facade',(x,1.65+h/2,-113),(5,h,3),stone,True)
 arch(-12,1.65,-113,6,9,2)
-box('Archive facade crest',(-12,13.4,-113),(31,1.5,2.5),stone,True)
-for x,h in [(-27,15),(-1,16)]:
-    box('Facade broken pinnacle',(x,h/2+1.65,-113),(2,h,3),stone,True)
+box('Archive central crown',(-12,11.7,-114),(12,1.5,4),stone,True)
+for x,h in [(-20,14),(-5,12)]:
+    box('Facade broken pinnacle',(x,h/2+1.65,-115),(1.5,h,2),stone,True)
 branch('Archive hero tree',(-23,1.65,-113),(-21,23,-118),2,bark,True)
 for end in [(-10,21,-119),(-31,20,-116),(-19,26,-127)]:
     branch('Hero spreading limb',(-21,15,-117),end,1.2,bark)
     mass('Hero tree crown',end,(8,3.6,7),leaves[1])
-for end in [(-27,1.65,-103),(-17,1.65,-106),(-26,2,-125),(-4,11,-114)]:
-    branch('Facade root',(-23,8,-113),end,1.1,bark,True)
+for points in [
+    [(-23,10,-114),(-25,6,-112),(-25,3,-108),(-28,1.8,-103)],
+    [(-23,8,-114),(-20,5,-112),(-18,2.8,-109),(-17,1.8,-105)],
+    [(-23,9,-114),(-25,5,-119),(-26,2,-125)],
+    [(-23,12,-114),(-19,10,-111),(-13,11.7,-111),(-7,12,-112),(-4,10,-115)],
+]: root_curve(points,1.1)
 
 # REF8: open central aisle, side arcades and a broken roof framing the sky.
 box('Archive hall floor',(-12,1.15,-127),(30,1,28),stone,True)
 for x in (-27,3):
     box('Archive side wall',(x,8,-128),(1.4,12.7,28),stone,True)
 for z in (-119,-127,-135):
-    for x in (-22,-2):
+    for x in (-19,-5):
         box('Hall column plinth',(x,1.95,z),(2.2,.6,2.2),edge,True)
         branch('Hall column',(x,2.25,z),(x,10.8,z),.65,stone,True)
-    arch(-12,1.65,z,18,12,1)
+    arch(-12,1.65,z,12,11,.8)
 for x in (-24,0):
     box('Broken roof shoulder',(x,14,-127),(6,.8,27),stone,True)
 arch(-12,1.65,-141,5,8,1.5)
@@ -172,42 +184,48 @@ for mat in (rock,water):
     shader.inputs['Base Color'].default_value=mat.diffuse_color
     shader.inputs['Roughness'].default_value=.9 if mat==rock else .25
 cx,cz=-12,-195
-radial=[random.uniform(-1.4,1.4) for _ in range(24)]
+radial=[[random.uniform(-2,2) for _ in range(24)] for _ in range(4)]
 for i in range(24):
     a,b=i*math.tau/24,(i+1)*math.tau/24
-    # Leave a six-metre entrance opening on the near wall.
-    if i in (5,6): continue
+    # The entrance cuts only the lower wall, not a slit through the entire roof.
     pts=[]
-    for y,r in [(-8,25),(3,24),(15,17),(22,4)]:
+    for level,(y,r) in enumerate([(-8,25),(3,24),(13,17),(18,4)]):
         for j,t in ((i,a),((i+1)%24,b)):
-            radius=r+radial[j]*(.3 if r==4 else 1)
-            pts.append((cx+radius*math.cos(t),y,cz+radius*math.sin(t)))
-    mesh('Cavern wall shell',pts,[(0,1,3,2),(2,3,5,4),(4,5,7,6)],rock,True)
+            radius=r+radial[level][j]*(.3 if r==4 else 1)
+            shift=-10*(level/3)**2
+            pts.append((cx+radius*math.cos(t),y,cz+shift+radius*math.sin(t)))
+    faces=[(2,3,4),(3,5,4),(4,5,7),(4,7,6)]
+    if i not in (5,6): faces=[(0,1,3),(0,3,2)]+faces
+    mesh('Cavern wall shell',pts,faces,rock,True)
     # Shore bank is continuous; central water has no walkable collider.
+def shore_radius(t): return 15.5+1.2*math.sin(3*t)+.7*math.cos(5*t)
 for i in range(32):
     a,b=i*math.tau/32,(i+1)*math.tau/32
-    pts=[(cx+r*math.cos(t),-7.5,cz+r*math.sin(t)) for r,t in ((16,a),(27,a),(27,b),(16,b))]
+    pts=[(cx+r*math.cos(t),-7.5,cz+r*math.sin(t)) for r,t in ((shore_radius(a),a),(28,a),(28,b),(shore_radius(b),b))]
     mesh('Cavern shore',pts,[(3,2,1,0)],edge,True)
-    lip=[(cx+16*math.cos(t),y,cz+16*math.sin(t)) for t,y in ((a,-7.5),(b,-7.5),(b,-9),(a,-9))]
+    lip=[(cx+shore_radius(t)*math.cos(t),y,cz+shore_radius(t)*math.sin(t)) for t,y in ((a,-7.5),(b,-7.5),(b,-9),(a,-9))]
     mesh('Shore rock lip',lip,[(0,1,2,3)],rock)
-mesh('Cavern pool',[(cx+16.15*math.cos(i*math.tau/48),-7.8,cz+16.15*math.sin(i*math.tau/48)) for i in range(48)],
-     [tuple(reversed(range(48)))],water)
+mesh('Cavern pool',[(cx+(shore_radius(i*math.tau/32)+.15)*math.cos(i*math.tau/32),-7.8,
+                     cz+(shore_radius(i*math.tau/32)+.15)*math.sin(i*math.tau/32)) for i in range(32)],
+     [tuple(reversed(range(32)))],water)
+for x,z,h in [(-33,-207,10),(8,-204,12),(-4,-217,13),(-22,-216,8)]:
+    mass('Cavern rock buttress',(x,-7.5+h*.45,z),(3,h*.75,3.5),rock)
 box('Cavern game shelf',(-33,-8,-195),(9,1,12),edge,True)
 
 views={
  'reference':{'position':[0,13,30],'target':[0,4,-8],'ref':'REF4'},
- 'forest':{'position':[-12,4,-43],'target':[-12,6,-64],'ref':'REF5'},
- 'canopy':{'position':[-12,4,-67],'target':[-12,7,-89],'ref':'REF6'},
- 'exterior':{'position':[8,9,-88],'target':[-12,10,-113],'ref':'REF7'},
+ 'forest':{'position':[-12,4,-43],'target':[-10,5,-64],'ref':'REF5'},
+ 'canopy':{'position':[-12,4,-67],'target':[-14,6,-89],'ref':'REF6'},
+ 'exterior':{'position':[5,7,-88],'target':[-12,11,-115],'ref':'REF7'},
  'interior':{'position':[-12,4,-116],'target':[-12,8,-140],'ref':'REF8'},
- 'cavern':{'position':[-26,-4,-178],'target':[-12,-2,-201],'ref':'REF10'},
+ 'cavern':{'position':[-26,-3,-176],'target':[-12,4,-201],'ref':'REF10'},
 }
 for name,v in views.items():
     bpy.ops.object.camera_add(location=pos(v['position']))
     cam=bpy.context.object;cam.name='View_'+name
     cam.rotation_euler=(Vector(pos(v['target']))-cam.location).to_track_quat('-Z','Y').to_euler()
     cam.data.lens=36
-for name,at in {'Hub':[5,0,5],'Forest':[-23,1.65,-68],'Hall':[-19,1.65,-127],'Cavern':[-33,-7.5,-195]}.items():
+for name,at in {'Hub':[5,0,5],'Forest':[-23,1.65,-68],'Hall':[-23,1.65,-123],'Cavern':[-33,-7.5,-195]}.items():
     bpy.ops.object.empty_add(location=pos(at));bpy.context.object.name='FutureGame_'+name
 for o in bpy.context.scene.objects:
     if o.type=='MESH' and o.data.materials and o.data.materials[0]==collision: o.hide_render=True

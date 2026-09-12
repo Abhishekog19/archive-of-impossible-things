@@ -109,8 +109,10 @@ Historical session evidence is retained in `plans/CURRENT_PLAN.md`.
 September 12's first Phase A production session has connected rough versions of all
 six areas, reserved four game locations and established provisional comparison views.
 The sampled outward/return route passes; this is not final layout/art approval.
-Next session: refine the straight forest route, archive proportions/root silhouette,
-hall scale and cavern shape/framing. Keep Phase A's remaining review windows rather
+The next layout session was also completed September 12, brought forward from
+September 13: forest bends, archive proportions/root silhouette, hall scale and
+cavern shape/framing were refined. Next: transitions, boundaries and six-area
+composition review to close Phase A. Keep the remaining review windows rather
 than inferring final quality from the existence of all areas. Detailed evidence is
 in `plans/CURRENT_PLAN.md`; October forecast is unchanged. Preserve the pre-existing
 user edit to `art/source/hub-blockout.blend`; the world generator writes separate

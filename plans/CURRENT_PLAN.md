@@ -4,9 +4,10 @@ Status (revised September 12): complete connected environment scope now covers
 REF4/5/6/7/8/10. The September 30 deadline and former future phase dates are superseded.
 Expected finish: October 25, 2026; planning range October 18–November 1, assuming
 one hour per weekday and three hours per weekend day. Reforecast September 22.
-Phase A (September 12–15) is underway: September 12's first connected layout pass
-is implemented and checked. Next session: refine route/area proportions, archive
-silhouette and cavern framing against references; Phase A visual approval is open.
+Phase A (September 12–15) is underway: its first and second layout sessions were
+both performed September 12 at the user's request. The second session was brought
+forward from September 13. Next: review transitions, boundaries and six-area
+composition to close the layout gate. Phase A visual approval remains open.
 Existing hub layout and corner technical proof remain reusable; final visual
 approval is open. Final character movement/physics and games follow environment
 completion. Existing movement supports inspection; author collision-ready geometry now.
@@ -26,6 +27,37 @@ This milestone takes priority over the older full-game roadmap.
 | 5. R3F loading | Browser loads GLB with correct scale, materials and lighting; representative export is proven early. |
 | 6. Integration readiness | Separate collision proxies and usable stairs/slopes/clearances; existing controller aids inspection. Final movement/physics integration follows environment delivery. |
 | 7. Browser/mobile testing | Reference-versus-screenshot review, build/lint and measured Iris Xe traversal pass; mobile viewport checks, then user-led real-phone control/thermal verification at the end. |
+
+## September 12 — Phase A second session, brought forward
+
+- Added a gentle S-bend to the forest extension and staggered tree positions while
+  retaining the 5.6 m route width and forest game clearing. REF5/6 comparison now
+  has changing foreground/midground overlap instead of a straight avenue.
+- Replaced the uniform archive frontage with stepped wings and a narrower central
+  crown. Bent the root proxies around the facade; reduced hall arch openings from
+  18 m to 12 m. Relocated the hall's future-game anchor to [-23,1.65,-123] so it
+  remains clear of the revised column line. The earlier anchor below is historical.
+- Broke up cavern wall planes and shoreline radius, lowered/moved the roof opening
+  to include it with the shore in the comparison frame, and added grounded rock
+  masses. The entrance now cuts the lower wall only. These are shape changes;
+  water, final lighting and surface detail remain later art work.
+- Compared `.artifacts/world-sep12b-{forest,exterior,interior,cavern}.png` with
+  REF5/7/8/10 and the first session's captures. The second visual iteration fixes
+  floating rock silhouettes and an unintended roof slit. No final-quality or
+  numerical similarity claim; roots and masonry are still coarse proxies.
+- Verification: build/lint pass; final world GLB is 4,138,036 bytes. All 24 outward
+  and 24 return checkpoints pass with 100% sampled grounding; evidence is
+  `.artifacts/world-routes-sep12b.json`. These are bounded route checks, not final
+  movement/physics acceptance. Browser navigation has zero application errors and
+  the two existing dependency warnings. User hub-source edit and Blender setup
+  remain untouched. Private source material is ignored/untracked, checked by Git
+  metadata only. New detailed textures/effects were not added.
+
+One early session does not automatically move all later dates. Remaining Phase A
+  work: terrain margins/descent enclosure, boundary and side-route review, and all
+  six composition views before kit production. Use recovered time for that gate;
+  Phase B remains Sep 16–22 unless the gate is actually completed earlier. October
+  25 remains the working forecast, to be re-estimated at the kit/prototype gate.
 
 ## September 12 — Phase A first session
 

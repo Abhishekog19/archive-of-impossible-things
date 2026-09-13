@@ -85,6 +85,24 @@ def root_curve(points, radius):
 def forest_x(z):
     t=max(0,min(1,(-z-42)/52))
     return -12+3.8*math.sin(t*math.tau)*math.sin(t*math.pi)
+def terrain_bank(side):
+    """Continuous steep inner bank: visible terrain supplies the boundary proxy."""
+    points=[]
+    for i,z in enumerate(range(-40,-117,-4)):
+        # Narrow into the archive walls, with space around the west game clearing.
+        taper=max(0,min(1,(-z-96)/16))
+        inner=(-31 if side<0 else 7)-side*4*taper
+        inner+=side*(.65*math.sin(i*1.7))
+        crest=5.4+.8*math.sin(i*.9)+.35*math.cos(i*2.1)
+        points.extend([(inner,1.55,z),(inner+side*.5,crest,z),
+                       (inner+side*5,crest+1.5,z),(inner+side*9,.4,z)])
+    faces=[]
+    for i in range(len(points)//4-1):
+        for j in range(3):
+            a=4*i+j;b=a+4
+            faces.extend([(a,b,a+1),(b,b+1,a+1)])
+    if side>0: faces=[tuple(reversed(f)) for f in faces]
+    mesh('Continuous forest bank',points,faces,earth,True)
 def arch(x,y,z,width=5,height=7,depth=1.2):
     r=width/2
     spring=y+height-r
@@ -116,7 +134,7 @@ for o in list(bpy.context.scene.objects):
 
 # REF5/6: the existing approach flows into a second, more enclosed forest section.
 box('Forest extension ground',(-12,.90,-76),(42,1.4,70),earth,True)
-road([(forest_x(z),1.65,z) for z in range(-42,-96,-2)],5.6)
+road([(forest_x(z),1.65,z) for z in range(-42,-92,-2)],5.6)
 for z in range(-48,-95,-7):
     for side in (-1,1):
         x=forest_x(z)+side*random.uniform(5.2,8)
@@ -129,13 +147,19 @@ for z in range(-48,-95,-7):
             box('Forest ruin remnant',(x+side*2,3,z),(1.5,2.7,2),stone,True)
     # Shoulders conceal the flat study boundary without filling the walking lane.
     for x in (-28,3):
-        mass('Forest shoulder',(x,3,z),(5,3,5),earth)
+        # Keep the west clearing and its four-metre camera orbit out of foliage.
+        shoulder_x=-36 if x==-28 and abs(z+68)<14 else x
+        mass('Forest shoulder',(shoulder_x,3,z),(5,3,5),earth)
 box('Forest game clearing',(-23,1.4,-68),(10,.5,9),stone,True)
 road([(forest_x(-68),1.65,-68),(-23,1.65,-68)],3)
+for side in (-1,1): terrain_bank(side)
 
 # REF7: a readable exterior courtyard and tree-wrapped facade, not a solid box.
 box('Archive courtyard',(-12,1.10,-103),(30,1,22),earth,True)
-road([(-12,1.65,-94),(-12,1.65,-113)],7)
+mesh('Forest courtyard threshold',
+     [(x+side*w/2,1.65,z) for x,z,w in [(forest_x(-90),-90,5.6),(-12,-96,6),(-12,-103,7)]
+      for side in (-1,1)],[(0,1,3,2),(2,3,5,4)],stone,True)
+road([(-12,1.65,-103),(-12,1.65,-113)],7)
 for x,h in [(-24,6),(-19.5,10),(-4.5,9),(0,5)]:
     box('Stepped archive facade',(x,1.65+h/2,-113),(5,h,3),stone,True)
 arch(-12,1.65,-113,6,9,2)
@@ -163,17 +187,36 @@ for z in (-119,-127,-135):
         branch('Hall column',(x,2.25,z),(x,10.8,z),.65,stone,True)
     arch(-12,1.65,z,12,11,.8)
 for x in (-24,0):
-    box('Broken roof shoulder',(x,14,-127),(6,.8,27),stone,True)
+    # Set roof remnants behind the facade, avoiding a detached-looking front lip.
+    box('Broken roof shoulder',(x,14,-130),(6,.8,21),stone,True)
 arch(-12,1.65,-141,5,8,1.5)
 for x in (-23,-1):
     box('Archive rear wall',(x,6.65,-141),(16,10,1.5),stone,True)
 
 # Descending passage reserves real clearance and joins the cavern's near shore.
 road([(-12,1.65,-141),(-12,-7.5,-174)],5,'Archive descent')
+# Closed side/roof rings replace disconnected decorative rocks. Keep a minimum
+# 5.6 m opening and 6.2 m roof clearance; ends remain open for both transitions.
+tunnel=[]
+for i,z in enumerate([-141,-146,-151,-156,-161,-166,-171,-174]):
+    y=1.65-(-z-141)/33*9.15
+    bulge=.3*math.sin(i*1.4)
+    for x,h in [(-2.8,-.35),(-3.15,3.6),(-1.8,6.2+bulge),
+                (0,6.8+bulge),(1.9,6.4-bulge),(3.2,3.5),(2.8,-.35)]:
+        # First ring overlaps the arch crown; no daylight seam above the tunnel.
+        if i==0 and h>6: h+=2
+        tunnel.append((-12+x,y+h,z))
+faces=[]
+for i in range(len(tunnel)//7-1):
+    for j in range(6):
+        a=i*7+j;b=a+7
+        faces.extend([(a,b,a+1),(a+1,b,b+1)])
+mesh('Continuous descent shell',tunnel,faces,edge,True)
+# Narrow shoulders join the paving to its walls, preventing falls through verges.
 for side in (-1,1):
-    for z in range(-145,-173,-5):
-        y=1.65-(abs(z)-141)/33*9.15
-        mass('Descent rock wall',(-12+side*4,y+3,z),(2.5,5,4),edge)
+    mesh('Descent shoulder',
+         [(-12+side*x,y,z) for y,z in [(1.65,-141),(-7.5,-174)] for x in [2.5,2.85]],
+         [(0,1,3,2)],edge,True)
 
 # REF10: faceted chamber shell, central pool, broad usable bank and overhead oculus.
 rock=bpy.data.materials.new('Cavern slate');rock.diffuse_color=(.22,.28,.32,1)

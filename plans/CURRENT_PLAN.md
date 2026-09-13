@@ -1,13 +1,15 @@
 # Current plan — Archive of Impossible Things
 
-Status (revised September 12): complete connected environment scope now covers
+Status (revised September 13): complete connected environment scope now covers
 REF4/5/6/7/8/10. The September 30 deadline and former future phase dates are superseded.
 Expected finish: October 25, 2026; planning range October 18–November 1, assuming
 one hour per weekday and three hours per weekend day. Reforecast September 22.
 Phase A (September 12–15) is underway: its first and second layout sessions were
 both performed September 12 at the user's request. The second session was brought
-forward from September 13. Next: review transitions, boundaries and six-area
-composition to close the layout gate. Phase A visual approval remains open.
+forward from September 13. September 13's third session adds continuous terrain
+banks, an enclosed descent and transition fixes; six-area comparison is recorded
+below. Next: final Phase A silhouette/review gate during September 14–15, then
+shared-kit/risk prototypes. Phase A visual approval remains open.
 Existing hub layout and corner technical proof remain reusable; final visual
 approval is open. Final character movement/physics and games follow environment
 completion. Existing movement supports inspection; author collision-ready geometry now.
@@ -27,6 +29,55 @@ This milestone takes priority over the older full-game roadmap.
 | 5. R3F loading | Browser loads GLB with correct scale, materials and lighting; representative export is proven early. |
 | 6. Integration readiness | Separate collision proxies and usable stairs/slopes/clearances; existing controller aids inspection. Final movement/physics integration follows environment delivery. |
 | 7. Browser/mobile testing | Reference-versus-screenshot review, build/lint and measured Iris Xe traversal pass; mobile viewport checks, then user-led real-phone control/thermal verification at the end. |
+
+## September 13 — Phase A transitions and boundaries
+
+- Added continuous irregular terrain banks from the forest into the archive sides,
+  with matching collision proxies. Preserved the west clearing; moved nearby
+  decorative shoulder masses outside its camera orbit after a gameplay capture
+  exposed an occlusion. The forest road widens into the courtyard continuously.
+- Replaced separated descent rocks with a connected side/roof shell and walkable
+  shoulders. Retained the 33 m descent and 5 m paving; the central roof clearance
+  is at least 6.2 m. The entry overlaps the archive arch crown to remove a daylight
+  seam. Set roof remnants behind the facade to remove a detached-looking lip.
+- Reviewed REF4/5/6/7/8/10 against six browser reference views at 1280 × 720;
+  evidence: `.artifacts/world-sep13-{reference,forest,canopy,exterior,interior,cavern}.jpg`.
+  Gameplay captures: `world-sep13-descent.png` and `world-sep13-clearing.png`.
+  Diagnostic files are local, ignored artifacts.
+- Composition review: hub split and landmark are retained (REF4); forest path
+  hierarchy is clear but side/background canopy remains sparse (REF5/6); archive
+  entrance reads, but facade/tree/root masses still need authored silhouettes
+  (REF7); hall aisle and descent are connected but arcades remain uniform (REF8);
+  cave opening, pool and bank read together, but the shell remains bowl-like and
+  needs varied rock planes and atmosphere (REF10). These are blockout comparisons,
+  not an 80% match or final art acceptance.
+- Final GLB: 4,161,700 bytes; build and lint pass. All 24 outward and 24 return
+  checkpoints pass with 100% sampled grounding, including the three remote game
+  clearings. Eight boundary approaches pass: both forest banks, courtyard sides,
+  passage sides and cavern outer walls. The passage camera is 4 m in the open and
+  pulls to 0.37 m beside a wall; that close pull-in still needs the deferred camera
+  polish. These are bounded checks, not exhaustive jump/camera/physics acceptance.
+  Evidence: `.artifacts/world-routes-sep13.json`, no application errors.
+- The isolated physics regression suppresses redundant render submissions during
+  fixed stepping. Its screenshot FPS values are not live performance measurements.
+  Visual comparison uses the normal browser renderer separately. No new runtime
+  effects, textures, controller changes or gameplay. Private material remains
+  ignored/untracked (Git metadata only); the user's hub-source hash is unchanged
+  and that file stays outside commits. Blender MCP setup was untouched.
+- Production forest HUD spot check: 60 FPS, 12 draws, 42,547 triangles, 16
+  geometries / 3 textures, Medium at DPR 1.25 and 1280 × 720. Grounded; no
+  application errors. This is a brief stationary observation, not a sustained
+  performance claim or a resolution of the Vercel report. Evidence:
+  `.artifacts/world-sep13-production.json`.
+- The production cavern spawn loads grounded at 390 × 844 without horizontal
+  overflow or application errors (`world-sep13-mobile.json`). This is a desktop
+  viewport smoke check; real-phone input and thermal verification remain pending.
+
+Remaining Phase A review: forest side silhouettes and archive massing before kit
+production; final layout approval is open. Keep September 14–15 for that review.
+Phase B remains September 16–22 and October 25 remains the working finish forecast.
+Detailed surfaces, canopy dressing, water/light and sustained whole-world/real-phone
+acceptance remain later gates; do not infer final quality from route checks.
 
 ## September 12 — Phase A second session, brought forward
 

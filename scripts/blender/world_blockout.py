@@ -78,10 +78,24 @@ def road(points, width, name='Connected paving'):
         verts.extend([(p[0]-dz/length*width/2,p[1],p[2]+dx/length*width/2),
                       (p[0]+dz/length*width/2,p[1],p[2]-dx/length*width/2)])
     return mesh(name,verts,[(2*i,2*i+2,2*i+3,2*i+1) for i in range(len(points)-1)],stone,True)
-def root_curve(points, radius):
-    """Broad bent root silhouette; surface/bark detail belongs to the art pass."""
-    for i,(a,b) in enumerate(zip(points,points[1:])):
-        branch('Wrapping facade root',a,b,radius*(1-i/(len(points)+1)),bark,True)
+def root_curve(points, radius, name='Wrapping facade root'):
+    """Continuous tapered rings avoid the seams of overlapping capped cones."""
+    vertices=[];sides=8
+    for i,p in enumerate(points):
+        tangent=(Vector(points[min(i+1,len(points)-1)])-
+                 Vector(points[max(0,i-1)])).normalized()
+        axis=Vector((0,0,1)) if abs(tangent.z)<.9 else Vector((1,0,0))
+        normal=tangent.cross(axis).normalized();binormal=tangent.cross(normal)
+        r=radius*(1-.65*i/(len(points)-1))
+        for j in range(sides):
+            angle=j*math.tau/sides
+            vertices.append(tuple(Vector(p)+r*(normal*math.cos(angle)+binormal*math.sin(angle))))
+    faces=[tuple(reversed(range(sides))),tuple(range(len(vertices)-sides,len(vertices)))]
+    for i in range(len(points)-1):
+        for j in range(sides):
+            a=i*sides+j;b=i*sides+(j+1)%sides
+            faces.append((a,b,b+sides,a+sides))
+    return mesh(name,vertices,faces,bark,True)
 def forest_x(z):
     t=max(0,min(1,(-z-42)/52))
     return -12+3.8*math.sin(t*math.tau)*math.sin(t*math.pi)
@@ -140,7 +154,9 @@ for z in range(-48,-95,-7):
         x=forest_x(z)+side*random.uniform(5.2,8)
         tree_z=z+random.uniform(-1.8,1.8)
         h=random.uniform(10,15)
-        branch('Deep canopy trunk',(x,1.65,tree_z),(x+side*.8,h,tree_z-1),.65,bark,True)
+        root_curve([(x,1.65,tree_z),(x-side*.25,h*.43,tree_z+.3),
+                    (x+side*.8,h*.76,tree_z-.5),(x+side*.3,h,tree_z-1)],
+                   .65,'Deep canopy trunk')
         for dx in (-2,1,3):
             mass('Deep canopy crown',(x+dx,h,tree_z),(4,2.3,4.7),random.choice(leaves))
         if z%3:
@@ -154,6 +170,23 @@ box('Forest game clearing',(-23,1.4,-68),(10,.5,9),stone,True)
 road([(forest_x(-68),1.65,-68),(-23,1.65,-68)],3)
 for side in (-1,1): terrain_bank(side)
 
+# REF5/6 need foliage behind the foreground trunks, not an empty side horizon.
+# A local random stream keeps new woodland from changing the cavern's geometry.
+woodland_state=random.getstate();random.seed(914)
+for i,z in enumerate(range(-43,-107,-8)):
+    for side in (-1,1):
+        x=forest_x(z)+side*(18+1.8*math.sin(i*1.3))
+        # The west game clearing includes a four-metre camera orbit.
+        if side<0 and abs(z+68)<17: x=min(x,-36)
+        # Keep the exterior comparison sightline outside the background crowns.
+        if side>0 and z<-74: x=max(x,20)
+        h=14+3*math.sin(i*.8+side)
+        branch('Woodland background trunk',(x,1.6,z),(x-side,h,z-2),.65,bark)
+        mass('Woodland middle crown',(x,7.5,z),(6,4.5,6),leaves[i%3])
+        mass('Woodland upper crown',(x-side*1.5,h,z-1),(7,4,6),leaves[(i+1)%3])
+        mass('Woodland lower silhouette',(x+side*1.5,4.5,z+3),(5,3.5,5),leaves[0])
+random.setstate(woodland_state)
+
 # REF7: a readable exterior courtyard and tree-wrapped facade, not a solid box.
 box('Archive courtyard',(-12,1.10,-103),(30,1,22),earth,True)
 mesh('Forest courtyard threshold',
@@ -164,17 +197,29 @@ for x,h in [(-24,6),(-19.5,10),(-4.5,9),(0,5)]:
     box('Stepped archive facade',(x,1.65+h/2,-113),(5,h,3),stone,True)
 arch(-12,1.65,-113,6,9,2)
 box('Archive central crown',(-12,11.7,-114),(12,1.5,4),stone,True)
+# Raise the central structure above its lower ruined wings, as in REF7.
+for x,h in [(-17,7.2),(-7,5.8)]:
+    box('Archive upper facade',(x,12.4+h/2,-115),(3,h,4),stone,True)
+arch(-12,12.4,-115,5,6,3)
+box('Archive upper broken belt',(-13,19.5,-115),(10,.8,4),stone,True)
 for x,h in [(-20,14),(-5,12)]:
     box('Facade broken pinnacle',(x,h/2+1.65,-115),(1.5,h,2),stone,True)
-branch('Archive hero tree',(-23,1.65,-113),(-21,23,-118),2,bark,True)
-for end in [(-10,21,-119),(-31,20,-116),(-19,26,-127)]:
-    branch('Hero spreading limb',(-21,15,-117),end,1.2,bark)
-    mass('Hero tree crown',end,(8,3.6,7),leaves[1])
+root_curve([(-23,1.65,-113),(-22,9,-114),(-19,18,-116),(-15,27,-118)],
+           2.1,'Archive hero tree')
+for end in [(-7,26,-117),(-28,23,-118),(-16,30,-124)]:
+    branch('Hero spreading limb',(-19,20,-116),end,1.2,bark)
+    mass('Hero tree crown',end,(6.5,4,6),leaves[1])
+hero_state=random.getstate();random.seed(9147)
+for at,scale in [((-10,29,-119),(4.5,3.5,5)),((-25,26,-116),(5,3,4)),
+                 ((-18,25,-121),(5,4,5))]:
+    mass('Hero secondary crown',at,scale,leaves[2])
+random.setstate(hero_state)
 for points in [
     [(-23,10,-114),(-25,6,-112),(-25,3,-108),(-28,1.8,-103)],
     [(-23,8,-114),(-20,5,-112),(-18,2.8,-109),(-17,1.8,-105)],
     [(-23,9,-114),(-25,5,-119),(-26,2,-125)],
     [(-23,12,-114),(-19,10,-111),(-13,11.7,-111),(-7,12,-112),(-4,10,-115)],
+    [(-19,20,-116),(-19,17,-112),(-15,15,-111),(-9,14,-111),(-5,10,-112),(-5,5,-112)],
 ]: root_curve(points,1.1)
 
 # REF8: open central aisle, side arcades and a broken roof framing the sky.
@@ -259,7 +304,7 @@ views={
  'reference':{'position':[0,13,30],'target':[0,4,-8],'ref':'REF4'},
  'forest':{'position':[-12,4,-43],'target':[-10,5,-64],'ref':'REF5'},
  'canopy':{'position':[-12,4,-67],'target':[-14,6,-89],'ref':'REF6'},
- 'exterior':{'position':[5,7,-88],'target':[-12,11,-115],'ref':'REF7'},
+ 'exterior':{'position':[8,9,-98],'target':[-13,13,-115],'ref':'REF7'},
  'interior':{'position':[-12,4,-116],'target':[-12,8,-140],'ref':'REF8'},
  'cavern':{'position':[-26,-3,-176],'target':[-12,4,-201],'ref':'REF10'},
 }

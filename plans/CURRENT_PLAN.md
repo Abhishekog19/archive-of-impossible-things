@@ -1,6 +1,6 @@
 # Current plan — Archive of Impossible Things
 
-Status (revised September 13): complete connected environment scope now covers
+Status (revised September 14): complete connected environment scope now covers
 REF4/5/6/7/8/10. The September 30 deadline and former future phase dates are superseded.
 Expected finish: October 25, 2026; planning range October 18–November 1, assuming
 one hour per weekday and three hours per weekend day. Reforecast September 22.
@@ -8,7 +8,8 @@ Phase A (September 12–15) is underway: its first and second layout sessions we
 both performed September 12 at the user's request. The second session was brought
 forward from September 13. September 13's third session adds continuous terrain
 banks, an enclosed descent and transition fixes; six-area comparison is recorded
-below. Next: final Phase A silhouette/review gate during September 14–15, then
+below. September 14 refines forest enclosure, bent trunks and archive/tree/root
+silhouettes. Next: September 15 final Phase A layout review, then September 16–22
 shared-kit/risk prototypes. Phase A visual approval remains open.
 Existing hub layout and corner technical proof remain reusable; final visual
 approval is open. Final character movement/physics and games follow environment
@@ -29,6 +30,45 @@ This milestone takes priority over the older full-game roadmap.
 | 5. R3F loading | Browser loads GLB with correct scale, materials and lighting; representative export is proven early. |
 | 6. Integration readiness | Separate collision proxies and usable stairs/slopes/clearances; existing controller aids inspection. Final movement/physics integration follows environment delivery. |
 | 7. Browser/mobile testing | Reference-versus-screenshot review, build/lint and measured Iris Xe traversal pass; mobile viewport checks, then user-led real-phone control/thermal verification at the end. |
+
+## September 14 — Phase A silhouette refinement
+
+- Added layered background woodland and bent foreground trunks for REF5/6.
+  Continuous tapered meshes replace overlapping capped segments, removing visible
+  joints in trunks and roots. Kept the forest clearing and route clear.
+- Raised the archive's central facade above its wings, bent the hero trunk,
+  layered its crown and added an upper wrapping root for REF7. Moved the exterior
+  comparison camera into a clear courtyard sightline; shifted background trees
+  after the first comparison exposed foliage occlusion.
+- Reviewed six 1280 × 720 browser comparisons against REF4/5/6/7/8/10:
+  `.artifacts/world-sep14-{reference,forest,canopy,exterior,interior,cavern}.jpg`.
+  Forest enclosure is fuller, but an eastern canopy gap remains near the courtyard.
+  The archive is taller; framing is still tighter/more oblique than REF7 and its
+  root transitions and masonry remain coarse. Hub, hall and cavern composition
+  are retained. These are blockout improvements, not final art acceptance.
+- GLB: 4,335,920 bytes (174,220 bytes above September 13). Build/lint pass.
+  Final regression passes all 24 outward and 24 return checkpoints with 100%
+  sampled grounding, plus eight boundary approaches; no application errors.
+  Evidence: `.artifacts/world-routes-sep14.json`. Gameplay captures of the clearing
+  and descent remain readable. The passage camera still pulls from 4 m to 0.37 m
+  beside a wall; final camera tuning remains deferred. The earlier concurrent
+  build/test screenshot timeout is excluded; the completed final run passes.
+- Production forest spot check: 60 FPS, 12 draws, 44,671 triangles, 16 geometries /
+  3 textures, Medium DPR 1.25 at 1280 × 720; grounded and no application errors.
+  Evidence: `.artifacts/world-sep14-production.json`. This brief stationary check
+  does not replace sustained traversal or resolve the reported Vercel slowdown.
+  Fixed-step regression screenshots do not measure live performance.
+- At 390 × 844, the production archive spawn is grounded with no horizontal
+  overflow or application errors (`.artifacts/world-sep14-mobile.json`). This is
+  a desktop viewport smoke check, not a real-phone control/thermal test.
+- Private material remains ignored/untracked by Git metadata checks only. The
+  pre-existing hub-source hash is unchanged and excluded from commits. Blender
+  MCP setup was untouched. No gameplay or new runtime effects/textures added.
+
+Next: September 15 layout review, including the eastern canopy gap and archive
+framing/root transitions, before shared-kit production. Surface detail, dressed
+vegetation, water and lighting remain in the dated art phases. October 25 remains
+the working forecast; reforecast September 22. Real-phone acceptance stays pending.
 
 ## September 13 — Phase A transitions and boundaries
 

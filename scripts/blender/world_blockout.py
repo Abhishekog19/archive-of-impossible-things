@@ -179,7 +179,7 @@ for i,z in enumerate(range(-43,-107,-8)):
         # The west game clearing includes a four-metre camera orbit.
         if side<0 and abs(z+68)<17: x=min(x,-36)
         # Keep the exterior comparison sightline outside the background crowns.
-        if side>0 and z<-74: x=max(x,20)
+        if side>0 and z<-86: x=max(x,20)
         h=14+3*math.sin(i*.8+side)
         branch('Woodland background trunk',(x,1.6,z),(x-side,h,z-2),.65,bark)
         mass('Woodland middle crown',(x,7.5,z),(6,4.5,6),leaves[i%3])
@@ -215,11 +215,13 @@ for at,scale in [((-10,29,-119),(4.5,3.5,5)),((-25,26,-116),(5,3,4)),
     mass('Hero secondary crown',at,scale,leaves[2])
 random.setstate(hero_state)
 for points in [
-    [(-23,10,-114),(-25,6,-112),(-25,3,-108),(-28,1.8,-103)],
-    [(-23,8,-114),(-20,5,-112),(-18,2.8,-109),(-17,1.8,-105)],
-    [(-23,9,-114),(-25,5,-119),(-26,2,-125)],
-    [(-23,12,-114),(-19,10,-111),(-13,11.7,-111),(-7,12,-112),(-4,10,-115)],
-    [(-19,20,-116),(-19,17,-112),(-15,15,-111),(-9,14,-111),(-5,10,-112),(-5,5,-112)],
+    [(-22,10,-114),(-24,6,-112),(-25,3,-108),(-28,1.5,-103)],
+    [(-22,8,-114),(-20,5,-112),(-18,2.8,-109),(-17,1.5,-105)],
+    [(-22,9,-114),(-25,5,-119),(-26,1.5,-125)],
+    [(-21,12,-115),(-20,11.8,-112),(-15,12.4,-111.9),(-9,12.4,-111.9),
+     (-5.4,10.5,-112),(-4.5,7,-112.2),(-3.8,1.5,-110)],
+    [(-18.5,19,-116),(-18,17,-113),(-15,15.3,-113),(-9,14.5,-113),
+     (-6.5,12,-112.6),(-5.8,8,-112.5),(-4.3,1.5,-111)],
 ]: root_curve(points,1.1)
 
 # REF8: open central aisle, side arcades and a broken roof framing the sky.
@@ -304,7 +306,7 @@ views={
  'reference':{'position':[0,13,30],'target':[0,4,-8],'ref':'REF4'},
  'forest':{'position':[-12,4,-43],'target':[-10,5,-64],'ref':'REF5'},
  'canopy':{'position':[-12,4,-67],'target':[-14,6,-89],'ref':'REF6'},
- 'exterior':{'position':[8,9,-98],'target':[-13,13,-115],'ref':'REF7'},
+ 'exterior':{'position':[1,7,-91],'target':[-13,13,-115],'ref':'REF7'},
  'interior':{'position':[-12,4,-116],'target':[-12,8,-140],'ref':'REF8'},
  'cavern':{'position':[-26,-3,-176],'target':[-12,4,-201],'ref':'REF10'},
 }

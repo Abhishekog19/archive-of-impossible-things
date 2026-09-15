@@ -1,16 +1,15 @@
 # Current plan — Archive of Impossible Things
 
-Status (revised September 14): complete connected environment scope now covers
+Status (revised September 15): complete connected environment scope now covers
 REF4/5/6/7/8/10. The September 30 deadline and former future phase dates are superseded.
 Expected finish: October 25, 2026; planning range October 18–November 1, assuming
 one hour per weekday and three hours per weekend day. Reforecast September 22.
-Phase A (September 12–15) is underway: its first and second layout sessions were
-both performed September 12 at the user's request. The second session was brought
-forward from September 13. September 13's third session adds continuous terrain
-banks, an enclosed descent and transition fixes; six-area comparison is recorded
-below. September 14 refines forest enclosure, bent trunks and archive/tree/root
-silhouettes. Next: September 15 final Phase A layout review, then September 16–22
-shared-kit/risk prototypes. Phase A visual approval remains open.
+Phase A (September 12–15) production and bounded route review are complete.
+All six areas are connected, with four reserved game locations and comparison
+cameras. September 15 closes the forest gap and refines archive framing/root
+connections. User visual acceptance remains open; this is a working layout for
+asset production, not final art approval. Next: Phase B, September 16–22,
+shared-kit/risk prototypes. See the six-area review and remaining art gaps below.
 Existing hub layout and corner technical proof remain reusable; final visual
 approval is open. Final character movement/physics and games follow environment
 completion. Existing movement supports inspection; author collision-ready geometry now.
@@ -30,6 +29,46 @@ This milestone takes priority over the older full-game roadmap.
 | 5. R3F loading | Browser loads GLB with correct scale, materials and lighting; representative export is proven early. |
 | 6. Integration readiness | Separate collision proxies and usable stairs/slopes/clearances; existing controller aids inspection. Final movement/physics integration follows environment delivery. |
 | 7. Browser/mobile testing | Reference-versus-screenshot review, build/lint and measured Iris Xe traversal pass; mobile viewport checks, then user-led real-phone control/thermal verification at the end. |
+
+## September 15 — Phase A layout review
+
+- Yesterday's pending publication is confirmed live. Today's export restores
+  eastern forest coverage without blocking the courtyard comparison camera.
+  The archive view is more frontal; roots now begin within the bent hero trunk,
+  follow the facade and extend into the ground instead of ending above it.
+- Compared all six reference views at 1280 × 720. Evidence:
+  `.artifacts/world-sep15-{reference,forest,canopy,exterior,interior,cavern}.jpg`.
+  The REF5 gap is closed; REF6 retains a sky opening toward the courtyard. The
+  archive entrance/root hierarchy is clearer, but its framing remains tighter
+  than REF7. Future dressing must preserve the entrance and clear walking lane.
+
+| Area | Layout review | Art work still required |
+|---|---|---|
+| REF4 hub | Crossroads, plaza and landmark remain readable. | Replace broad ground/tree proxies; unify the detailed corner with the hub. |
+| REF5/6 forest | Connected winding route, shoulders and clearing remain usable. | Authored branches/leaf clusters, irregular paving, ground cover and canopy light. |
+| REF7 exterior | Entrance, taller central facade and wrapping roots read together. | Broken masonry, broader tree integration, finer roots and less cropped framing. |
+| REF8 hall | Open aisle/arcades lead into the descent. | Vary arch/column damage; add vegetation, roof breakup and light hierarchy. |
+| REF10 cavern | Shore, pool and overhead opening form a connected destination. | Less bowl-like rock planes, water/reflection treatment and overhead light. |
+
+- Final GLB: 4,341,104 bytes. Build/lint pass. All 24 outward and 24 return route
+  checkpoints pass with 100% sampled grounding, including remote game clearings;
+  eight boundary approaches pass, with no application errors. Evidence:
+  `.artifacts/world-routes-sep15.json` and clearing/descent gameplay captures.
+  Camera distance is still 4 m in the passage and 0.37 m close to its wall; final
+  camera polish and real-phone input/thermal acceptance remain deferred.
+- Production archive spot check: 60 FPS at Medium DPR 1.25, 1280 × 720;
+  12 draws / 44,719 triangles / 12 geometries / 1 texture. Grounded, no
+  application errors (`.artifacts/world-sep15-production.json`). This stationary
+  observation and fixed-step route screenshots are not sustained performance
+  acceptance; the reported Vercel difference remains unresolved.
+- Private material is ignored/untracked by metadata-only checks. The user's
+  hub-source hash is unchanged and excluded from commits. No Blender setup,
+  gameplay, controller or new runtime-effect changes.
+
+Next session: Phase B's first reusable stone/masonry and tree/root modules, with
+one exported browser proof before broad placement. Zone-loading and cavern
+water/light prototypes belong to Phase B. Keep the September 22 reforecast and
+October 25 working finish; do not treat the layout review as an 80% art match.
 
 ## September 14 — Phase A silhouette refinement
 

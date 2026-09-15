@@ -1,6 +1,6 @@
 # Connected environment production plan
 
-Revised September 14, 2026 (Asia/Calcutta). Filename retained for existing links.
+Revised September 15, 2026 (Asia/Calcutta). Filename retained for existing links.
 This replaces the September 30 hub-only scope and future phase dates. Completed
 production evidence remains in `plans/CURRENT_PLAN.md`.
 
@@ -115,9 +115,12 @@ cavern shape/framing were refined. September 13's session added continuous terra
 banks, the enclosed descent, courtyard transition and archive join fixes; checked
 side routes/boundaries and compared all six areas. September 14 refines forest
 background enclosure, continuous bent trunks, the taller archive facade and hero
-tree/root masses. Next: September 15 final Phase A layout review before the
-September 16–22 shared-kit and prototype phase. Keep the review window rather
-than inferring final quality from the existence of all areas. Detailed evidence is
+tree/root masses. September 15 completes the production layout review, restoring
+forest coverage, refining archive framing and grounding the wrapping roots.
+Six comparisons and bounded outward/return/boundary checks are recorded; user
+visual acceptance remains open. Next: September 16–22 shared-kit and prototype
+phase, beginning with a reusable stone/masonry and tree/root export proof.
+Do not infer final art quality from the existence of all areas. Detailed evidence is
 in `plans/CURRENT_PLAN.md`; October forecast is unchanged. Preserve the pre-existing
 user edit to `art/source/hub-blockout.blend`; the world generator writes separate
 world-blockout assets and does not overwrite that file. Blender setup is untouched.

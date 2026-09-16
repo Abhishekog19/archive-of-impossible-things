@@ -1,6 +1,6 @@
 # Blender pipeline
 
-Setup verified September 5, 2026; environment production updated September 10.
+Setup verified September 5, 2026; environment production updated September 16.
 
 ## Installed runtime
 
@@ -20,6 +20,7 @@ npm run blender:version
 npm run blender:setup
 npm run blender:blockout
 npm run blender:corner
+npm run blender:kit
 ```
 
 The runner searches the Blender Foundation installation directory. Set BLENDER_PATH
@@ -75,3 +76,23 @@ Blender's default Z-up and glTF's axis conversion must be handled by the exporte
 do not apply a second ad-hoc rotation during loading.
 
 See `environment-september-plan.md` for the dated production gates and scope.
+
+## Phase B reusable kit
+
+`npm run blender:kit` reads `art/source/hub-corner.blend` and writes
+`art/source/archive-kit.blend`, `public/models/archive-kit.glb` and
+`src/config/asset-kit.json`. It does not modify the corner or hub source. The
+generated kit packs textures and retains hidden editable originals; save manual
+edits separately before regenerating these outputs.
+
+Fourteen stone/wood prototypes share 2K/1K atlases; leaf and fern meshes retain
+vertex colours. Pivots use native metre-scale bottom centres, except the tree
+trunk origin; the manifest records Blender-space bounds. Exporter axis conversion
+is used once. Collider_* proxies accompany masonry, column, arch and trunk; the
+preview uses continuous walkable ground beneath decorative paving.
+
+`?scene=kit` proves instancing and inspection collision; `?scene=kit&view=kit` is
+the comparison camera. The GLB and its R3F component load only on this route.
+Directional diffuse atlases are preview lighting: rebake assembled static zones
+with contextual shadows before final art delivery. Remaining variation and
+water/zone-loading gates are tracked in the current plan.

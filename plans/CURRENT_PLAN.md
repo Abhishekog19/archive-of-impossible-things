@@ -1,6 +1,6 @@
 # Current plan — Archive of Impossible Things
 
-Status (revised September 15): complete connected environment scope now covers
+Status (revised September 16): complete connected environment scope now covers
 REF4/5/6/7/8/10. The September 30 deadline and former future phase dates are superseded.
 Expected finish: October 25, 2026; planning range October 18–November 1, assuming
 one hour per weekday and three hours per weekend day. Reforecast September 22.
@@ -8,8 +8,9 @@ Phase A (September 12–15) production and bounded route review are complete.
 All six areas are connected, with four reserved game locations and comparison
 cameras. September 15 closes the forest gap and refines archive framing/root
 connections. User visual acceptance remains open; this is a working layout for
-asset production, not final art approval. Next: Phase B, September 16–22,
-shared-kit/risk prototypes. See the six-area review and remaining art gaps below.
+asset production, not final art approval. Phase B (September 16–22) is active.
+The reusable-kit/browser proof started September 15 and is finalized September 16.
+Kit variation, zone exports/loading and cavern water/light prototypes remain next.
 Existing hub layout and corner technical proof remain reusable; final visual
 approval is open. Final character movement/physics and games follow environment
 completion. Existing movement supports inspection; author collision-ready geometry now.
@@ -29,6 +30,44 @@ This milestone takes priority over the older full-game roadmap.
 | 5. R3F loading | Browser loads GLB with correct scale, materials and lighting; representative export is proven early. |
 | 6. Integration readiness | Separate collision proxies and usable stairs/slopes/clearances; existing controller aids inspection. Final movement/physics integration follows environment delivery. |
 | 7. Browser/mobile testing | Reference-versus-screenshot review, build/lint and measured Iris Xe traversal pass; mobile viewport checks, then user-led real-phone control/thermal verification at the end. |
+
+## September 16 — Phase B first kit and browser proof
+
+- Finished the September 15 carryover: six slabs, three masonry variants, broken
+  column, arch, one tree silhouette and two roots, plus leaf and fern meshes.
+  The three displayed trees reuse one silhouette; vegetation expansion remains.
+- Added editable `art/source/archive-kit.blend` (5,329,807 bytes), runtime GLB
+  (1,718,472 bytes), dimensions manifest and `npm run blender:kit`. Shared 2K stone
+  and 1K wood preview atlases; opaque vertex-coloured foliage; separate colliders.
+- Added lazy-loaded `?scene=kit` inspection and `?scene=kit&view=kit` fixed camera.
+  Repeated assets are instanced. Default world navigation does not fetch this GLB.
+  Directional diffuse preview bakes need contextual zone rebaking before delivery.
+- Compared REF2 stone, REF5/6 vegetation and REF7/8 architecture direction with
+  `.artifacts/kit-sep16-reference.jpg`. Initial iteration corrected column scale,
+  slab/arch export and excessive upper-wall moss. Biggest remaining gaps: repeated
+  tree crowns, regular arch/block silhouettes, patterned moss and contextual
+  ground/lighting. The flat preview floor is a test surface, not finished world art.
+- Build/lint pass. September 15 development physics checks pass eight outward/return
+  checkpoints with 100% sampled grounding, wall blocking and arch passage;
+  evidence: `.artifacts/kit-sep15-checks.json`. Production omits the development
+  stepping hook intentionally; today's loading checks inspect the rendered UI.
+- Production spot check: 60 FPS, Medium DPR 1.25, 1280 × 720; 19 draws, 48,434
+  triangles, 19 geometries / 3 textures. Grounded, no application errors. At
+  390 × 844 it loads grounded without overflow. These are brief desktop/viewport
+  observations, not sustained whole-world or real-phone performance acceptance.
+- Three production kit → world navigations pass with stable kit resource counts,
+  no errors and no kit request on the default route. Full-page navigation does not
+  prove in-place zone disposal. Headless FPS is excluded from performance claims.
+  Evidence: `.artifacts/kit-sep16-{production,mobile,loading}.json`.
+- Private material remains ignored/untracked by metadata-only checks. The user's
+  hub-source hash is unchanged and excluded from commits. Blender MCP setup,
+  phone controls, existing world art and Archive gameplay are unchanged.
+
+Schedule: Phase B began September 15, one calendar day early; its first checkpoint
+is finalized September 16, on schedule. No completed-day lead or earlier finish
+is established. Next: tree/ground-cover variation, zone export/loading and cavern
+water/light proofs. Phase B ends September 22; expected environment finish remains
+October 25, subject to the September 22 review.
 
 ## September 15 — Phase A layout review
 

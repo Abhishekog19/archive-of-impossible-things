@@ -1,6 +1,6 @@
 # Connected environment production plan
 
-Revised September 15, 2026 (Asia/Calcutta). Filename retained for existing links.
+Revised September 16, 2026 (Asia/Calcutta). Filename retained for existing links.
 This replaces the September 30 hub-only scope and future phase dates. Completed
 production evidence remains in `plans/CURRENT_PLAN.md`.
 
@@ -118,9 +118,25 @@ background enclosure, continuous bent trunks, the taller archive facade and hero
 tree/root masses. September 15 completes the production layout review, restoring
 forest coverage, refining archive framing and grounding the wrapping roots.
 Six comparisons and bounded outward/return/boundary checks are recorded; user
-visual acceptance remains open. Next: September 16–22 shared-kit and prototype
-phase, beginning with a reusable stone/masonry and tree/root export proof.
+visual acceptance remains open. Phase B began September 15, one calendar day early.
+Its first reusable-kit/browser proof is finalized September 16, on the planned
+start date. This is not a completed-day lead or a completed Phase B; the October
+forecast is unchanged. Remaining Phase B sessions are listed below.
 Do not infer final art quality from the existence of all areas. Detailed evidence is
 in `plans/CURRENT_PLAN.md`; October forecast is unchanged. Preserve the pre-existing
 user edit to `art/source/hub-blockout.blend`; the world generator writes separate
 world-blockout assets and does not overwrite that file. Blender setup is untouched.
+
+## Phase B session targets — revised September 16
+
+| Date | Target |
+|---|---|
+| Sep 16 | Finish the first reusable kit, instanced browser preview, collision/loading checks and grouped publication. |
+| Sep 17 | Expand tree silhouettes and ground-cover families; reduce repeated moss and masonry patterns. |
+| Sep 18 | Prove separate zone export/loading with reusable assets and record transfer/resource costs. |
+| Sep 19–20 | Prototype cavern water and overhead light; compare REF10 in the browser and measure cost. |
+| Sep 21 | Review assembled material/lighting transfer, repeated loading and performance risks. |
+| Sep 22 | Close the kit/prototype gate, review references and reforecast before full-area dressing. |
+
+These targets clarify the existing Phase B window; they do not add unattended work
+or move later dates. Fix the largest visual gaps before multiplying assets.

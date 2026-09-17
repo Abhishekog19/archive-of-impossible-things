@@ -149,6 +149,22 @@
       ]
     },
     {
+      "name": "Masonry_4",
+      "family": "Stone",
+      "boundsBlender": [
+        [
+          -0.4024498462677002,
+          -0.35633420944213867,
+          0.0
+        ],
+        [
+          0.4024500846862793,
+          0.35633420944213867,
+          0.5009138584136963
+        ]
+      ]
+    },
+    {
       "name": "Column_Broken",
       "family": "Stone",
       "boundsBlender": [
@@ -197,6 +213,38 @@
       ]
     },
     {
+      "name": "Tree_Tall",
+      "family": "Wood",
+      "boundsBlender": [
+        [
+          -1.9937829971313477,
+          -1.823336124420166,
+          -0.054731570184230804
+        ],
+        [
+          1.9267727136611938,
+          1.3959726095199585,
+          9.951842308044434
+        ]
+      ]
+    },
+    {
+      "name": "Tree_Leaning",
+      "family": "Wood",
+      "boundsBlender": [
+        [
+          -3.5391085147857666,
+          -3.1731414794921875,
+          -0.0370490625500679
+        ],
+        [
+          3.249411106109619,
+          3.3009965419769287,
+          6.758641719818115
+        ]
+      ]
+    },
+    {
       "name": "Root_1",
       "family": "Wood",
       "boundsBlender": [
@@ -231,12 +279,28 @@
   ],
   "extras": [
     "Tree_Leaves",
-    "Fern"
+    "Tree_Tall_Leaves",
+    "Tree_Leaning_Leaves",
+    "Fern",
+    "Grass_Tuft",
+    "Broadleaf_Clump",
+    "Low_Shrub"
+  ],
+  "groundCover": [
+    "Fern",
+    "Grass_Tuft",
+    "Broadleaf_Clump",
+    "Low_Shrub"
+  ],
+  "treeVariants": [
+    "Tree_Broadleaf",
+    "Tree_Tall",
+    "Tree_Leaning"
   ],
   "atlasSizes": [
     2048,
     1024
   ],
-  "glbBytes": 1718472,
-  "seconds": 17.5
+  "glbBytes": 2875388,
+  "seconds": 25.7
 }

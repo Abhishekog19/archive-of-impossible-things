@@ -5,6 +5,7 @@ prove export; placed production zones must receive their own contextual bake.
 """
 import bpy
 import math
+import random
 import json
 import time
 from pathlib import Path
@@ -44,6 +45,45 @@ sun.rotation_euler=Vector((-6,8,-12)).to_track_quat('-Z','Y').to_euler()
 assets=[]
 exports=[]
 colliders=[]
+
+def patchy_stone(name, amount, seed):
+    """Broad damp islands, baked once; avoid identical vertical moss stripes."""
+    material=bpy.data.materials['Warm limestone 1'].copy()
+    material.name=name
+    nodes,links=material.node_tree.nodes,material.node_tree.links
+    shader=nodes.get('Principled BSDF')
+    base=shader.inputs['Base Color'].links[0].from_socket
+    geometry=nodes.new('ShaderNodeNewGeometry')
+    offset=nodes.new('ShaderNodeVectorMath');offset.operation='ADD'
+    offset.inputs[1].default_value=(seed*3.7,seed*1.9,0)
+    links.new(geometry.outputs['Position'],offset.inputs[0])
+    noise=nodes.new('ShaderNodeTexNoise')
+    noise.inputs['Scale'].default_value=2.2
+    noise.inputs['Detail'].default_value=2.5
+    links.new(offset.outputs[0],noise.inputs['Vector'])
+    islands=nodes.new('ShaderNodeMapRange')
+    islands.inputs['From Min'].default_value=.43
+    islands.inputs['From Max'].default_value=.67
+    links.new(noise.outputs['Fac'],islands.inputs['Value'])
+    height=nodes.new('ShaderNodeSeparateXYZ')
+    links.new(geometry.outputs['Position'],height.inputs[0])
+    damp=nodes.new('ShaderNodeMapRange')
+    damp.inputs['From Min'].default_value=.1
+    damp.inputs['From Max'].default_value=2.4
+    damp.inputs['To Min'].default_value=amount
+    damp.inputs['To Max'].default_value=.025
+    links.new(height.outputs['Z'],damp.inputs['Value'])
+    mask=nodes.new('ShaderNodeMath');mask.operation='MULTIPLY'
+    links.new(islands.outputs['Result'],mask.inputs[0])
+    links.new(damp.outputs['Result'],mask.inputs[1])
+    mix=nodes.new('ShaderNodeMixRGB')
+    mix.inputs[2].default_value=(.10,.145,.05,1)
+    links.new(mask.outputs[0],mix.inputs[0]);links.new(base,mix.inputs[1])
+    links.new(mix.outputs[0],shader.inputs['Base Color'])
+    return material
+
+stone_variants=[patchy_stone('Kit damp stone '+str(i),amount,i)
+                for i,amount in enumerate((.92,.10,.48,.30))]
 
 def combine(name, objects, pivot=None):
     verts=[];faces=[];indices=[];mats=[];smooth=[]
@@ -97,15 +137,24 @@ slabs=sorted((o for n,o in sources.items() if n.startswith('Fractured limestone 
              key=lambda o:sum(p.area for p in o.data.polygons),reverse=True)
 for i,o in enumerate(slabs[:6]): register(combine('Slab_'+str(i+1),[o]),'Stone')
 blocks=sorted((o for n,o in sources.items() if n.startswith('Eroded wall course')),key=lambda o:o.name)
-for i in range(3):
-    block=combine('Masonry_'+str(i+1),[blocks[i*7]])
-    if i>0: block.data.materials[0]=bpy.data.materials['Warm limestone '+str(i)]
+for i in range(4):
+    block=combine('Masonry_'+str(i+1),[blocks[(i*7)%len(blocks)]])
+    if i==3:
+        # A sloping broken cap changes the wall outline without extra debris.
+        for vertex in block.data.vertices:
+            if vertex.co.z>.25:
+                vertex.co.z-=max(0,vertex.co.y+.2)*.28
+        block.data.update()
+    for slot in range(len(block.data.materials)):
+        block.data.materials[slot]=stone_variants[i]
     register(block,'Stone',True)
-register(combine('Column_Broken',[o for n,o in sources.items() if n.startswith(('Column course','Column plinth','Fractured column crown'))]),'Stone',True)
+column=combine('Column_Broken',[o for n,o in sources.items() if n.startswith(('Column course','Column plinth','Fractured column crown'))])
+for slot in range(len(column.data.materials)): column.data.materials[slot]=stone_variants[0]
+register(column,'Stone',True)
 
 # Arch: distinct wedge stones and plinths, with a broad four-metre clear opening.
-archparts=[];archcollision=[]
-mat=blocks[0].data.materials[0]
+archparts=[]
+mat=stone_variants[2]
 for side in (-1,1):
     for row in range(6):
         bpy.ops.mesh.primitive_cube_add(size=1,location=(side*2.32,0,.25+row*.48))
@@ -132,6 +181,31 @@ register(arch,'Stone')
 
 wood=[o for n,o in sources.items() if n.startswith(('Rooted tree','Spreading branch','Leaf-bearing twig','Upper crown fork','Buttress root'))]
 register(combine('Tree_Broadleaf',wood,pivot=(3,3,0)),'Wood',True)
+
+def shape_tree(mesh, variant):
+    """Deform wood and attached leaves together, keeping the root origin fixed."""
+    for vertex in mesh.vertices:
+        x,y,z=vertex.co
+        height=max(0,z)/8
+        crown=max(0,min(1,(z-3)/4))
+        if variant=='Tall':
+            # Raised, narrow crown and an S-shaped leader for the forest approach.
+            angle=.28*crown
+            spread=.74-.18*crown
+            vertex.co=(spread*(x*math.cos(angle)-y*math.sin(angle))+.22*math.sin(height*math.pi),
+                       spread*(x*math.sin(angle)+y*math.cos(angle)),z*1.30)
+        else:
+            # Low spreading crown, leaning upper trunk and unequal lateral growth.
+            spread=1+.24*crown
+            vertex.co=(x*spread+1.45*height*height,
+                       y*(.92+.15*crown)+.30*height*height,z*.88+.09*x*crown)
+    mesh.update()
+
+for variant in ('Tall','Leaning'):
+    tree=combine('Tree_'+variant,wood,pivot=(3,3,0))
+    shape_tree(tree.data,variant)
+    register(tree,'Wood',True)
+    shape_tree(colliders[-1].data,variant)
 for i,suffix in enumerate(('.001','.004')):
     register(combine('Root_'+str(i+1),[sources['Buttress root'+suffix]]),'Wood')
 
@@ -141,6 +215,58 @@ for source,name,pivot in [('Corner_Foliage','Tree_Leaves',(3,3,0)),('FernPrototy
     o=bpy.data.objects.new(name,original.data.copy());scene.collection.objects.link(o)
     o.data.transform(Matrix.Translation(-Vector(pivot))@original.matrix_world)
     o.location=(180,0,0)  # Out of the atlas bake; reset before export.
+    exports.append(o)
+
+def ground_cover(name, kind, seed):
+    rng=random.Random(seed)
+    verts=[];faces=[];tints=[]
+    count={'Grass_Tuft':15,'Broadleaf_Clump':11,'Low_Shrub':28}[name]
+    for i in range(count):
+        angle=i*2.399+rng.uniform(-.3,.3)
+        axis=Vector((math.cos(angle),math.sin(angle),0))
+        side=Vector((-axis.y,axis.x,0))
+        if kind=='grass':
+            base=axis*rng.uniform(.015,.10)
+            height=rng.uniform(.25,.62);reach=rng.uniform(.10,.30)
+            middle=base+axis*reach*.3+Vector((0,0,height*.65))
+            tip=base+axis*reach+Vector((0,0,height))
+            width=rng.uniform(.018,.035)
+            points=[base-side*width,middle-side*width*.6,tip,
+                    middle+side*width*.6,base+side*width]
+            local_faces=[(0,1,4),(1,3,4),(1,2,3)]
+        else:
+            reach=rng.uniform(.24,.52) if kind=='broadleaf' else rng.uniform(.20,.43)
+            height=rng.uniform(.12,.32) if kind=='broadleaf' else rng.uniform(.20,.68)
+            base=axis*rng.uniform(.01,.07)
+            if kind=='shrub': base+=axis*rng.uniform(.03,.16)+Vector((0,0,height*.35))
+            middle=base+axis*reach*.5+Vector((0,0,height))
+            tip=base+axis*reach+Vector((0,0,height*.60))
+            width=reach*(.28 if kind=='broadleaf' else .22)
+            points=[base,middle-side*width,middle+Vector((0,0,.035)),
+                    tip,middle+side*width]
+            local_faces=[(0,1,2),(1,3,2),(3,4,2),(4,0,2)]
+        start=len(verts);verts.extend(tuple(p) for p in points)
+        faces.extend(tuple(start+j for j in face) for face in local_faces)
+        tints.extend([rng.uniform(.72,1.1)]*len(local_faces))
+    mesh=bpy.data.meshes.new(name);mesh.from_pydata(verts,[],faces);mesh.update()
+    mesh.materials.append(sources['FernPrototype'].data.materials[0])
+    colors=mesh.color_attributes.new(name='FoliageColor',type='BYTE_COLOR',domain='CORNER')
+    base=(.12,.18,.055) if kind=='grass' else (.075,.145,.035)
+    for poly,tint in zip(mesh.polygons,tints):
+        for index in poly.loop_indices: colors.data[index].color=(*(c*tint for c in base),1)
+    obj=bpy.data.objects.new(name,mesh);scene.collection.objects.link(obj)
+    obj.location=(180,0,0);exports.append(obj)
+
+for name,kind,seed in [('Grass_Tuft','grass',171),('Broadleaf_Clump','broadleaf',172),
+                       ('Low_Shrub','shrub',173)]:
+    ground_cover(name,kind,seed)
+
+leaves=next(o for o in exports if o.name=='Tree_Leaves')
+for variant in ('Tall','Leaning'):
+    o=bpy.data.objects.new('Tree_'+variant+'_Leaves',leaves.data.copy())
+    scene.collection.objects.link(o)
+    shape_tree(o.data,variant)
+    o.location=(180,0,0)
     exports.append(o)
 
 for family,res in [('Stone',2048),('Wood',1024)]:
@@ -198,7 +324,10 @@ bpy.ops.export_scene.gltf(filepath=str(export),export_format='GLB',use_selection
 manifest={'version':1,'units':'metres','pivot':'bottom-centre, except tree trunk origin',
           'previewLighting':'Directional diffuse preview only; rebake assembled zones before final delivery.',
           'assets':[{'name':a['name'],'family':a['family'],'boundsBlender':a['bounds']} for a in assets],
-          'extras':['Tree_Leaves','Fern'],'atlasSizes':[2048,1024],
+          'extras':['Tree_Leaves','Tree_Tall_Leaves','Tree_Leaning_Leaves','Fern',
+                    'Grass_Tuft','Broadleaf_Clump','Low_Shrub'],
+          'groundCover':['Fern','Grass_Tuft','Broadleaf_Clump','Low_Shrub'],
+          'treeVariants':['Tree_Broadleaf','Tree_Tall','Tree_Leaning'],'atlasSizes':[2048,1024],
           'glbBytes':export.stat().st_size,'seconds':round(time.monotonic()-started,1)}
 (ROOT/'src/config/asset-kit.json').write_text(json.dumps(manifest,indent=2)+'\n')
 (OUT/'kit-report.json').write_text(json.dumps(manifest,indent=2))

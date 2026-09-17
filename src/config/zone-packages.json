@@ -1,0 +1,50 @@
+{
+  "source": "art/source/archive-kit.blend",
+  "packages": {
+    "ruins": {
+      "url": "/models/zones/ruins.glb",
+      "bytes": 824268,
+      "nodes": [
+        "Slab_1",
+        "Slab_2",
+        "Slab_3",
+        "Slab_4",
+        "Slab_5",
+        "Slab_6",
+        "Masonry_1",
+        "Collider_Masonry_1",
+        "Masonry_2",
+        "Collider_Masonry_2",
+        "Masonry_3",
+        "Collider_Masonry_3",
+        "Masonry_4",
+        "Collider_Masonry_4",
+        "Column_Broken",
+        "Collider_Column_Broken",
+        "Arch_Ruin",
+        "Collider_Arch_Ruin"
+      ]
+    },
+    "forest": {
+      "url": "/models/zones/forest.glb",
+      "bytes": 2051460,
+      "nodes": [
+        "Tree_Broadleaf",
+        "Collider_Tree_Broadleaf",
+        "Tree_Tall",
+        "Collider_Tree_Tall",
+        "Tree_Leaning",
+        "Collider_Tree_Leaning",
+        "Root_1",
+        "Root_2",
+        "Tree_Leaves",
+        "Tree_Tall_Leaves",
+        "Tree_Leaning_Leaves",
+        "Fern",
+        "Grass_Tuft",
+        "Broadleaf_Clump",
+        "Low_Shrub"
+      ]
+    }
+  }
+}

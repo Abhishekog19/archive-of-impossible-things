@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "blender:zones": "node scripts/blender/run.cjs zones",
     "blender:kit": "node scripts/blender/run.cjs kit",
     "blender:world": "node scripts/blender/run.cjs world",
     "blender:corner": "node scripts/blender/run.cjs corner",

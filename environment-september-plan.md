@@ -1,6 +1,6 @@
 # Connected environment production plan
 
-Revised September 16, 2026 (Asia/Calcutta). Filename retained for existing links.
+Revised September 17, 2026 (Asia/Calcutta). Filename retained for existing links.
 This replaces the September 30 hub-only scope and future phase dates. Completed
 production evidence remains in `plans/CURRENT_PLAN.md`.
 
@@ -133,12 +133,12 @@ world-blockout assets and does not overwrite that file. Blender setup is untouch
 |---|---|
 | Sep 16 | Finish the first reusable kit, instanced browser preview, collision/loading checks and grouped publication. |
 | Sep 17 | Completed early Sep 16: three tree forms, four ground-cover families, varied masonry/moss and combined browser checks. |
-| Sep 18 | Prove separate zone export/loading with reusable assets and record transfer/resource costs. |
+| Sep 18 | Completed early Sep 17: separate ruins/forest packages, distance loading/eviction, retry/cancellation and transfer/resource checks. |
 | Sep 19–20 | Prototype cavern water and overhead light; compare REF10 in the browser and measure cost. |
 | Sep 21 | Review assembled material/lighting transfer, repeated loading and performance risks. |
 | Sep 22 | Close the kit/prototype gate, review references and reforecast before full-area dressing. |
 
 These targets clarify the existing Phase B window; they do not add unattended work
 or move later dates. Fix the largest visual gaps before multiplying assets.
-The September 17 checkpoint is now complete one calendar day early; next session
-is the September 18 zone-loading proof. The October 25 forecast is unchanged.
+The September 18 checkpoint is complete one calendar day early; next session is
+the cavern water/overhead-light prototype. The October 25 forecast is unchanged.

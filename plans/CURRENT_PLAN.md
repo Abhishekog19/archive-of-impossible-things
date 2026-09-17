@@ -1,6 +1,6 @@
 # Current plan — Archive of Impossible Things
 
-Status (revised September 16): complete connected environment scope now covers
+Status (revised September 17): complete connected environment scope now covers
 REF4/5/6/7/8/10. The September 30 deadline and former future phase dates are superseded.
 Expected finish: October 25, 2026; planning range October 18–November 1, assuming
 one hour per weekday and three hours per weekend day. Reforecast September 22.
@@ -10,9 +10,9 @@ cameras. September 15 closes the forest gap and refines archive framing/root
 connections. User visual acceptance remains open; this is a working layout for
 asset production, not final art approval. Phase B (September 16–22) is active.
 The reusable-kit/browser proof started September 15 and is finalized September 16.
-September 17's full kit-variation session was brought forward and completed on
-September 16. Both halves are ready for grouped publication. Next: September 18's
-zone export/loading prototype, followed by cavern water/light prototypes.
+September 17's kit variation was completed early and published September 17 as
+version 14 after the usage-limit interruption. September 18's zone export/loading
+proof is now complete on September 17. Next: cavern water/light risk prototypes.
 Existing hub layout and corner technical proof remain reusable; final visual
 approval is open. Final character movement/physics and games follow environment
 completion. Existing movement supports inspection; author collision-ready geometry now.
@@ -32,6 +32,55 @@ This milestone takes priority over the older full-game roadmap.
 | 5. R3F loading | Browser loads GLB with correct scale, materials and lighting; representative export is proven early. |
 | 6. Integration readiness | Separate collision proxies and usable stairs/slopes/clearances; existing controller aids inspection. Final movement/physics integration follows environment delivery. |
 | 7. Browser/mobile testing | Reference-versus-screenshot review, build/lint and measured Iris Xe traversal pass; mobile viewport checks, then user-led real-phone control/thermal verification at the end. |
+
+## September 17 — zone-loading proof brought forward from September 18
+
+- Finished the pending kit publication in three separately pushed commits:
+  ba0fb52 (art), f154a40 (preview), 1746c00 (documentation); version 14 is live.
+  The earlier automatic approval failure was a usage-limit interruption, now cleared.
+- Added `npm run blender:zones`: reads the editable kit without modifying it and
+  exports independent ruins (824,268 bytes) and forest (2,051,460 bytes) GLBs with
+  a package manifest. These are kit-family packages used in two test sections,
+  not final exports of the six-area world.
+- Added `?scene=zones`: existing inspection movement crosses a resident floor.
+  Ruins/forest preload at 28/29 m from their centres and unload beyond 40/39 m;
+  separate thresholds prevent repeated loading near one boundary. Each mount owns
+  its parsed geometry/materials/textures; eviction disposes them and closes decoded
+  image bitmaps. Pending fetches abort, and late completed parses are discarded.
+- Loading or failed sections retain solid entry gates. A fixed screen overlay
+  reports readiness and offers Retry. A review caught the original 3D-anchored
+  overlay disappearing behind the camera; the final overlay remains screen-fixed.
+  Shared `KitBatch` preserves the earlier preview's instancing behaviour.
+- Three in-place round trips return to 16 geometries / 2 textures in ruins and
+  14 / 2 in forest; overlap reaches 26 / 3. Simulated HTTP failure blocks the
+  character at the gate, Retry recovers, and cancellation/re-entry returns to the
+  same baseline. No application errors. Evidence: `.artifacts/zones-sep17-checks.json`.
+- A production keyboard walk from z=6 to below -50 and back passes with all 72
+  sampled positions grounded. Resource counts return to 16 / 2. The default world
+  requests neither zone packages nor the asset preview. Headless FPS is excluded
+  from hardware performance claims. Evidence: `zones-sep17-production.json`.
+- Initial production resources: 2,010,279 encoded bytes / 4,338,997 decoded bytes,
+  excluding the HTML document and HTTP headers; only the ruins GLB is fetched at
+  spawn. Forest loads on approach. This is a prototype payload measurement, not
+  proof that the complete world meets the 8 MB initial-load budget.
+- Brief live production ruins sample: 60 FPS, Medium DPR 1.25, 1280 × 720;
+  16 draws / 5,836 triangles. Forest test view renders about 109K triangles;
+  sustained forest/Iris Xe and phone performance remain unaccepted. Build/lint pass.
+  At 390 × 844, the production prototype loads grounded without horizontal
+  overflow or application errors (`.artifacts/zones-sep17-mobile.json`).
+- Compared REF2 stone and REF5/6 forest direction with fixed views at
+  `.artifacts/zones-sep17-{ruins,forest}.jpg`. The forest camera was lowered and
+  centred to keep the route readable. Flat ground, sparse background enclosure,
+  simplified leaf light and bark atlas seams remain art limitations; this loading
+  proof does not replace Phase C dressing. Reference views keep both zones loaded.
+- Existing world art and controller behaviour are preserved. User hub-source hash
+  remains unchanged; private material is ignored/untracked by metadata-only checks.
+  Blender MCP setup was untouched. New work is grouped as exports, runtime and docs.
+
+Next session: the September 19–20 cavern water/overhead-light prototype, using REF10
+and an early browser cost check. The September 18 checkpoint is complete one day
+early; this does not move the full-phase finish or October 25 forecast. Reforecast
+September 22 after the remaining material/light risks are reviewed.
 
 ## September 17 work — completed early on September 16
 

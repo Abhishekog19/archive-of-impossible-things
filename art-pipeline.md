@@ -1,6 +1,6 @@
 # Blender pipeline
 
-Setup verified September 5, 2026; environment production updated September 16.
+Setup verified September 5, 2026; environment production updated September 17.
 
 ## Installed runtime
 
@@ -21,6 +21,7 @@ npm run blender:setup
 npm run blender:blockout
 npm run blender:corner
 npm run blender:kit
+npm run blender:zones
 ```
 
 The runner searches the Blender Foundation installation directory. Set BLENDER_PATH
@@ -103,3 +104,20 @@ before export; retain the root origin. The preview uses all three silhouettes.
 Fern, grass, broadleaf clump and low shrub are opaque vertex-coloured ground cover,
 batched separately with deterministic yaw/scale variation. Stone damp islands are
 baked into the existing atlas; runtime moss does not add materials or draw calls.
+
+## Zone-loading prototype
+
+After regenerating the kit, run `npm run blender:zones`. This reads the kit source
+and overwrites `public/models/zones/{ruins,forest}.glb` plus
+`src/config/zone-packages.json`; it does not rewrite a Blender source. Each package
+contains its asset family and matching collision proxies, with its own atlas.
+
+`?scene=zones` is the connected loading test. Fixed views are `?scene=zones&view=zones`
+and `?scene=zones&view=zone-forest`; these pin both packages for comparison. Runtime
+zone mounts own their parsed resources, abort abandoned loads and dispose geometry,
+materials, textures and decoded bitmaps on eviction. A permanent inspection floor
+and temporary entry gates protect movement while packages load or fail.
+
+This proves lifecycle behaviour with kit-family packages. Full-world zoning,
+contextual bakes, LOD and sustained hardware acceptance remain later integration
+work; do not treat these test sections as finished environment art.

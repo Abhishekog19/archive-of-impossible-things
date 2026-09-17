@@ -6,8 +6,8 @@ import { DoubleSide, Matrix4, Quaternion, Vector3 } from 'three'
 
 // Prototype placements only. Zone art will replace this isolated assembly proof.
 const placements = {}
-function put(name, x, y, z, scale = 1) {
-  ;(placements[name] ??= []).push({ position: [x, y, z], scale })
+function put(name, x, y, z, scale = 1, yaw = 0) {
+  ;(placements[name] ??= []).push({ position: [x, y, z], scale, yaw })
 }
 for (let row = 0; row < 12; row++) {
   for (let col = 0; col < 4; col++) {
@@ -17,28 +17,46 @@ for (let row = 0; row < 12; row++) {
 }
 for (let row = 0; row < 4; row++) {
   for (let i = 0; i < 7 - row; i++) {
-    put(`Masonry_${row === 0 ? 1 : 2 + i % 2}`, -3.7, row * 0.5, 1 - i * 1.02 - row * 0.22)
+    const variant = row === 3 ? [4, 2, 3, 1][i] : [1, 3, 2, 4, 2, 1, 3][(i + row * 2) % 7]
+    put(`Masonry_${variant}`, -3.7 + Math.sin(i * 2.4 + row) * 0.045,
+      row * 0.5, 1 - i * 1.02 - row * 0.22)
   }
 }
 put('Arch_Ruin', 0, 0, -10)
 put('Column_Broken', 3.8, 0, -3)
 put('Column_Broken', -4.2, 0, -12)
-for (const [x, z, scale] of [[6, -6, 1.1], [-6, -9, 1.3], [7, -16, 1.4]]) {
-  put('Tree_Broadleaf', x, 0, z, scale)
-  put('Tree_Leaves', x, 0, z, scale)
+for (const [name, leaves, x, z, scale] of [
+  ['Tree_Leaning', 'Tree_Leaning_Leaves', 6, -6, 1.1],
+  ['Tree_Tall', 'Tree_Tall_Leaves', -6, -9, 1.1],
+  ['Tree_Broadleaf', 'Tree_Leaves', 7, -16, 1.4],
+]) {
+  put(name, x, 0, z, scale)
+  put(leaves, x, 0, z, scale)
 }
 put('Root_1', -3.2, 0, -5)
 put('Root_2', 4, 0, -6)
 for (let i = 0; i < 24; i++) {
   const side = i % 2 ? -1 : 1
-  put('Fern', side * (2.8 + 0.7 * Math.sin(i * 2.1)), 0, 3 - i * 0.65, 0.65 + (i % 4) * 0.12)
+  put('Fern', side * (2.8 + 0.7 * Math.sin(i * 2.1)), 0, 3 - i * 0.65,
+    0.65 + (i % 4) * 0.12, i * 2.399)
+}
+// Group plants at sheltered edges rather than filling the walking lane evenly.
+for (const [cluster, x, z] of [[0, -3.1, 1], [1, -3.0, -4.3], [2, 3.5, -2.8],
+  [3, 4.3, -6.3], [4, -5.3, -9.2], [5, 3.4, -10.5]]) {
+  for (let i = 0; i < 7; i++) {
+    const angle = i * 2.399 + cluster, radius = 0.2 + (i % 3) * 0.22
+    const name = ['Broadleaf_Clump', 'Grass_Tuft', 'Low_Shrub'][(i + cluster) % 3]
+    put(name, x + Math.cos(angle) * radius, 0, z + Math.sin(angle) * radius,
+      0.7 + (i % 4) * 0.15, angle)
+  }
 }
 
 function Batch({ node, transforms }) {
   const ref = useRef(null)
   useLayoutEffect(() => {
     const m = new Matrix4(), q = new Quaternion()
-    transforms.forEach(({ position, scale }, i) => {
+    transforms.forEach(({ position, scale, yaw }, i) => {
+      q.setFromAxisAngle(new Vector3(0, 1, 0), yaw)
       m.compose(new Vector3(...position), q, new Vector3(scale, scale, scale))
       ref.current.setMatrixAt(i, m)
     })
@@ -84,8 +102,8 @@ export default function AssetKit({ reference = false }) {
       {batches.map(([name, transforms]) => (
         <group key={name}>
           <Batch node={nodes[name]} transforms={transforms} />
-          {nodes[`Collider_${name}`] && transforms.map(({ position, scale }, i) => (
-            <RigidBody key={i} type="fixed" colliders="trimesh" includeInvisible position={position} scale={scale}>
+          {nodes[`Collider_${name}`] && transforms.map(({ position, scale, yaw }, i) => (
+            <RigidBody key={i} type="fixed" colliders="trimesh" includeInvisible position={position} rotation={[0, yaw, 0]} scale={scale}>
               <mesh geometry={nodes[`Collider_${name}`].geometry} visible={false} />
             </RigidBody>
           ))}

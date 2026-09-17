@@ -85,7 +85,7 @@ See `environment-september-plan.md` for the dated production gates and scope.
 generated kit packs textures and retains hidden editable originals; save manual
 edits separately before regenerating these outputs.
 
-Fourteen stone/wood prototypes share 2K/1K atlases; leaf and fern meshes retain
+Seventeen stone/wood prototypes share 2K/1K atlases; foliage meshes retain
 vertex colours. Pivots use native metre-scale bottom centres, except the tree
 trunk origin; the manifest records Blender-space bounds. Exporter axis conversion
 is used once. Collider_* proxies accompany masonry, column, arch and trunk; the
@@ -96,3 +96,10 @@ the comparison camera. The GLB and its R3F component load only on this route.
 Directional diffuse atlases are preview lighting: rebake assembled static zones
 with contextual shadows before final art delivery. Remaining variation and
 water/zone-loading gates are tracked in the current plan.
+
+The September 17 session adds tall and leaning forms derived from the
+broadleaf tree. Apply the same shape function to wood, leaves and trunk proxies
+before export; retain the root origin. The preview uses all three silhouettes.
+Fern, grass, broadleaf clump and low shrub are opaque vertex-coloured ground cover,
+batched separately with deterministic yaw/scale variation. Stone damp islands are
+baked into the existing atlas; runtime moss does not add materials or draw calls.

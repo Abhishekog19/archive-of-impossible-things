@@ -10,7 +10,9 @@ cameras. September 15 closes the forest gap and refines archive framing/root
 connections. User visual acceptance remains open; this is a working layout for
 asset production, not final art approval. Phase B (September 16–22) is active.
 The reusable-kit/browser proof started September 15 and is finalized September 16.
-Kit variation, zone exports/loading and cavern water/light prototypes remain next.
+September 17's full kit-variation session was brought forward and completed on
+September 16. Both halves are ready for grouped publication. Next: September 18's
+zone export/loading prototype, followed by cavern water/light prototypes.
 Existing hub layout and corner technical proof remain reusable; final visual
 approval is open. Final character movement/physics and games follow environment
 completion. Existing movement supports inspection; author collision-ready geometry now.
@@ -30,6 +32,70 @@ This milestone takes priority over the older full-game roadmap.
 | 5. R3F loading | Browser loads GLB with correct scale, materials and lighting; representative export is proven early. |
 | 6. Integration readiness | Separate collision proxies and usable stairs/slopes/clearances; existing controller aids inspection. Final movement/physics integration follows environment delivery. |
 | 7. Browser/mobile testing | Reference-versus-screenshot review, build/lint and measured Iris Xe traversal pass; mobile viewport checks, then user-led real-phone control/thermal verification at the end. |
+
+## September 17 work — completed early on September 16
+
+- Completed both halves: three derived tree silhouettes, four ground-cover
+  families (fern, grass tuft, broadleaf clump, low shrub), four masonry variants,
+  softer damp-stone islands and mixed broken caps. Plants use opaque vertex-colour
+  geometry, yaw/scale variation and six sheltered clusters; the path stays clear.
+- Replaced the old vertically stretched moss stripes on masonry, column and arch
+  with varied noise islands and a gentle damp-height falloff. The first comparison
+  exposed a repeating sawtooth cap row; the final arrangement mixes the cap forms.
+- Compared REF2 stone and REF5/6 undergrowth/tree direction with the fixed and
+  gameplay views: `.artifacts/kit-sep17-{reference,gameplay}.jpg`. Repetition is
+  reduced. The sparse test floor, simplified canopy shading/branch structure and
+  absence of contextual ground shadows remain prototype limitations, not art approval.
+- Source: 5,853,402 bytes; GLB: 2,875,388 bytes. Seventeen stone/wood prototypes
+  plus seven foliage meshes retain two 2K/1K atlases. No new runtime effects.
+  Three tree shapes increase wood atlas occupancy; check close-range density when
+  placing them in zones. The main world still does not fetch the preview kit.
+- Build/lint pass. Eight outward/return checkpoints, wall blocking, arch passage
+  and both new trunk approaches pass with 100% sampled route grounding. Three
+  production kit/world reload cycles have stable counts and no application errors.
+  These are bounded checks; full-page reloads do not prove in-place zone disposal.
+  Evidence: `.artifacts/kit-sep17-{checks,loading}.json`.
+- Brief production desktop sample: 60 FPS, Medium DPR 1.25, 1280 × 720; 27 draws,
+  51,284 triangles, 27 geometries / 3 textures. The 390 × 844 viewport loads grounded
+  without overflow. Evidence: `.artifacts/kit-sep17-{production,mobile}.json`.
+  Neither these samples nor headless checks establish sustained whole-world or
+  real-phone acceptance; the Vercel report remains unresolved.
+- Both halves are grouped for separate art, runtime and documentation commits.
+  Private material remains ignored/untracked (metadata only); the user's existing
+  hub-source hash is unchanged and excluded. Blender MCP setup is unchanged.
+
+This completes the September 17 checkpoint one calendar day early. Next session:
+the September 18 zone export/loading proof, including payload and resource costs.
+Later phase dates and the October 25 forecast remain unchanged until reforecast.
+
+## September 17 work — historical first-half checkpoint, superseded above
+
+- Stopped at the requested halfway boundary: tree silhouettes only. Added tall
+  narrow and low leaning variants alongside the broadleaf original. Deterministic
+  nonlinear shape changes keep wood, leaves and trunk proxies aligned, with roots
+  anchored at the origin. These are derived forms, not three independently authored
+  species. Ground-cover expansion and moss/masonry refinement remain untouched.
+- Rebuilt the editable kit, GLB and manifest; preview displays one of each form.
+  GLB is 2,880,112 bytes, up from 1,718,472. Still two 2K/1K atlases; increased
+  wood atlas occupancy needs close-range review during later material refinement.
+- REF5 comparison: taller trunk/raised crown and leaning spread reduce identical
+  silhouette repetition. Preview framing and gameplay captures are saved as
+  `.artifacts/kit-sep17-half-{reference,gameplay}.jpg`. Crown layering, leaf-scale
+  consistency and natural branching remain review points before whole-world use.
+- Build/lint pass. Eight route checkpoints, wall/arch checks and both new trunk
+  approaches pass with grounding; no application errors. Default world still does
+  not request the kit. Evidence: `.artifacts/kit-sep17-half-checks.json`.
+- Brief live development sample: 60 FPS, Low/saved DPR 1.00, 1280 × 720; 23 draws,
+  48,434 triangles, 23 geometries / 3 textures. This is not sustained performance
+  acceptance or directly comparable to the earlier Medium production sample.
+  Evidence: `.artifacts/kit-sep17-half-live.json`.
+- No commit, push or deployment for this half-session. Public version 13 remains
+  unchanged. User hub-source edit is preserved; private material remains ignored
+  and untracked by metadata-only checks. Stop here as requested.
+
+Remaining half: ground-cover families and less repetitive moss/masonry patterns,
+then combined visual review. Dates/October 25 forecast are unchanged; this early
+partial session does not establish a full day ahead.
 
 ## September 16 — Phase B first kit and browser proof
 

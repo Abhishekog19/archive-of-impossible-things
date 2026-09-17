@@ -16,6 +16,7 @@ import Settings from './ui/Settings'
 import { useGameStore } from './store'
 import worldViews from './config/world-views.json'
 const AssetKit = lazy(() => import('./scenes/AssetKit'))
+const ZoneLoading = lazy(() => import('./scenes/ZoneLoading'))
 
 /**
  * Does this browser support WebGL2?
@@ -90,9 +91,10 @@ export default function App() {
   const params = new URLSearchParams(window.location.search)
   const greyroom = params.get('scene') === 'greyroom'
   const kit = params.get('scene') === 'kit'
+  const zones = params.get('scene') === 'zones'
   const cornerView = !greyroom && params.get('view') === 'corner'
   const view = params.get('view')
-  const reference = !greyroom && (kit ? view === 'kit' : Object.hasOwn(worldViews, view) || cornerView)
+  const reference = !greyroom && (zones ? ['zones', 'zone-forest'].includes(view) : kit ? view === 'kit' : Object.hasOwn(worldViews, view) || cornerView)
   const cornerStart = !greyroom && params.get('start') === 'corner'
   // The ecctrl handle, shared by the camera (needs the body to follow) and the
   // scene (the post needs to know when the player is close).
@@ -144,8 +146,8 @@ export default function App() {
 
         <Suspense fallback={null}>
           <Physics paused={(!visible || settingsOpen) && !physicsForced}>
-            {kit ? <AssetKit reference={reference} /> : greyroom ? <GreyRoom playerRef={playerRef} /> : <HubBlockout reference={reference} cornerView={cornerView} view={view} legacy={params.get('scene') === 'hub'} />}
-            {!reference && <Player ref={playerRef} recoverFalls={!greyroom} cornerStart={!kit && cornerStart} start={greyroom || kit ? undefined : params.get('start')} />}
+            {zones ? <ZoneLoading playerRef={playerRef} reference={reference} view={view} /> : kit ? <AssetKit reference={reference} /> : greyroom ? <GreyRoom playerRef={playerRef} /> : <HubBlockout reference={reference} cornerView={cornerView} view={view} legacy={params.get('scene') === 'hub'} />}
+            {!reference && <Player ref={playerRef} recoverFalls={!greyroom} cornerStart={!kit && !zones && cornerStart} start={greyroom || kit || zones ? undefined : params.get('start')} />}
             {!reference && <FollowCamera bodyRef={playerRef} />}
             {/* Dev-only scene handle for stepping the loop and running the M1
                 audit. Inside <Physics> because it raycasts against the same
@@ -158,7 +160,7 @@ export default function App() {
         <TierGovernor farOverride={greyroom ? undefined : 180} />
       </Canvas>
 
-      {!reference && <DevHud hub={!greyroom} label={kit ? 'Phase B · asset preview' : undefined} />}
+      {!reference && <DevHud hub={!greyroom} label={zones ? 'Phase B · zone loading' : kit ? 'Phase B · asset preview' : undefined} />}
       {!reference && <MobileControls />}
       {!reference && <Settings />}
     </>

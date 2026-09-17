@@ -1,8 +1,8 @@
-import { useEffect, useLayoutEffect, useMemo, useRef } from 'react'
+import { useEffect, useLayoutEffect, useMemo } from 'react'
 import { useGLTF } from '@react-three/drei'
 import { useThree } from '@react-three/fiber'
 import { CuboidCollider, RigidBody } from '@react-three/rapier'
-import { DoubleSide, Matrix4, Quaternion, Vector3 } from 'three'
+import KitBatch from './KitBatch'
 
 // Prototype placements only. Zone art will replace this isolated assembly proof.
 const placements = {}
@@ -51,26 +51,6 @@ for (const [cluster, x, z] of [[0, -3.1, 1], [1, -3.0, -4.3], [2, 3.5, -2.8],
   }
 }
 
-function Batch({ node, transforms }) {
-  const ref = useRef(null)
-  useLayoutEffect(() => {
-    const m = new Matrix4(), q = new Quaternion()
-    transforms.forEach(({ position, scale, yaw }, i) => {
-      q.setFromAxisAngle(new Vector3(0, 1, 0), yaw)
-      m.compose(new Vector3(...position), q, new Vector3(scale, scale, scale))
-      ref.current.setMatrixAt(i, m)
-    })
-    ref.current.instanceMatrix.needsUpdate = true
-    ref.current.computeBoundingSphere()
-    const instance = ref.current
-    return () => { instance.material.dispose(); instance.dispose() }
-  }, [transforms])
-  return (
-    <instancedMesh ref={ref} name={`KitInstances_${node.name}`} args={[node.geometry, undefined, transforms.length]} dispose={null}>
-      <meshBasicMaterial map={node.material.map} vertexColors={!!node.geometry.attributes.color} side={DoubleSide} />
-    </instancedMesh>
-  )
-}
 
 export default function AssetKit({ reference = false }) {
   const { nodes, materials } = useGLTF('/models/archive-kit.glb')
@@ -101,7 +81,7 @@ export default function AssetKit({ reference = false }) {
       </RigidBody>
       {batches.map(([name, transforms]) => (
         <group key={name}>
-          <Batch node={nodes[name]} transforms={transforms} />
+          <KitBatch node={nodes[name]} transforms={transforms} />
           {nodes[`Collider_${name}`] && transforms.map(({ position, scale, yaw }, i) => (
             <RigidBody key={i} type="fixed" colliders="trimesh" includeInvisible position={position} rotation={[0, yaw, 0]} scale={scale}>
               <mesh geometry={nodes[`Collider_${name}`].geometry} visible={false} />

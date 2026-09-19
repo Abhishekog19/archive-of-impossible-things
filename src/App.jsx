@@ -15,8 +15,10 @@ import MobileControls from './ui/MobileControls'
 import Settings from './ui/Settings'
 import { useGameStore } from './store'
 import worldViews from './config/world-views.json'
+import { CAVERN_STUDY } from './config/cavern-study'
 const AssetKit = lazy(() => import('./scenes/AssetKit'))
 const ZoneLoading = lazy(() => import('./scenes/ZoneLoading'))
+const CavernStudy = lazy(() => import('./scenes/CavernStudy'))
 
 /**
  * Does this browser support WebGL2?
@@ -46,16 +48,16 @@ function hasWebGL2() {
  * `far` is matched to the distance at which that fog is ~95% opaque — drawing
  * past it would be drawing things fog has already erased.
  */
-function Atmosphere({ hub = false }) {
+function Atmosphere({ hub = false, cavern = false }) {
   const fogEnabled = useGameStore((s) => s.fogEnabled)
   // Density is a tier value (look-target section 9); the store is the one
   // authority on which tier this device is on -- see config/tiers.js.
   const tier = useGameStore((s) => s.tier)
   return (
     <>
-      <color attach="background" args={[PALETTE.sky]} />
+      <color attach="background" args={[cavern ? CAVERN_STUDY.fog : PALETTE.sky]} />
       {fogEnabled && (
-        hub ? <fog attach="fog" args={[FOG.color, 35, 150]} /> : <fogExp2 attach="fog" args={[FOG.color, TIERS[tier].fogDensity]} />
+        cavern ? <fog attach="fog" args={[CAVERN_STUDY.fog, CAVERN_STUDY.fogNear, CAVERN_STUDY.fogFar]} /> : hub ? <fog attach="fog" args={[FOG.color, 35, 150]} /> : <fogExp2 attach="fog" args={[FOG.color, TIERS[tier].fogDensity]} />
       )}
     </>
   )
@@ -93,6 +95,7 @@ export default function App() {
   const kit = params.get('scene') === 'kit'
   const zones = params.get('scene') === 'zones'
   const waterStudy = params.get('scene') === 'water'
+  const cavernStudy = params.get('scene') === 'cavern'
   const cornerView = !greyroom && params.get('view') === 'corner'
   const view = params.get('view')
   const reference = !greyroom && (zones ? ['zones', 'zone-forest'].includes(view) : kit ? view === 'kit' : Object.hasOwn(worldViews, view) || cornerView)
@@ -137,7 +140,7 @@ export default function App() {
         camera={{ fov: reference ? 53.13 : CAMERA.fov, near: 0.1, far: greyroom ? TIERS[tier].far : 180 }}
         gl={{ antialias: true }}
       >
-        <Atmosphere hub={!greyroom} />
+        <Atmosphere hub={!greyroom} cavern={cavernStudy} />
 
         {/* Temporary lighting. The shipped game has zero runtime lights and
             bakes everything (spec §4.1); §4 allows exactly one hemisphere light
@@ -147,8 +150,8 @@ export default function App() {
 
         <Suspense fallback={null}>
           <Physics paused={(!visible || settingsOpen) && !physicsForced}>
-            {zones ? <ZoneLoading playerRef={playerRef} reference={reference} view={view} /> : kit ? <AssetKit reference={reference} /> : greyroom ? <GreyRoom playerRef={playerRef} /> : <HubBlockout reference={reference} cornerView={cornerView} view={view} legacy={params.get('scene') === 'hub'} waterStudy={waterStudy} />}
-            {!reference && <Player ref={playerRef} recoverFalls={!greyroom} cornerStart={!kit && !zones && !waterStudy && cornerStart} start={greyroom || kit || zones ? undefined : params.get('start') || (waterStudy ? 'cavern' : undefined)} />}
+            {cavernStudy ? <CavernStudy reference={reference} /> : zones ? <ZoneLoading playerRef={playerRef} reference={reference} view={view} /> : kit ? <AssetKit reference={reference} /> : greyroom ? <GreyRoom playerRef={playerRef} /> : <HubBlockout reference={reference} cornerView={cornerView} view={view} legacy={params.get('scene') === 'hub'} waterStudy={waterStudy} />}
+            {!reference && <Player ref={playerRef} recoverFalls={!greyroom} recoverToStart={cavernStudy} cornerStart={!kit && !zones && !waterStudy && !cavernStudy && cornerStart} start={cavernStudy ? 'cavern' : greyroom || kit || zones ? undefined : params.get('start') || (waterStudy ? 'cavern' : undefined)} />}
             {!reference && <FollowCamera bodyRef={playerRef} />}
             {/* Dev-only scene handle for stepping the loop and running the M1
                 audit. Inside <Physics> because it raycasts against the same
@@ -161,7 +164,7 @@ export default function App() {
         <TierGovernor farOverride={greyroom ? undefined : 180} />
       </Canvas>
 
-      {!reference && <DevHud hub={!greyroom} label={waterStudy ? 'Phase B · water study (half)' : zones ? 'Phase B · zone loading' : kit ? 'Phase B · asset preview' : undefined} />}
+      {!reference && <DevHud hub={!greyroom} label={cavernStudy ? 'Phase B · cavern light study' : waterStudy ? 'Phase B · water-only study' : zones ? 'Phase B · zone loading' : kit ? 'Phase B · asset preview' : undefined} />}
       {!reference && <MobileControls />}
       {!reference && <Settings />}
     </>

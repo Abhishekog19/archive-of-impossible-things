@@ -63,7 +63,7 @@ const BOB = {
 }
 
 /** Feeds ecctrl runtime state into the store for the dev HUD. */
-function StateProbe({ controllerRef, recoverFalls }) {
+function StateProbe({ controllerRef, recoverFalls, respawn = SPAWN }) {
   const setPlayerDebug = useGameStore((s) => s.setPlayerDebug)
   // Throttled: the HUD is text, and re-rendering React text 60 times a second
   // to show a number that changes in the third decimal is pure waste.
@@ -73,7 +73,7 @@ function StateProbe({ controllerRef, recoverFalls }) {
     const c = controllerRef.current
     if (!c?.body) return
     if (recoverFalls && c.body.translation().y < -12) {
-      c.body.setTranslation({ x: SPAWN[0], y: SPAWN[1], z: SPAWN[2] }, true)
+      c.body.setTranslation({ x: respawn[0], y: respawn[1], z: respawn[2] }, true)
       c.body.setLinvel({ x: 0, y: 0, z: 0 }, true)
       c.body.setAngvel({ x: 0, y: 0, z: 0 }, true)
     }
@@ -138,7 +138,7 @@ function BodyMotion({ controllerRef, groupRef }) {
   return null
 }
 
-const Player = forwardRef(function Player({ recoverFalls = false, cornerStart = false, start }, ref) {
+const Player = forwardRef(function Player({ recoverFalls = false, recoverToStart = false, cornerStart = false, start }, ref) {
   const controllerRef = useRef(null)
   const bodyGroupRef = useRef(null)
 
@@ -187,7 +187,8 @@ const Player = forwardRef(function Player({ recoverFalls = false, cornerStart = 
         </group>
       </Ecctrl>
 
-      <StateProbe controllerRef={controllerRef} recoverFalls={recoverFalls} />
+      <StateProbe controllerRef={controllerRef} recoverFalls={recoverFalls}
+        respawn={recoverToStart && Object.hasOwn(WORLD_SPAWNS, start) ? WORLD_SPAWNS[start] : SPAWN} />
       <BodyMotion controllerRef={controllerRef} groupRef={bodyGroupRef} />
     </>
   )

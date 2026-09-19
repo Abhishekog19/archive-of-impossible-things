@@ -317,8 +317,17 @@ blur passes, transparency or refraction; Low uses opaque tint and subtle motion
 with no reflection target. This is a measured prototype exception to the baked
 rendering direction, not acceptance of realtime reflections throughout the world.
 The authored Blender/GLB pool outline is reused without altering its collision.
-Overhead light, cavern fog, final shore/rock materials and combined acceptance
-remain pending. The current warm blockout lighting is not the REF10 finish.
+The water-only route retains warm blockout lighting for comparison.
+
+September 19 adds `?scene=cavern`: an isolated diffuse-baked light study using
+the same chamber/pool geometry. `src/config/cavern-study.js` defines its cool
+fog/background (`#53616c`, linear 12–85 m), opening (`#c1d4e0`) and soft shaft
+(`#b7cbdc`). A 1K full-colour diffuse atlas carries the light; runtime geometry
+uses unlit materials. Medium/High add one transparent tapered shaft, disabled
+on Low; there are no realtime shadow maps, volumetric ray marching or bloom.
+This proves export and bounded cost, not final REF10 quality. The coarse chamber,
+shoreline, light distribution and close-range material density need Phase E art
+and further comparisons. Sustained traversal and real-phone acceptance remain open.
 
 1. **Camera distance 4.0 m is a guess.** Canopy scenes often want closer for
    enclosure. Expect to change it in the first hour of Step 1.

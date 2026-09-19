@@ -1,6 +1,6 @@
 # Connected environment production plan
 
-Revised September 17, 2026 (Asia/Calcutta). Filename retained for existing links.
+Revised September 19, 2026 (Asia/Calcutta). Filename retained for existing links.
 This replaces the September 30 hub-only scope and future phase dates. Completed
 production evidence remains in `plans/CURRENT_PLAN.md`.
 
@@ -134,11 +134,14 @@ world-blockout assets and does not overwrite that file. Blender setup is untouch
 | Sep 16 | Finish the first reusable kit, instanced browser preview, collision/loading checks and grouped publication. |
 | Sep 17 | Completed early Sep 16: three tree forms, four ground-cover families, varied masonry/moss and combined browser checks. |
 | Sep 18 | Completed early Sep 17: separate ruins/forest packages, distance loading/eviction, retry/cancellation and transfer/resource checks. |
-| Sep 19–20 | Prototype cavern water and overhead light; compare REF10 in the browser and measure cost. |
+| Sep 19–20 | Sep 19 implementation complete: water half, baked overhead illumination, fog/shaft study, REF10 comparison and initial cost checks. Sep 20: broader angle/fallback review and sustained-cost checks. |
 | Sep 21 | Review assembled material/lighting transfer, repeated loading and performance risks. |
 | Sep 22 | Close the kit/prototype gate, review references and reforecast before full-area dressing. |
 
 These targets clarify the existing Phase B window; they do not add unattended work
 or move later dates. Fix the largest visual gaps before multiplying assets.
-The September 18 checkpoint is complete one calendar day early; next session is
-the cavern water/overhead-light prototype. The October 25 forecast is unchanged.
+The September 18 loading checkpoint finished one calendar day early. The water
+half began September 18; the combined light/fog implementation finished September
+19. September 20's prototype review remains scheduled, followed by September 21's
+material-transfer review. Do not turn early starts into a claimed full-project
+schedule lead. The October 25 forecast is unchanged.

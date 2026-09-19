@@ -1,6 +1,6 @@
 # Current plan — Archive of Impossible Things
 
-Status (revised September 17): complete connected environment scope now covers
+Status (revised September 19): complete connected environment scope now covers
 REF4/5/6/7/8/10. The September 30 deadline and former future phase dates are superseded.
 Expected finish: October 25, 2026; planning range October 18–November 1, assuming
 one hour per weekday and three hours per weekend day. Reforecast September 22.
@@ -12,7 +12,10 @@ asset production, not final art approval. Phase B (September 16–22) is active.
 The reusable-kit/browser proof started September 15 and is finalized September 16.
 September 17's kit variation was completed early and published September 17 as
 version 14 after the usage-limit interruption. September 18's zone export/loading
-proof is now complete on September 17. Next: cavern water/light risk prototypes.
+proof was completed September 17 and published as version 15 on September 18.
+September 18's water-only half is finished; September 19 adds the combined cavern
+light/fog prototype and initial cost checks. Next: September 20's wider camera,
+fallback and sustained-cost review before September 21's material-transfer review.
 Existing hub layout and corner technical proof remain reusable; final visual
 approval is open. Final character movement/physics and games follow environment
 completion. Existing movement supports inspection; author collision-ready geometry now.
@@ -32,6 +35,49 @@ This milestone takes priority over the older full-game roadmap.
 | 5. R3F loading | Browser loads GLB with correct scale, materials and lighting; representative export is proven early. |
 | 6. Integration readiness | Separate collision proxies and usable stairs/slopes/clearances; existing controller aids inspection. Final movement/physics integration follows environment delivery. |
 | 7. Browser/mobile testing | Reference-versus-screenshot review, build/lint and measured Iris Xe traversal pass; mobile viewport checks, then user-led real-phone control/thermal verification at the end. |
+
+## September 18–19 — water half completed, today's light prototype verified
+
+- Published the pending zone-loading checkpoint (version 15). Finished the
+  requested water-only half, then resumed on September 19 at the user's request.
+  Water work was committed/pushed separately as `436230e`.
+- `?scene=water` preserves the old cavern for comparison. It reuses the Blender
+  GLB pool outline with calm ripples, angle-dependent tint and a 384/512px planar
+  reflection on Medium/High. Low has no reflection target. Nested reflection
+  draws are included in the HUD; owned targets/materials/geometry are disposed.
+- `npm run blender:cavern` extracts the existing cavern into its own editable
+  study and bakes colour/direct/indirect illumination through the opening, at
+  40 CPU samples. One 1024px atlas; GLB 226,036 bytes; source 1,023,422 bytes.
+  The world/hub source assets and Blender MCP setup remain unchanged.
+- `?scene=cavern` loads only this study GLB, with unlit baked stone, cool fog,
+  opening light and a soft transparent shaft. Low omits the shaft/reflection.
+  It retains inspection movement, closes the extracted passage's upper end and
+  returns falls to the cavern entrance. No swimming, final physics or gameplay.
+- REF10 comparisons: `.artifacts/cavern-sep19-{reference,gameplay}.jpg`, plus
+  `water-sep18-half-{reference,gameplay}.jpg`. Two lighting iterations reduced
+  overall brightness, noisy mottling and weak separation around the shaft.
+  Coarse triangular walls, flat/regular shore, roof light spokes and limited
+  pool framing remain the largest visual gaps; this is not final art approval.
+- Three Low/High/Medium cycles return to the same resource counts. Fixed study:
+  Low 3 draws / 512 triangles / 3 geometries / 1 texture; Medium/High 6 draws /
+  1,090 triangles / 4 geometries / 2 textures, including the reflection pass.
+  The atlas is sRGB, unlit and filtered up to 4x. Shore walk/return, entrance
+  recovery and the closed upper passage pass. No application/shader errors.
+- Production spawn, tier changes, 390 × 844 layout and default-world isolation
+  pass. The default does not fetch the study GLB or either cavern shader chunk.
+  Build/lint pass. Evidence: `.artifacts/cavern-sep19-{checks,production}.json`.
+- A brief visible production sample at 1280 × 720, Medium DPR 1.25, holds about
+  60 FPS after settling; 9 draws / 1,726 triangles / 6 geometries / 3 textures.
+  `cavern-sep19-live.json` contains 15 HUD observations, not a three-minute
+  traversal or real-phone thermal acceptance. Headless FPS is excluded.
+- Private material remains ignored/untracked by Git metadata only. User's
+  modified `hub-blockout.blend` remains excluded, with its original hash intact.
+
+September 19's implementation session is complete. September 20 remains the
+broader angle/fallback/sustained-cost review within the existing two-day prototype
+window. Phase B is not complete; the September 22 review and October 25 forecast
+are unchanged. Separate pushed groups: water `436230e`, Blender/export `310b4f8`,
+runtime `73e407e`, followed by the documentation checkpoint containing this record.
 
 ## September 17 — zone-loading proof brought forward from September 18
 

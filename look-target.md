@@ -307,6 +307,19 @@ one that matters. §16: *satisfying the requirements is not the same as being go
 
 ## 11. Known open
 
+### REF10 water risk study — September 18, 2026
+
+The expanded cavern scope uses a separate experimental pool palette: deep
+`#15232b`, grazing tint `#53636b` (`src/config/cavern-water.js`). Only
+`?scene=water` uses this material; the outdoor palette and default world remain
+unchanged. Medium/High test one 384/512px planar reflection target, without MSAA,
+blur passes, transparency or refraction; Low uses opaque tint and subtle motion
+with no reflection target. This is a measured prototype exception to the baked
+rendering direction, not acceptance of realtime reflections throughout the world.
+The authored Blender/GLB pool outline is reused without altering its collision.
+Overhead light, cavern fog, final shore/rock materials and combined acceptance
+remain pending. The current warm blockout lighting is not the REF10 finish.
+
 1. **Camera distance 4.0 m is a guess.** Canopy scenes often want closer for
    enclosure. Expect to change it in the first hour of Step 1.
 2. **Dappled light as a texture is unproven here.** It's the second-highest-value

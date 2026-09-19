@@ -92,6 +92,7 @@ export default function App() {
   const greyroom = params.get('scene') === 'greyroom'
   const kit = params.get('scene') === 'kit'
   const zones = params.get('scene') === 'zones'
+  const waterStudy = params.get('scene') === 'water'
   const cornerView = !greyroom && params.get('view') === 'corner'
   const view = params.get('view')
   const reference = !greyroom && (zones ? ['zones', 'zone-forest'].includes(view) : kit ? view === 'kit' : Object.hasOwn(worldViews, view) || cornerView)
@@ -146,8 +147,8 @@ export default function App() {
 
         <Suspense fallback={null}>
           <Physics paused={(!visible || settingsOpen) && !physicsForced}>
-            {zones ? <ZoneLoading playerRef={playerRef} reference={reference} view={view} /> : kit ? <AssetKit reference={reference} /> : greyroom ? <GreyRoom playerRef={playerRef} /> : <HubBlockout reference={reference} cornerView={cornerView} view={view} legacy={params.get('scene') === 'hub'} />}
-            {!reference && <Player ref={playerRef} recoverFalls={!greyroom} cornerStart={!kit && !zones && cornerStart} start={greyroom || kit || zones ? undefined : params.get('start')} />}
+            {zones ? <ZoneLoading playerRef={playerRef} reference={reference} view={view} /> : kit ? <AssetKit reference={reference} /> : greyroom ? <GreyRoom playerRef={playerRef} /> : <HubBlockout reference={reference} cornerView={cornerView} view={view} legacy={params.get('scene') === 'hub'} waterStudy={waterStudy} />}
+            {!reference && <Player ref={playerRef} recoverFalls={!greyroom} cornerStart={!kit && !zones && !waterStudy && cornerStart} start={greyroom || kit || zones ? undefined : params.get('start') || (waterStudy ? 'cavern' : undefined)} />}
             {!reference && <FollowCamera bodyRef={playerRef} />}
             {/* Dev-only scene handle for stepping the loop and running the M1
                 audit. Inside <Physics> because it raycasts against the same
@@ -160,7 +161,7 @@ export default function App() {
         <TierGovernor farOverride={greyroom ? undefined : 180} />
       </Canvas>
 
-      {!reference && <DevHud hub={!greyroom} label={zones ? 'Phase B · zone loading' : kit ? 'Phase B · asset preview' : undefined} />}
+      {!reference && <DevHud hub={!greyroom} label={waterStudy ? 'Phase B · water study (half)' : zones ? 'Phase B · zone loading' : kit ? 'Phase B · asset preview' : undefined} />}
       {!reference && <MobileControls />}
       {!reference && <Settings />}
     </>

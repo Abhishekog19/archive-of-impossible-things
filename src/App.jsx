@@ -98,7 +98,7 @@ export default function App() {
   const cavernStudy = params.get('scene') === 'cavern'
   const cornerView = !greyroom && params.get('view') === 'corner'
   const view = params.get('view')
-  const reference = !greyroom && (zones ? ['zones', 'zone-forest'].includes(view) : kit ? view === 'kit' : Object.hasOwn(worldViews, view) || cornerView)
+  const reference = !greyroom && (cavernStudy ? Object.hasOwn(CAVERN_STUDY.views, view) : zones ? ['zones', 'zone-forest'].includes(view) : kit ? view === 'kit' : Object.hasOwn(worldViews, view) || cornerView)
   const cornerStart = !greyroom && params.get('start') === 'corner'
   // The ecctrl handle, shared by the camera (needs the body to follow) and the
   // scene (the post needs to know when the player is close).
@@ -150,7 +150,7 @@ export default function App() {
 
         <Suspense fallback={null}>
           <Physics paused={(!visible || settingsOpen) && !physicsForced}>
-            {cavernStudy ? <CavernStudy reference={reference} /> : zones ? <ZoneLoading playerRef={playerRef} reference={reference} view={view} /> : kit ? <AssetKit reference={reference} /> : greyroom ? <GreyRoom playerRef={playerRef} /> : <HubBlockout reference={reference} cornerView={cornerView} view={view} legacy={params.get('scene') === 'hub'} waterStudy={waterStudy} />}
+            {cavernStudy ? <CavernStudy reference={reference} view={view} /> : zones ? <ZoneLoading playerRef={playerRef} reference={reference} view={view} /> : kit ? <AssetKit reference={reference} /> : greyroom ? <GreyRoom playerRef={playerRef} /> : <HubBlockout reference={reference} cornerView={cornerView} view={view} legacy={params.get('scene') === 'hub'} waterStudy={waterStudy} />}
             {!reference && <Player ref={playerRef} recoverFalls={!greyroom} recoverToStart={cavernStudy} cornerStart={!kit && !zones && !waterStudy && !cavernStudy && cornerStart} start={cavernStudy ? 'cavern' : greyroom || kit || zones ? undefined : params.get('start') || (waterStudy ? 'cavern' : undefined)} />}
             {!reference && <FollowCamera bodyRef={playerRef} />}
             {/* Dev-only scene handle for stepping the loop and running the M1

@@ -4,7 +4,6 @@ import { useThree } from '@react-three/fiber'
 import { CuboidCollider, RigidBody } from '@react-three/rapier'
 import { Color } from 'three'
 import CavernWater from './CavernWater'
-import { CAVERN_WATER } from '../config/cavern-water'
 import { CAVERN_STUDY } from '../config/cavern-study'
 import { useGameStore } from '../store'
 
@@ -33,7 +32,7 @@ const shaftFragment = `
   }
 `
 
-export default function CavernStudy({ reference }) {
+export default function CavernStudy({ reference, view = 'cavern' }) {
   const { nodes } = useGLTF('/models/cavern-study.glb')
   const camera = useThree((s) => s.camera)
   const gl = useThree((s) => s.gl)
@@ -51,17 +50,18 @@ export default function CavernStudy({ reference }) {
   useEffect(() => () => map.dispose(), [map])
   useEffect(() => {
     if (!reference) return
-    camera.position.set(...CAVERN_WATER.camera.position)
-    camera.lookAt(...CAVERN_WATER.camera.target)
+    const pose = CAVERN_STUDY.views[view] || CAVERN_STUDY.views.cavern
+    camera.position.set(...pose.position)
+    camera.lookAt(...pose.target)
     camera.updateProjectionMatrix()
-  }, [camera, reference])
+  }, [camera, reference, view])
   return <>
     <mesh geometry={nodes.Cavern_Baked.geometry}>
       <meshBasicMaterial map={map} />
     </mesh>
-    <CavernWater geometry={nodes.Pool_study.geometry} />
+    <CavernWater geometry={nodes.Pool_study.geometry} openingLight={CAVERN_STUDY} />
     <mesh position={CAVERN_STUDY.openingPosition} rotation={[Math.PI / 2, 0, 0]}>
-      <circleGeometry args={[6, 32]} />
+      <circleGeometry args={[CAVERN_STUDY.openingRadius, 32]} />
       <meshBasicMaterial color={CAVERN_STUDY.opening} fog={false} />
     </mesh>
     {tier !== 'low' && <mesh position={CAVERN_STUDY.shaftPosition} renderOrder={1}>

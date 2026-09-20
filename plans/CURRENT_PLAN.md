@@ -1,6 +1,6 @@
 # Current plan — Archive of Impossible Things
 
-Status (revised September 19): complete connected environment scope now covers
+Status (revised September 20): complete connected environment scope now covers
 REF4/5/6/7/8/10. The September 30 deadline and former future phase dates are superseded.
 Expected finish: October 25, 2026; planning range October 18–November 1, assuming
 one hour per weekday and three hours per weekend day. Reforecast September 22.
@@ -14,8 +14,8 @@ September 17's kit variation was completed early and published September 17 as
 version 14 after the usage-limit interruption. September 18's zone export/loading
 proof was completed September 17 and published as version 15 on September 18.
 September 18's water-only half is finished; September 19 adds the combined cavern
-light/fog prototype and initial cost checks. Next: September 20's wider camera,
-fallback and sustained-cost review before September 21's material-transfer review.
+light/fog prototype and initial cost checks. September 20 closes the wider camera,
+fallback and sustained-cost review. Next: September 21's material-transfer review.
 Existing hub layout and corner technical proof remain reusable; final visual
 approval is open. Final character movement/physics and games follow environment
 completion. Existing movement supports inspection; author collision-ready geometry now.
@@ -36,7 +36,39 @@ This milestone takes priority over the older full-game roadmap.
 | 6. Integration readiness | Separate collision proxies and usable stairs/slopes/clearances; existing controller aids inspection. Final movement/physics integration follows environment delivery. |
 | 7. Browser/mobile testing | Reference-versus-screenshot review, build/lint and measured Iris Xe traversal pass; mobile viewport checks, then user-led real-phone control/thermal verification at the end. |
 
-## September 18–19 — water half completed, today's light prototype verified
+## September 20 — cavern angles, Low fallback and sustained cost
+
+- Compared REF10 with four fixed views: original, west, east and low shoreline.
+  Use `?scene=cavern&view=cavern`, `cavern-west`, `cavern-east` or `cavern-shore`.
+  Evidence: `.artifacts/cavern-sep20-{low,west,east,shore}.jpg`.
+- Water now follows scene fog at every tier. Low retains a soft analytical
+  opening-light reflection without a render target; it does not reflect scenery
+  or the character. Medium/High retain their bounded planar reflection targets.
+- All 12 camera/tier combinations pass without application/shader errors. Three
+  in-place quality cycles return to stable resource counts. Fixed main view:
+  Low 3 draws / 512 triangles / 3 geometries / 1 texture; Medium/High 6 draws /
+  1,090 triangles / 4 geometries / 2 textures, including reflection rendering.
+  Shore travel/return, fall recovery and the upper gate pass.
+- Production spawn/tier switching, 390 × 844 layout and default-world isolation
+  pass. Build/lint pass. Evidence: `.artifacts/cavern-sep20-{checks,production}.json`.
+- A 180-second production traversal in GPU-backed headless Chromium on actual
+  Iris Xe/D3D11 averages 60.00 FPS; 1% low 58.99 FPS, p95 frame time 16.8 ms.
+  At 1280 × 720, Medium DPR 1.25, all 917 observations remain visible/grounded;
+  64 shoreline waypoints complete with no application errors. Evidence:
+  `.artifacts/cavern-sep20-performance.json`. A first run stalled at its return
+  waypoint and is excluded; the final route checks for stalls throughout.
+  This is local prototype evidence, not whole-world, Vercel or phone acceptance.
+- Largest remaining REF10 gaps are coarse wall facets, a regular rounded bank,
+  angular shoreline wedges and roof-light spokes/limited atlas density. These
+  need Phase E geometry and contextual art; this prototype is not visual approval.
+- Private material remains ignored/untracked by metadata checks only. The user's
+  pre-existing hub-source edit is unchanged and excluded. Blender setup is untouched.
+
+Next: September 21 assembled material/lighting transfer and repeated-loading risk
+review. Phase B's September 22 gate and October 25 forecast remain unchanged;
+this closes the scheduled day and does not establish a full-project schedule lead.
+
+## September 18–19 — water half completed, light prototype verified
 
 - Published the pending zone-loading checkpoint (version 15). Finished the
   requested water-only half, then resumed on September 19 at the user's request.

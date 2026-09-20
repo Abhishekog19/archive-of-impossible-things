@@ -327,7 +327,17 @@ uses unlit materials. Medium/High add one transparent tapered shaft, disabled
 on Low; there are no realtime shadow maps, volumetric ray marching or bloom.
 This proves export and bounded cost, not final REF10 quality. The coarse chamber,
 shoreline, light distribution and close-range material density need Phase E art
-and further comparisons. Sustained traversal and real-phone acceptance remain open.
+and further comparisons. September 20's three-minute local prototype traversal
+averages 60 FPS on Iris Xe at Medium/DPR 1.25, 1280 × 720, in GPU-backed headless
+Chromium. Whole-world sustained traversal and real-phone acceptance remain open.
+
+September 20 review adds `view=cavern-west`, `view=cavern-east` and
+`view=cavern-shore` alongside `view=cavern`, all with `scene=cavern`. Water now
+participates in scene fog at every quality level. Low approximates only the
+opening's reflection analytically, preserving a light cue without a scene render
+target; it does not reflect rocks or the character. Medium/High retain their
+384/512px targets. Remaining art gaps are the coarse wall/shore silhouettes,
+radial roof-light pattern and close-view atlas density; this is still a risk study.
 
 1. **Camera distance 4.0 m is a guess.** Canopy scenes often want closer for
    enclosure. Expect to change it in the first hour of Step 1.

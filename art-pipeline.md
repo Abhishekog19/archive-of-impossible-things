@@ -112,6 +112,19 @@ and overwrites `public/models/zones/{ruins,forest}.glb` plus
 `src/config/zone-packages.json`; it does not rewrite a Blender source. Each package
 contains its asset family and matching collision proxies, with its own atlas.
 
+Run `npm run verify:zone-assets` after either export. It checks package sizes and
+node manifests, embedded atlas identity against the kit, UV0 and vertex colours,
+and the current opaque material contract. It rejects tint, normal/emissive textures
+or texture transforms that KitBatch would silently drop. This is a focused export
+check, not a glTF validator or a visual-quality test.
+
+September 21 transfer review: exported kit atlas bytes are preserved. The current
+unlit runtime intentionally does not relight a diffuse bake. Rotating a preview
+asset rotates its baked highlights too; do not mistake that for a lighting bug in
+GLB loading. Before repeating final art, prove one assembled sunlit/shaded patch
+with correctly oriented bakes, contact/canopy shadows and a seam-free bark sample.
+Keep contextual static shells separate from reusable instanced foliage/props.
+
 `?scene=zones` is the connected loading test. Fixed views are `?scene=zones&view=zones`
 and `?scene=zones&view=zone-forest`; these pin both packages for comparison. Runtime
 zone mounts own their parsed resources, abort abandoned loads and dispose geometry,

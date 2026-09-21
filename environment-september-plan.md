@@ -1,6 +1,6 @@
 # Connected environment production plan
 
-Revised September 20, 2026 (Asia/Calcutta). Filename retained for existing links.
+Revised September 21, 2026 (Asia/Calcutta). Filename retained for existing links.
 This replaces the September 30 hub-only scope and future phase dates. Completed
 production evidence remains in `plans/CURRENT_PLAN.md`.
 
@@ -135,13 +135,13 @@ world-blockout assets and does not overwrite that file. Blender setup is untouch
 | Sep 17 | Completed early Sep 16: three tree forms, four ground-cover families, varied masonry/moss and combined browser checks. |
 | Sep 18 | Completed early Sep 17: separate ruins/forest packages, distance loading/eviction, retry/cancellation and transfer/resource checks. |
 | Sep 19–20 | Complete: water, baked overhead light and fog/shaft prototype; four camera comparisons, all-tier fog, Low opening cue and sustained local Iris Xe cost review. Detailed evidence and limits in CURRENT_PLAN. |
-| Sep 21 | Review assembled material/lighting transfer, repeated loading and performance risks. |
+| Sep 21 | Complete: atlas/material transfer audit, reusable export check, repeated loading/recovery and three-minute Iris Xe strip traversal (59.97 FPS average). Art blockers recorded for the gate. |
 | Sep 22 | Close the kit/prototype gate, review references and reforecast before full-area dressing. |
 
 These targets clarify the existing Phase B window; they do not add unattended work
 or move later dates. Fix the largest visual gaps before multiplying assets.
 The September 18 loading checkpoint finished one calendar day early. The water
 half began September 18; the combined light/fog implementation finished September
-19. September 20's prototype review is complete; next is September 21's
-material-transfer review. Do not turn early starts into a claimed full-project
+19. September 20's prototype review and September 21's material/loading review
+are complete; next is September 22's kit gate and reforecast. Do not turn early starts into a claimed full-project
 schedule lead. The October 25 forecast is unchanged.

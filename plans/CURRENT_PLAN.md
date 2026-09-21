@@ -1,6 +1,6 @@
 # Current plan — Archive of Impossible Things
 
-Status (revised September 20): complete connected environment scope now covers
+Status (revised September 21): complete connected environment scope now covers
 REF4/5/6/7/8/10. The September 30 deadline and former future phase dates are superseded.
 Expected finish: October 25, 2026; planning range October 18–November 1, assuming
 one hour per weekday and three hours per weekend day. Reforecast September 22.
@@ -15,7 +15,8 @@ version 14 after the usage-limit interruption. September 18's zone export/loadin
 proof was completed September 17 and published as version 15 on September 18.
 September 18's water-only half is finished; September 19 adds the combined cavern
 light/fog prototype and initial cost checks. September 20 closes the wider camera,
-fallback and sustained-cost review. Next: September 21's material-transfer review.
+fallback and sustained-cost review. September 21 completes material-transfer and
+repeated-loading review. Next: September 22's kit/prototype gate and reforecast.
 Existing hub layout and corner technical proof remain reusable; final visual
 approval is open. Final character movement/physics and games follow environment
 completion. Existing movement supports inspection; author collision-ready geometry now.
@@ -35,6 +36,45 @@ This milestone takes priority over the older full-game roadmap.
 | 5. R3F loading | Browser loads GLB with correct scale, materials and lighting; representative export is proven early. |
 | 6. Integration readiness | Separate collision proxies and usable stairs/slopes/clearances; existing controller aids inspection. Final movement/physics integration follows environment delivery. |
 | 7. Browser/mobile testing | Reference-versus-screenshot review, build/lint and measured Iris Xe traversal pass; mobile viewport checks, then user-led real-phone control/thermal verification at the end. |
+
+## September 21 — assembled material transfer and loading risk review
+
+- Reviewed REF2 stone and REF5 forest against the assembled zone views at
+  1280 × 720 (`.artifacts/material-sep21-{ruins,forest}.jpg`). This session is
+  technical/visual review, not new world dressing or final material approval.
+- Added `npm run verify:zone-assets`: checks manifest sizes/nodes, embedded atlas
+  identity against the source kit, UV0, foliage colours and the current runtime's
+  material contract. Both packages pass; in-memory stale-size and changed-atlas
+  negative checks are rejected. No source assets are rewritten.
+- Browser audit verifies 22 instance batches: unlit baked materials, sRGB 2K
+  stone/1K wood atlases, 4x filtering, correct vertex colours and fog support.
+  The transfer is intact; flat lighting is not evidence of missing texture maps.
+  Evidence: `.artifacts/material-sep21.json`.
+- Three in-place eviction/reload cycles return to 16 geometries / 2 textures in
+  ruins, 14 / 2 in forest, and 26 / 3 in overlap. Failed fetch keeps the gate solid;
+  Retry and cancellation/re-entry recover without errors or resource growth.
+  Evidence: `.artifacts/zones-sep21-checks.json` (rerun of existing lifecycle test).
+- A 180-second production keyboard traversal on Iris Xe/D3D11 in GPU-backed
+  headless Chromium averages 59.97 FPS, 1% low 56.47 FPS, p95 16.7 ms. Medium,
+  DPR 1.25, 1280 × 720; nine endpoint arrivals, 864 visible/grounded observations,
+  no application errors. Each endpoint returns to the same resource baseline.
+  Observed maximum: 26 draws / 114,824 triangles. Evidence:
+  `.artifacts/zones-sep21-performance.json`. This proves the prototype strip,
+  not final dressing density, full-world transitions, Vercel parity or phone thermals.
+- Production 390 × 844 layout has no overflow and loads grounded. Build/lint and
+  export checks pass. Private source stays ignored/untracked by metadata only;
+  the pre-existing hub-source edit is unchanged and excluded from commits.
+
+Priorities for September 22's gate: (1) contextual ground/contact/canopy shadows,
+(2) bark atlas seams and directional-bake orientation, (3) foliage value/depth and
+background enclosure. Current unlit preview highlights rotate with reused assets;
+prove an assembled sun/shade patch before repeating final art. These are explicit
+art-production blockers, not a claim that today fixed them. Pipeline notes describe
+the export check and baking decision. World art/runtime are unchanged today.
+
+Next: review the kit/prototype gate and reforecast September 22 before Phase C
+hub/forest dressing. October 25 remains the provisional finish; no schedule lead
+is claimed from a completed review day. The playable preview remains version 17.
 
 ## September 20 — cavern angles, Low fallback and sustained cost
 

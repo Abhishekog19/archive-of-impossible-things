@@ -1,6 +1,7 @@
 # Connected environment production plan
 
-Revised September 21, 2026 (Asia/Calcutta). Filename retained for existing links.
+Revised September 21, 2026 (Asia/Calcutta), including the September 22 review
+completed early. Filename retained for existing links.
 This replaces the September 30 hub-only scope and future phase dates. Completed
 production evidence remains in `plans/CURRENT_PLAN.md`.
 
@@ -32,16 +33,20 @@ stairs, slopes, clearances and separate collision proxies now to avoid remodelin
 
 ## Expected finish and assumptions
 
-**Expected finish: October 25, 2026. Planning range: October 18–November 1.**
-September 30 is no longer a deadline. This is an initial estimate, not a quality
-guarantee. Reforecast after September 22 using actual asset-production throughput.
-The hub and technical corner proof are reusable, but do not prove finished quality
-across the expanded world. Architecture/root composition, cavern water/light and
-whole-world performance are the largest uncertainties.
+**Expected finish: October 25, 2026. Planning range: October 25–November 1.**
+September 22's reforecast was completed September 21. September 30 is no longer a
+deadline. The technical kit, loading and cavern proofs reduce implementation risk,
+but no complete area has accepted final art yet. There is insufficient area-art
+throughput evidence to retain October 18 as an optimistic bound. October 25 stays
+the working estimate, conditional on the first assembled material/light patch and
+Phase C area progress. Recheck September 25; do not invent an art-completion rate
+from prototype count, frame rate or early review sessions. Hero architecture/roots,
+contextual baking, cavern art and whole-world performance remain uncertainties.
 
 Existing availability: one hour per weekday and three hours per weekend day.
-September 12–October 25 provides 30 weekday hours + 42 weekend hours = 72 shared
-production/review hours. The early/late bounds provide approximately 61–83 hours.
+The original September 12–October 25 window provides 72 shared production/review
+hours. With the September 22 review completed early, September 22–October 25 now
+provides 54 remaining scheduled hours; extending through November 1 adds 11 hours.
 These are working windows, not pure artist-labor or agent-runtime estimates.
 Assume reviews within about one day, no major direction restart, and explicitly
 started sessions; no unattended work or extra daily availability is assumed.
@@ -51,15 +56,15 @@ started sessions; no unattended work or extra daily availability is assumed.
 | Phase | Dates (2026) | Window | Deliverable and exit check |
 |---|---|---:|---|
 | A — Whole-world layout | Sep 12–15 | 8 h | Block out every area and connection; establish four future game locations and six reference cameras; inspect the complete route in-browser. |
-| B — Shared kit and risk prototypes | Sep 16–22 | 11 h | Stone/masonry/arch/tree/root/vegetation kit; prove repeated assets, zone exports/loading and a small cavern water/light prototype. Review material direction and reforecast. |
-| C — Hub and forest art | Sep 23–29 | 11 h | Apply art across REF4/5/6; replace placeholders, finish vegetation/lighting and review transitions. |
+| B — Shared kit and risk prototypes | Sep 16–21 (closed early) | 10 h window | Technical proofs and September 22 review complete. Advance with a material/light correction checkpoint; final art is not approved. |
+| C — Hub and forest art | Sep 22–29 | 12 h | First prove an assembled sun/shade patch; then apply art across REF4/5/6, replace placeholders, finish vegetation/lighting and review transitions. |
 | D — Archive exterior/interior | Sep 30–Oct 6 | 11 h | Complete REF7/8 facade, tree/root composition, hall, arches and roof opening; connect forest and cavern descent; compare in-browser. |
 | E — Deep Archive | Oct 7–13 | 11 h | Complete REF10 rock chamber, shoreline/pool, overhead light and passage; verify visual result and Iris Xe cost. |
 | F — World consistency and optimization | Oct 14–20 | 11 h | Finish all connections; unify lighting/material scale; tune loading, culling and detail levels; resolve worst visual/performance gaps. Environment content complete by Oct 20. |
 | G — Acceptance and contingency | Oct 21–25 | 9 h | Six reference comparisons, repeated zone entry, sustained performance, deployment verification and environment fixes; delivery candidate Oct 25. |
 
-October 18 is possible only with limited rework and early gate completion. Do not
-compress verification or silently remove required areas to hit a date. If a phase
+October 18 is no longer a supported forecast. Do not compress verification or
+silently remove required areas to hit a date. If a phase
 exceeds its window, explicitly reforecast, using November 1 as a planning bound,
 not a guaranteed latest date. Character/physics/game work is not included above.
 
@@ -120,14 +125,15 @@ forest coverage, refining archive framing and grounding the wrapping roots.
 Six comparisons and bounded outward/return/boundary checks are recorded; user
 visual acceptance remains open. Phase B began September 15, one calendar day early.
 Its first reusable-kit/browser proof is finalized September 16, on the planned
-start date. This is not a completed-day lead or a completed Phase B; the October
-forecast is unchanged. Remaining Phase B sessions are listed below.
+start date. The September 22 technical review was subsequently completed September
+21, one calendar day early. Phase C starts September 22 with explicit art corrections;
+this does not bring the full environment finish forward. Completed B sessions are below.
 Do not infer final art quality from the existence of all areas. Detailed evidence is
-in `plans/CURRENT_PLAN.md`; October forecast is unchanged. Preserve the pre-existing
+in `plans/CURRENT_PLAN.md`; October 25 remains the working finish. Preserve the pre-existing
 user edit to `art/source/hub-blockout.blend`; the world generator writes separate
 world-blockout assets and does not overwrite that file. Blender setup is untouched.
 
-## Phase B session targets — revised September 16
+## Phase B session record — closed September 21
 
 | Date | Target |
 |---|---|
@@ -136,12 +142,28 @@ world-blockout assets and does not overwrite that file. Blender setup is untouch
 | Sep 18 | Completed early Sep 17: separate ruins/forest packages, distance loading/eviction, retry/cancellation and transfer/resource checks. |
 | Sep 19–20 | Complete: water, baked overhead light and fog/shaft prototype; four camera comparisons, all-tier fog, Low opening cue and sustained local Iris Xe cost review. Detailed evidence and limits in CURRENT_PLAN. |
 | Sep 21 | Complete: atlas/material transfer audit, reusable export check, repeated loading/recovery and three-minute Iris Xe strip traversal (59.97 FPS average). Art blockers recorded for the gate. |
-| Sep 22 | Close the kit/prototype gate, review references and reforecast before full-area dressing. |
+| Sep 22 | Completed early Sep 21: six-reference review, technical pass with visual conditions, and reforecast. Final art approval stays open. |
 
-These targets clarify the existing Phase B window; they do not add unattended work
-or move later dates. Fix the largest visual gaps before multiplying assets.
-The September 18 loading checkpoint finished one calendar day early. The water
-half began September 18; the combined light/fog implementation finished September
-19. September 20's prototype review and September 21's material/loading review
-are complete; next is September 22's kit gate and reforecast. Do not turn early starts into a claimed full-project
-schedule lead. The October 25 forecast is unchanged.
+The completed review advances only Phase C's start. Later phases retain their dates;
+October 25 is still the working finish. Sessions require the user's explicit start.
+
+## Phase C sessions — September 22–29 (12 h window)
+
+| Date | Window | Work and exit check |
+|---|---:|---|
+| Sep 22 | 1 h | Assemble a connected hub/forest sun-shade patch in the actual world. Correct bark seams and bake orientation; establish canopy/contact shadows and foliage value depth. Export and compare before broad duplication. |
+| Sep 23 | 1 h | Close any patch mismatch; replace hub paving and main ruin silhouettes while preserving the established layout. If the patch fails, finish it before expanding and reforecast affected work. |
+| Sep 24 | 1 h | Extend hub vegetation, material scale and contextual lighting; remove the seam between the old corner and surrounding art. |
+| Sep 25 | 1 h | Build the REF5 forest approach pass: path edges, trunks/crowns, woodland shoulders and ground cover. Review achieved area coverage and revise dates if the remaining window is insufficient. |
+| Sep 26 | 3 h | Complete REF5 and dress REF6: enclosed canopy, broken ruins, layered foliage and readable light. Maintain the continuous inspection route. |
+| Sep 27 | 3 h | Finish hub/forest contextual bakes, transitions and local corrections; export/cull/instance using measured budgets. |
+| Sep 28 | 1 h | Compare REF4/5/6 at fixed and player views; fix the largest remaining 3–5 mismatches. No placeholder surfaces in the Phase C candidate. |
+| Sep 29 | 1 h | Sustained traversal/resource and layout checks; capture the three comparisons and record visual acceptance/remaining gaps before Phase D. |
+
+Patch checkpoint: bark joins should hold up at player distance; warm sun/cool shade
+and grounded canopy/contact shadows should read coherently across adjacent assets;
+foliage should have layered values without obscuring the route. Review fixed and
+moving views in-browser against REF4/5/6. No similarity percentage is inferred.
+Use contextual static bakes plus reusable foliage/props as described in
+`art-pipeline.md`. Keep simple colliders and the existing inspection controller;
+final movement, phone-control redesign and games remain after the environment.

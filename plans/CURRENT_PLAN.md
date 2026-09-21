@@ -2,13 +2,15 @@
 
 Status (revised September 21): complete connected environment scope now covers
 REF4/5/6/7/8/10. The September 30 deadline and former future phase dates are superseded.
-Expected finish: October 25, 2026; planning range October 18–November 1, assuming
-one hour per weekday and three hours per weekend day. Reforecast September 22.
+Expected finish: October 25, 2026; planning range October 25–November 1, assuming
+one hour per weekday and three hours per weekend day. September 22's reforecast
+was completed early on September 21; check it again after the September 25 art pass.
 Phase A (September 12–15) production and bounded route review are complete.
 All six areas are connected, with four reserved game locations and comparison
 cameras. September 15 closes the forest gap and refines archive framing/root
 connections. User visual acceptance remains open; this is a working layout for
-asset production, not final art approval. Phase B (September 16–22) is active.
+asset production, not final art approval. Phase B's technical review is complete;
+the September 22 gate was brought forward to September 21. Final art approval is open.
 The reusable-kit/browser proof started September 15 and is finalized September 16.
 September 17's kit variation was completed early and published September 17 as
 version 14 after the usage-limit interruption. September 18's zone export/loading
@@ -16,7 +18,8 @@ proof was completed September 17 and published as version 15 on September 18.
 September 18's water-only half is finished; September 19 adds the combined cavern
 light/fog prototype and initial cost checks. September 20 closes the wider camera,
 fallback and sustained-cost review. September 21 completes material-transfer and
-repeated-loading review. Next: September 22's kit/prototype gate and reforecast.
+repeated-loading review. The kit/prototype gate now permits Phase C production,
+starting September 22 with the material/light correction patch before broad dressing.
 Existing hub layout and corner technical proof remain reusable; final visual
 approval is open. Final character movement/physics and games follow environment
 completion. Existing movement supports inspection; author collision-ready geometry now.
@@ -36,6 +39,56 @@ This milestone takes priority over the older full-game roadmap.
 | 5. R3F loading | Browser loads GLB with correct scale, materials and lighting; representative export is proven early. |
 | 6. Integration readiness | Separate collision proxies and usable stairs/slopes/clearances; existing controller aids inspection. Final movement/physics integration follows environment delivery. |
 | 7. Browser/mobile testing | Reference-versus-screenshot review, build/lint and measured Iris Xe traversal pass; mobile viewport checks, then user-led real-phone control/thermal verification at the end. |
+
+## September 22 gate — completed early on September 21
+
+Decision: technical prototypes pass; advance to Phase C with a mandatory visual
+correction checkpoint at its start. This closes the planned review, not final art
+approval. No new area dressing or runtime change was made during this gate.
+
+| Gate | Evidence and disposition |
+|---|---|
+| Reusable kit | Six slabs, four masonry forms, arch and broken column, three derived tree forms, two roots and four ground-cover families exist. Sufficient starting kit; hero facade/root/rock assets still belong to their area phases. |
+| Export/material transfer | September 21 asset contract and 22 browser batches pass. 2K stone/1K wood atlases retain their bytes, sRGB and filtering. Visual seams and contextual lighting remain art work. |
+| Loading/collision readiness | Three eviction cycles, retry, cancellation and resident-floor/gate checks pass. The kit-family strip is a loading proof, not the final six-zone partition. |
+| Water/light risk | September 20 four-view/three-tier study passes. Low has no reflection target; Medium/High use bounded targets. Final chamber and shoreline shapes remain Phase E. |
+| Local performance | Existing 180-second production tests: streamed strip 59.97 FPS, cavern 60.00 FPS, Iris Xe/D3D11, Medium DPR 1.25, 1280 × 720. These do not approve full-world density, deployment parity or phones. |
+| Visual production readiness | Conditional: fix contextual shadows, bark seams/bake orientation and canopy depth in an assembled patch before repeating the kit widely. User visual acceptance remains open. |
+
+Reviewed the unchanged September 15 world screenshots against REF4/5/6/7/8/10,
+plus September 21 assembled-kit and September 20 cavern comparisons. These are
+existing captured views, not new renders. The review priorities by area are:
+
+| Area/reference | Largest remaining mismatches | Production owner |
+|---|---|---|
+| Hub / REF4 | Flat plaza/ring surface, placeholder crowns and pillars, missing canopy/contact shadows | Phase C |
+| Approach / REF5 | Smooth road ribbon, sparse woodland shoulders, coarse trunk/crown silhouettes | Phase C |
+| Deep canopy / REF6 | Blocky overhead masses, weak layered depth, missing dappled light and broken stone detail | Phase C |
+| Exterior / REF7 | Box-like facade, angular wrapping roots, absent masonry relief/organic joins | Phase D |
+| Interior / REF8 | Uniform arcade/columns, plain floor, missing roof-light/vegetation composition | Phase D |
+| Cavern / REF10 | Faceted bowl walls, regular shore/wedges, radial roof light and low surface density | Phase E |
+
+Source evidence: `.artifacts/world-sep15-{reference,forest,canopy,exterior,interior,cavern}.jpg`,
+`material-sep21-{ruins,forest}.jpg` and `cavern-sep20-{west,east,shore,low}.jpg`.
+Detailed measured checks remain in the September 20/21 entries; no identical tests
+were rerun for this documentation-only gate. Private material is ignored/untracked;
+the pre-existing hub source stays excluded. Blender setup and live version 17 are unchanged.
+
+Reforecast: retain October 25 as the working finish, with October 25–November 1
+as the planning range. The old October 18 optimistic bound is withdrawn: there is
+no accepted complete-area art throughput yet to support it. Prototype risk has
+fallen, but contextual baking and hero asset production are still unmeasured.
+Bring Phase C's start to September 22, giving it 12 scheduled hours through
+September 29 and 54 hours remaining through October 25. These are availability
+windows, not logged labour or a guarantee. Later phase dates stay unchanged.
+
+Next session (September 22): assemble a connected hub-to-forest sun/shade patch
+in the actual world; correct bark seams and baked-light orientation, add grounded
+canopy/contact shadows and layered foliage values; export and compare fixed and
+player views. Preserve the approved layout and existing hub-source edit. Expand
+only after that patch meets its visual checkpoint. See the dated Phase C sessions
+in `environment-september-plan.md`. This review is one calendar day early; it does
+not establish a one-day earlier environment delivery.
 
 ## September 21 — assembled material transfer and loading risk review
 

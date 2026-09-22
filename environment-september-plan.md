@@ -1,7 +1,7 @@
 # Connected environment production plan
 
-Revised September 21, 2026 (Asia/Calcutta), including the September 22 review
-completed early. Filename retained for existing links.
+Revised September 22, 2026 (Asia/Calcutta), including the finished correction patch
+and September 23 hub stonework completed early. Filename retained for existing links.
 This replaces the September 30 hub-only scope and future phase dates. Completed
 production evidence remains in `plans/CURRENT_PLAN.md`.
 
@@ -149,10 +149,16 @@ October 25 is still the working finish. Sessions require the user's explicit sta
 
 ## Phase C sessions — September 22–29 (12 h window)
 
+September 22 status: correction patch and September 23 hub paving/main ruin
+silhouettes are complete; final art approval stays open. Next is September 24.
+The dated work is one calendar day ahead, while the October 25 forecast and
+September 25 throughput review remain unchanged. Measured evidence and remaining
+visual mismatches are in plans/CURRENT_PLAN.md.
+
 | Date | Window | Work and exit check |
 |---|---:|---|
-| Sep 22 | 1 h | Assemble a connected hub/forest sun-shade patch in the actual world. Correct bark seams and bake orientation; establish canopy/contact shadows and foliage value depth. Export and compare before broad duplication. |
-| Sep 23 | 1 h | Close any patch mismatch; replace hub paving and main ruin silhouettes while preserving the established layout. If the patch fails, finish it before expanding and reforecast affected work. |
+| Sep 22 | 1 h | Completed Sep 22, including the interrupted second half: connected sun/shade patch, fused bark joins, placed bake orientation, canopy/contact shadows and foliage depth. Fixed/player comparisons and route checks pass; final art approval remains open. |
+| Sep 23 | 1 h | Completed early Sep 22: patch correction checkpoint, hub paving and main ruin silhouettes with preserved layout. Comparison, export, traversal and local hardware checks pass. |
 | Sep 24 | 1 h | Extend hub vegetation, material scale and contextual lighting; remove the seam between the old corner and surrounding art. |
 | Sep 25 | 1 h | Build the REF5 forest approach pass: path edges, trunks/crowns, woodland shoulders and ground cover. Review achieved area coverage and revise dates if the remaining window is insufficient. |
 | Sep 26 | 3 h | Complete REF5 and dress REF6: enclosed canopy, broken ruins, layered foliage and readable light. Maintain the continuous inspection route. |

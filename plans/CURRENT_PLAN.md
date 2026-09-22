@@ -1,6 +1,6 @@
 # Current plan — Archive of Impossible Things
 
-Status (revised September 21): complete connected environment scope now covers
+Status (revised September 22): complete connected environment scope now covers
 REF4/5/6/7/8/10. The September 30 deadline and former future phase dates are superseded.
 Expected finish: October 25, 2026; planning range October 25–November 1, assuming
 one hour per weekday and three hours per weekend day. September 22's reforecast
@@ -18,8 +18,10 @@ proof was completed September 17 and published as version 15 on September 18.
 September 18's water-only half is finished; September 19 adds the combined cavern
 light/fog prototype and initial cost checks. September 20 closes the wider camera,
 fallback and sustained-cost review. September 21 completes material-transfer and
-repeated-loading review. The kit/prototype gate now permits Phase C production,
-starting September 22 with the material/light correction patch before broad dressing.
+repeated-loading review. The kit/prototype gate permits Phase C production.
+September 22’s assembled correction patch is complete. September 23’s hub paving
+and main ruin silhouette pass was completed early on September 22. Next: September
+24 hub vegetation, material scale and contextual lighting, including the old corner.
 Existing hub layout and corner technical proof remain reusable; final visual
 approval is open. Final character movement/physics and games follow environment
 completion. Existing movement supports inspection; author collision-ready geometry now.
@@ -39,6 +41,56 @@ This milestone takes priority over the older full-game roadmap.
 | 5. R3F loading | Browser loads GLB with correct scale, materials and lighting; representative export is proven early. |
 | 6. Integration readiness | Separate collision proxies and usable stairs/slopes/clearances; existing controller aids inspection. Final movement/physics integration follows environment delivery. |
 | 7. Browser/mobile testing | Reference-versus-screenshot review, build/lint and measured Iris Xe traversal pass; mobile viewport checks, then user-led real-phone control/thermal verification at the end. |
+
+## September 22–23 — placed forest patch and hub stone pass
+
+September 22's interrupted first half is finished. September 23's paving/ruin
+production is completed on September 22, one calendar day early. This is a
+production checkpoint, not final visual approval or an earlier delivery promise.
+
+- Forest: 72 placed slabs follow the existing slope; four trees have fused branch
+  junctions, layered leaf values and terrain-grounded roots. A terrain-following
+  moss/soil surface and 72 plants receive/cast contextual shadows in a placed 2K
+  diffuse bake. Iteration removed black branch collars, extended the interrupted
+  paving and changed the evenly spaced plant rows into clusters.
+- Hub: 250 chipped flagstones, worn circular inlays and seven weathered column
+  silhouettes replace the smooth plaza and matching coarse pillars. Retained the
+  26 m footprint, routes, tower, older corner and resident floor/pillar colliders.
+  Comparison corrected honeycomb-like cells, regular pillar edges and crisp rings.
+- New editable sources and generators: forest patch and hub art. Runtime uses
+  unlit sRGB bakes with up to 4x filtering; foliage retains vertex colours. Forest
+  GLB: 4,911,392 bytes / one 2K atlas. Hub GLB: 2,339,136 bytes / 2K + 1K atlases.
+  Shared context exporter removes only replaced proxies without saving the source
+  world. Python caches are ignored. No new real-time lights or shadow maps.
+- Review is opt-in: `?patch=1&start=patch` for forest roaming,
+  `?patch=1&start=hub` for hub roaming, `?patch=1&view=patch` and
+  `?patch=1&view=reference` for comparison. Default world and zone/cavern studies
+  retain their existing loading path; new art does not load in the default world.
+- REF5/6 comparison: `.artifacts/patch-sep22-reference.jpg`. REF4 comparison:
+  `hub-sep23-reference.jpg`; player view: `hub-sep23-gameplay.jpg` in the same
+  folder. Largest remaining mismatches: placeholder hub/background crowns, smooth
+  undressed approach connections, sparse/regular surface growth, flat broader
+  lighting and the visible old-corner transition. September 24 addresses the hub
+  portion; REF5/6 expansion remains September 25–29. No similarity score claimed.
+- Build/lint pass. All 17 route segments pass with 100% sampled ground contact;
+  two trunk approaches and a hub pillar approach remain blocked and grounded.
+  Three new baked surfaces retain their expected sRGB maps. Production loading,
+  default-world isolation and 390 × 844 no-overflow checks pass.
+  Evidence: `hub-sep23-checks.json`, `world-art-sep23-production.json`.
+- A 180-second production keyboard traversal on Iris Xe/D3D11 averages 60.00 FPS,
+  1% low 59.52 FPS, p95 16.8 ms at 1280 × 720, Medium DPR 1.25. All 898
+  observations are visible/grounded; 50 route waypoints complete with no errors.
+  Maximum observed: 20 draws / 158,590 triangles. Evidence:
+  `world-art-sep23-performance.json`. This validates the local hub/patch route,
+  not final full-world density, Vercel parity or phone thermal performance.
+- The private source remains ignored/untracked (Git metadata only); the user's
+  existing hub-source edit remains unchanged and excluded. Blender MCP setup is
+  untouched. No Archive gameplay or final character/phone work was added.
+
+Next session: September 24 hub vegetation/material scale/contextual lighting and
+old-corner blending. The dated production sequence is one day ahead; October 25
+remains the working finish, with October 25–November 1 planning range and the
+September 25 throughput review still required.
 
 ## September 22 gate — completed early on September 21
 

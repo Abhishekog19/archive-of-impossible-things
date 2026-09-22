@@ -55,3 +55,6 @@ concept/
 # Private project material
 # NEVER commit this file — contains hidden portfolio/game source material
 personal-source-material.md
+
+# Blender Python module caches
+__pycache__/

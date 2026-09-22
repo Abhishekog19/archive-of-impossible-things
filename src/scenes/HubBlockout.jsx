@@ -6,6 +6,7 @@ import HubCorner from './HubCorner'
 import worldViews from '../config/world-views.json'
 import { CAVERN_WATER } from '../config/cavern-water'
 const CavernWater = lazy(() => import('./CavernWater'))
+const HubArt = lazy(() => import('./HubArt'))
 const ForestPatch = lazy(() => import('./ForestPatch'))
 
 export default function HubBlockout({ reference = false, cornerView = false, view = 'reference', legacy = false, waterStudy = false, patch = false }) {
@@ -23,7 +24,7 @@ export default function HubBlockout({ reference = false, cornerView = false, vie
   return (
     <>
       <HubCorner />
-      {patch && <ForestPatch />}
+      {patch && <><ForestPatch /><HubArt /></>}
       {Object.values(nodes).filter((node) => node.isMesh && node.name !== 'Collision' && !(waterStudy && node.name === 'Pool_study')).map((node) => (
         <mesh key={node.uuid} geometry={node.geometry} material={node.material} />
       ))}

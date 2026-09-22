@@ -26,8 +26,8 @@ for (const [key, folder] of Object.entries({
   fs.mkdirSync(env[key], { recursive: true })
 }
 const mode = process.argv[2] || 'setup'
-if (!['setup', 'version', 'blockout', 'corner', 'world', 'kit', 'zones', 'cavern'].includes(mode)) throw new Error('Use setup, version, blockout, corner, world, kit, zones or cavern')
-const scripts = { setup: 'setup.py', blockout: 'hub_blockout.py', corner: 'hub_corner.py', world: 'world_blockout.py', kit: 'asset_kit.py', zones: 'zone_kit.py', cavern: 'cavern_study.py' }
+if (!['setup', 'version', 'blockout', 'corner', 'world', 'kit', 'zones', 'cavern', 'patch'].includes(mode)) throw new Error('Use setup, version, blockout, corner, world, kit, zones, cavern or patch')
+const scripts = { setup: 'setup.py', blockout: 'hub_blockout.py', corner: 'hub_corner.py', world: 'world_blockout.py', kit: 'asset_kit.py', zones: 'zone_kit.py', cavern: 'cavern_study.py', patch: 'forest_patch.py' }
 const args = mode === 'version' ? ['--version'] : [
   '--background', '--factory-startup', '--python-exit-code', '1',
   '--python', path.join(__dirname, scripts[mode]), '--', '--output', output,

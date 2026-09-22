@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "blender:patch": "node scripts/blender/run.cjs patch",
     "verify:zone-assets": "node scripts/verify-zone-assets.cjs",
     "blender:cavern": "node scripts/blender/run.cjs cavern",
     "blender:zones": "node scripts/blender/run.cjs zones",

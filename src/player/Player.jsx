@@ -22,6 +22,7 @@ import useMovementInput from './useMovementInput'
 const SPAWN = [0, 2, 6]
 const CORNER_SPAWN = [-8, 2, -4]
 const WORLD_SPAWNS = {
+  patch: [-12, 2.5, -20],
   forest: [-12, 3.5, -43], canopy: [-12, 3.5, -67],
   exterior: [-12, 3.5, -98], interior: [-12, 3.5, -116],
   cavern: [-12, -5.5, -174],

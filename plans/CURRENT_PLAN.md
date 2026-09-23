@@ -1,6 +1,6 @@
 # Current plan — Archive of Impossible Things
 
-Status (revised September 22): complete connected environment scope now covers
+Status (revised September 23): complete connected environment scope now covers
 REF4/5/6/7/8/10. The September 30 deadline and former future phase dates are superseded.
 Expected finish: October 25, 2026; planning range October 25–November 1, assuming
 one hour per weekday and three hours per weekend day. September 22's reforecast
@@ -22,6 +22,8 @@ repeated-loading review. The kit/prototype gate permits Phase C production.
 September 22’s assembled correction patch is complete. September 23’s hub paving
 and main ruin silhouette pass was completed early on September 22. Next: September
 24 hub vegetation, material scale and contextual lighting, including the old corner.
+The first three-tree vegetation pass started early on September 23; the rest of
+that session remains open.
 Existing hub layout and corner technical proof remain reusable; final visual
 approval is open. Final character movement/physics and games follow environment
 completion. Existing movement supports inspection; author collision-ready geometry now.
@@ -41,6 +43,37 @@ This milestone takes priority over the older full-game roadmap.
 | 5. R3F loading | Browser loads GLB with correct scale, materials and lighting; representative export is proven early. |
 | 6. Integration readiness | Separate collision proxies and usable stairs/slopes/clearances; existing controller aids inspection. Final movement/physics integration follows environment delivery. |
 | 7. Browser/mobile testing | Reference-versus-screenshot review, build/lint and measured Iris Xe traversal pass; mobile viewport checks, then user-led real-phone control/thermal verification at the end. |
+
+## September 24 — first vegetation pass, started September 23
+
+The September 22–23 patch/stonework checkpoint is complete and published as
+version 18. The September 24 session is now **in progress**, not complete.
+
+- Replaced three established hub tree proxies beside the plaza and old corner
+  with fused trunks, branching crowns and layered leaf colours. Preserved root
+  positions and resident trunk collision. Their placed shadows now contribute to
+  the plaza/ruin bake; no runtime lights or shadow maps were added.
+- Added one 1K wood atlas and one merged foliage draw. Hub GLB is now 4,932,840
+  bytes with 2K + 1K + 1K atlases. Forest patch is unchanged.
+- Compared REF4 with `.artifacts/hub-sep24-first-reference.jpg` and
+  `hub-sep24-first-gameplay.jpg`. Remaining priorities: replace the other coarse
+  crowns, vary canopy density/shape, grow irregular ground cover through sheltered
+  joints and blend the old corner's material scale/light direction with the plaza.
+  The smooth connection into the forest also remains undressed.
+- Build/lint, all 17 route segments, representative trunk/pillar blocking, sRGB
+  transfer, default-world isolation and 390 × 844 layout pass.
+  Evidence: `hub-sep24-first-checks.json` and
+  `world-art-sep24-first-production.json` in `.artifacts/`.
+- A 60-second production regression traversal on Iris Xe/D3D11 averages 60.00 FPS,
+  1% low 59.52 FPS, p95 16.7 ms; 1280 × 720, Medium DPR 1.25. All 297 observations
+  are visible/grounded; 16 waypoints complete without errors. Evidence:
+  `world-art-sep24-first-performance.json`. This is a bounded regression after
+  the stone pass's three-minute test, not full-environment or phone acceptance.
+- Private-file protection and the user's existing hub source edit remain intact.
+
+Next: finish the remaining September 24 vegetation/material/light work before
+starting the September 25 REF5 expansion and throughput review. Starting tomorrow's
+work early does not change the October 25 forecast.
 
 ## September 22–23 — placed forest patch and hub stone pass
 

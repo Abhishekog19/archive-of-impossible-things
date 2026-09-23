@@ -9,6 +9,8 @@ def export_context(include_hub=None):
         include_hub = (ROOT / "public/models/hub-art.glb").exists()
     bpy.ops.wm.open_mainfile(filepath=str(ROOT / 'art/source/world-blockout.blend'))
     removed = []
+    hub_trees = {'Tree trunk.'+str(i).zfill(3) for i in (2,3,4)}
+    hub_trees.update(prefix+'.'+str(i).zfill(3) for prefix in ('Tree limb','Forest crown') for i in range(10,25))
     for obj in list(bpy.context.scene.objects):
         if obj.type != 'MESH': continue
         centre = sum((obj.matrix_world @ Vector(p) for p in obj.bound_box), Vector()) / 8
@@ -16,7 +18,7 @@ def export_context(include_hub=None):
         local = -21 < x < -4 and -40 < z < -17
         plant_proxy = obj.name.startswith(('Tree trunk', 'Tree limb', 'Forest crown', 'Woodland shoulder'))
         trunk_proxy = obj.name.startswith('Collision') and obj.dimensions.z > 7 and obj.dimensions.x < 1.2 and obj.dimensions.y < 1.2
-        hub_proxy = include_hub and obj.name.startswith(('Plaza paving', 'Plaza ring', 'Column base', 'Broken column course'))
+        hub_proxy = include_hub and (obj.name.startswith(('Plaza paving', 'Plaza ring', 'Column base', 'Broken column course')) or obj.name in hub_trees)
         if (local and (plant_proxy or trunk_proxy)) or hub_proxy:
             removed.append(obj.name)
             bpy.data.objects.remove(obj, do_unlink=True)

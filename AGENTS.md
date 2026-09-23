@@ -8,5 +8,6 @@
 - Design for Iris Xe and mobile performance throughout production.
 - Composition first, detail later.
 - Always verify visual work with reference-versus-screenshot comparisons.
+- Daily cadence: build → quick affected-area visual/movement check → continue building. Batch routine FPS/performance and broad technical regression checks once weekly, as scheduled in the current plan; do not repeat them per art change.
 - When pushing is requested, make logical, verified commit groups and push each group separately.
 - Never read, expose, copy, or commit `personal-source-material.md`; check its safety using Git metadata only.

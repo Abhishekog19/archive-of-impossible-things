@@ -112,7 +112,9 @@ and overwrites `public/models/zones/{ruins,forest}.glb` plus
 `src/config/zone-packages.json`; it does not rewrite a Blender source. Each package
 contains its asset family and matching collision proxies, with its own atlas.
 
-Run `npm run verify:zone-assets` after either export. It checks package sizes and
+Include `npm run verify:zone-assets` in the weekly technical review when either
+package export has changed; reuse the result for unchanged packages. Daily art
+checks follow the cadence in `environment-september-plan.md`. It checks package sizes and
 node manifests, embedded atlas identity against the kit, UV0 and vertex colours,
 and the current opaque material contract. It rejects tint, normal/emissive textures
 or texture transforms that KitBatch would silently drop. This is a focused export

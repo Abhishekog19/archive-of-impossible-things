@@ -23,8 +23,14 @@ reference → blockout → camera match → terrain/ruins → vegetation → mat
   the full kit. Bake or recreate Blender effects that GLB cannot carry.
 - Keep decorative geometry separate from simple walkable colliders. Reuse the
   existing Rapier/ecctrl integration; check stairs, slopes, grounding, and camera collision.
-- Use available browser/Playwright tools for screenshots and traversal checks.
-  Compare the reference camera and gameplay views after each visual iteration;
-  record actual performance and remaining mismatches in the current plan.
+- Daily: build an area, compare one affected reference/player view, briefly check
+  the changed route, then continue building. Record remaining visual mismatches.
+- Batch FPS, sustained traversal, resource/loading, deployment parity and mobile
+  regression checks once weekly using the dates in `environment-september-plan.md`.
+  Do not add per-change performance runs. Fix observed load/movement blockers with
+  a targeted check; keep unrelated technical work for the weekly session.
+- Run one production build for changed runtime/assets before pushing and lint
+  changed JavaScript once. Reuse passing checks until their inputs change;
+  documentation-only edits need no game build or browser/performance run.
 - Optimize visible triangles, draw calls, textures, and foliage overdraw for Iris Xe
   and mobile. Real-phone verification stays pending until tested on a real device.

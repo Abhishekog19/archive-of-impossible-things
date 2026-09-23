@@ -2,9 +2,10 @@
 
 Status (revised September 23): complete connected environment scope now covers
 REF4/5/6/7/8/10. The September 30 deadline and former future phase dates are superseded.
-Expected finish: October 25, 2026; planning range October 25–November 1, assuming
-one hour per weekday and three hours per weekend day. September 22's reforecast
-was completed early on September 21; check it again after the September 25 art pass.
+Accelerated target: October 23, 2026; previous baseline October 25, risk planning
+bound November 1. Availability remains one hour per weekday and three hours per
+weekend day. The September 23 build-first revision below supersedes older forecasts
+and verification cadence; reassess area coverage at the September 27 weekly review.
 Phase A (September 12–15) production and bounded route review are complete.
 All six areas are connected, with four reserved game locations and comparison
 cameras. September 15 closes the forest gap and refines archive framing/root
@@ -42,7 +43,44 @@ This milestone takes priority over the older full-game roadmap.
 | 4. Optimization/export | Reusable assets and simple colliders export to GLB; textures, draw calls and visible geometry meet existing budgets. |
 | 5. R3F loading | Browser loads GLB with correct scale, materials and lighting; representative export is proven early. |
 | 6. Integration readiness | Separate collision proxies and usable stairs/slopes/clearances; existing controller aids inspection. Final movement/physics integration follows environment delivery. |
-| 7. Browser/mobile testing | Reference-versus-screenshot review, build/lint and measured Iris Xe traversal pass; mobile viewport checks, then user-led real-phone control/thermal verification at the end. |
+| 7. Browser/mobile testing | Daily affected-area visual/movement check; build/lint when inputs change. Weekly technical batch covers Iris Xe, resources/loading and mobile layout; user-led real-phone controls/thermals remain at the end. |
+
+## Build-first cadence — effective September 23
+
+User direction: spend daily sessions building the complete environment; consolidate
+routine technical verification into one weekly session. This supersedes earlier
+per-session test requirements and historical next-step dates below.
+
+- Daily loop: build an area → compare the affected reference/player view → briefly
+  check the changed walking connection → continue to the next area. Keep routine
+  review to about 5–10 minutes per session; address the biggest visual mismatches.
+- Before pushing changed runtime/assets, run one production build and lint changed
+  JavaScript once. Reuse passing checks until their inputs change. Documentation-only
+  changes need a diff/read-through, not a game build, browser run or FPS test.
+- No routine daily FPS samples, timed traversal, repeated full-route suites,
+  resource/eviction audits, tier matrices, mobile matrices or duplicate deployment
+  checks. Queue those for the weekly review. Fix an observed broken load, blocked
+  route or crash immediately with a focused check; do not expand it into a broad audit.
+- Weekly review: September 27, October 4, 11 and 18, then the final week's review
+  on October 23. Reserve 45–60 minutes within existing availability; use the rest
+  of the session for building. Run one representative sustained hardware traversal,
+  inspect loading/resources/payload and changed transitions, check mobile layout
+  and deployment parity, then record actionable fixes. Recheck only failed items.
+- Keep Iris Xe/mobile budgets in design decisions. Real-phone controls/thermals
+  remain user-led at the end. Final delivery still covers all six reference areas.
+- Next production task: finish September 24 hub vegetation, ground cover, material
+  scale and old-corner lighting blend, then continue REF5/6. Next technical review:
+  September 27. Sessions still require the user's start; this is not an automation.
+
+Accelerated delivery target: **October 23, 2026**, two calendar days earlier than
+the former October 25 target. The revised schedule provides 48 hours from September
+22 through October 23 versus the former 54 through October 25: it requires about
+six scheduled hours to be recovered through consolidated checks and less duplicate
+acceptance work. Those hours are a planning assumption, not measured time saved.
+No additional completed days are credited yet; September 24 is only partly done.
+Confirm or revise the target at September 27's weekly review using completed art
+coverage. October 25 remains the previous baseline; November 1 is still the risk
+planning bound. Do not omit areas or materials/lighting to claim an earlier finish.
 
 ## September 24 — first vegetation pass, started September 23
 

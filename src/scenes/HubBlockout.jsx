@@ -23,7 +23,7 @@ export default function HubBlockout({ reference = false, cornerView = false, vie
 
   return (
     <>
-      <HubCorner />
+      <HubCorner contextual={patch} />
       {patch && <><ForestPatch /><HubArt /></>}
       {Object.values(nodes).filter((node) => node.isMesh && node.name !== 'Collision' && !(waterStudy && node.name === 'Pool_study')).map((node) => (
         <mesh key={node.uuid} geometry={node.geometry} material={node.material} />

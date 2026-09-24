@@ -1,8 +1,7 @@
 """Phase C hub stone pass. Preserve the plaza, route and collision layout.
 
-Authored geometry stays editable; placed light/shadow is baked to two atlases.
-Three contextual trees start the vegetation pass; full canopy, ground cover and
-the corner-to-plaza lighting blend remain for the rest of that session.
+Authored geometry stays editable. Hub, planted shoulders and the existing corner
+share placed lighting; small ground-cover prototypes export with instance markers.
 """
 import bpy
 import math
@@ -12,6 +11,7 @@ import time
 import sys
 from pathlib import Path
 from mathutils import Vector
+from mathutils.bvhtree import BVHTree
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / '.artifacts/blender'
@@ -39,9 +39,23 @@ sun.rotation_euler = Vector((-6, 8, -12)).to_track_quat('-Z', 'Y').to_euler()
 with bpy.data.libraries.load(str(ROOT / 'art/source/archive-kit.blend'), link=False) as (src, dst):
     dst.objects = ['Author_Slab_' + str(i) for i in range(1, 5)] + [
         'Author_Tree_Tall', 'Author_Tree_Leaning', 'Author_Tree_Broadleaf',
-        'Tree_Tall_Leaves', 'Tree_Leaning_Leaves', 'Tree_Leaves']
+        'Tree_Tall_Leaves', 'Tree_Leaning_Leaves', 'Tree_Leaves',
+        'Fern', 'Low_Shrub', 'Grass_Tuft', 'Broadleaf_Clump']
 sources = {obj.name: obj for obj in dst.objects}
 stone = [sources['Author_Slab_'+str(i)].data.materials[0] for i in range(1,5)]
+with bpy.data.libraries.load(str(ROOT / 'art/source/world-blockout.blend'), link=False) as (src, dst):
+    dst.objects = [n for n in src.objects if n.startswith(('Continuous terrain','Plaza paving',
+        'Arrival slope','Left path mouth','Canopy approach','Right branch'))]
+verts, faces = [], []
+for obj in dst.objects:
+    offset = len(verts)
+    verts.extend(obj.matrix_world @ v.co for v in obj.data.vertices)
+    faces.extend(tuple(offset+i for i in p.vertices) for p in obj.data.polygons)
+ground_bvh = BVHTree.FromPolygons(verts,faces)
+def height_at(x,z):
+    hit = ground_bvh.ray_cast(Vector((x,-z,25)),Vector((0,0,-1)))[0]
+    assert hit is not None, 'Plant outside the hub terrain'
+    return hit.z
 moss = bpy.data.materials.new('Hub sheltered joints')
 moss.diffuse_color = (.12, .155, .045, 1)
 moss.use_nodes = True
@@ -102,7 +116,33 @@ for x, y in seeds:
     # The existing corner surface sits above this thin paving layer. Its own
     # authored footprint remains intact while the surrounding plaza is dressed.
     slab_count += 1
-    paving.append(slab(inset, rng.uniform(.025,.055), rng.choice(stone)))
+    top = rng.uniform(.025,.055)
+    paving.append(slab(inset, top, rng.choice(stone)))
+    if (math.hypot(x,y)>4 and rng.random()<.55) or rng.random()<.10:
+        a,b = rng.choice(list(zip(inset,inset[1:]+inset[:1])))
+        cx,cy = (a[0]+b[0])/2,(a[1]+b[1])/2
+        radius = rng.uniform(.28,.85)
+        growth = [(cx+math.cos(i*math.tau/13)*radius*rng.uniform(.6,1.1),
+                   cy+math.sin(i*math.tau/13)*radius*rng.uniform(.6,1.1)) for i in range(13)]
+        for a,b in zip(inset,inset[1:]+inset[:1]):
+            nx,ny = b[1]-a[1],a[0]-b[0]
+            growth = clip(growth,nx,ny,nx*a[0]+ny*a[1])
+        if len(growth)>2:
+            paving.append(mesh('Sheltered stone-edge moss',[(px,py,top+.002) for px,py in growth],
+                               [tuple(range(len(growth)))],moss))
+
+# Close the plain connection between the existing corner and forest patch.
+for row in range(9):
+    z = -13.9-row*.94
+    centre = -6-6*min(1,(-z-8)/14)
+    for col in range(4):
+        obj = bpy.data.objects.new('Hub approach paving',sources['Author_Slab_'+str(1+(row+col)%4)].data.copy())
+        scene.collection.objects.link(obj)
+        x = centre+(col-1.5)*1.12
+        obj.location = (x,-z,height_at(x,z)-.075)
+        obj.scale = (.93,)*3
+        obj.rotation_euler.x = math.atan(.055)
+        paving.append(obj)
 
 # A shallow, interrupted inlay retains the circular motif without floating tubes.
 for radius in (.7, 2.2, 4.1):
@@ -136,13 +176,17 @@ for x,z,height in columns:
         block(x+rng.uniform(-.05,.05),z+rng.uniform(-.025,.025),.4+j*.65,
               rng.uniform(.73,.95) if cap else 1.15,1.12,min(.63,height-j*.65),cap)
 
-# September 24 first pass: replace the three established trees beside the hub
-# and old corner. Preserve their roots and the resident collision proxies.
+# Replace the eight established hub trees, preserving roots and trunk proxies.
 trees, leaves = [], []
 for kind, leaf_name, x, z, ground, height, yaw in [
         ('Tall','Tree_Tall_Leaves',-18,-2,.140054,12,.4),
         ('Broadleaf','Tree_Leaves',18,-4,.491365,13,-.6),
-        ('Leaning','Tree_Leaning_Leaves',-17,-13,.980715,12,1.1)]:
+        ('Leaning','Tree_Leaning_Leaves',-17,-13,.980715,12,1.1),
+        ('Broadleaf','Tree_Leaves',-17,9,.666705,13,2.3),
+        ('Tall','Tree_Tall_Leaves',17,12,.590452,14,-1.8),
+        ('Leaning','Tree_Leaning_Leaves',-23,2,1.532772,15,.8),
+        ('Broadleaf','Tree_Leaves',23,5,.717884,16,-2.4),
+        ('Tall','Tree_Tall_Leaves',-22,-12,1.022115,14,-.8)]:
     leaf_source = sources[leaf_name]
     scale = height/max(v.co.z for v in leaf_source.data.vertices)
     for name, group in [('Author_Tree_'+kind,trees),(leaf_name,leaves)]:
@@ -170,6 +214,22 @@ for kind, leaf_name, x, z, ground, height, yaw in [
     bpy.ops.object.modifier_apply(modifier=decimate.name)
     tree.data.validate(clean_customdata=True)
     tree.data.update()
+    # The kit's eight-triangle leaf fans can use six triangles without changing
+    # their silhouettes. Keep one tint per leaf and avoid duplicating centre verts.
+    old = leaf.data
+    if len(old.vertices)%9==0 and len(old.polygons)==len(old.vertices)//9*8:
+        count = len(old.vertices)//9
+        tints = [tuple(old.color_attributes.active_color.data[old.polygons[i*8].loop_start].color) for i in range(count)]
+        data = bpy.data.meshes.new('Hub economical leaf outlines')
+        data.from_pydata([tuple(old.vertices[i*9+j].co) for i in range(count) for j in range(1,9)],[],
+                         [tuple(range(i*8,i*8+8)) for i in range(count)])
+        for mat in old.materials: data.materials.append(mat)
+        attr = data.color_attributes.new(name='FoliageColor',type='BYTE_COLOR',domain='CORNER')
+        for poly in data.polygons:
+            poly.use_smooth = True
+            for i in poly.loop_indices: attr.data[i].color = tints[poly.index]
+        data.update()
+        leaf.data = data
     colors = leaf.data.color_attributes.active_color
     low = min(v.co.z for v in leaf.data.vertices)
     span = max(v.co.z for v in leaf.data.vertices)-low
@@ -180,15 +240,69 @@ for kind, leaf_name, x, z, ground, height, yaw in [
             c = colors.data[i].color
             colors.data[i].color = (c[0]*factor,c[1]*factor,c[2]*factor,1)
 
+# Ground cover uses four exported prototypes, not hundreds of duplicate meshes.
+plant_rng = random.Random(2409)
+plant_casters, plant_markers, plant_prototypes = [], [], []
+families = ['Fern','Low_Shrub','Grass_Tuft','Broadleaf_Clump']
+for family in families:
+    obj = bpy.data.objects.new('HubPlantPrototype_'+family,sources[family].data.copy())
+    scene.collection.objects.link(obj)
+    obj.hide_render = True
+    plant_prototypes.append(obj)
+for cluster in range(32):
+    angle = cluster*2.399
+    radius = plant_rng.uniform(13.4,23)
+    cx,cz = math.cos(angle)*radius,math.sin(angle)*radius
+    if cluster<7:
+        cx,cz,_ = columns[cluster]
+        cx += 1.3
+    for j in range(5):
+        x,z = cx+plant_rng.uniform(-1.7,1.7),cz+plant_rng.uniform(-1.7,1.7)
+        # Keep the arrival and both route mouths readable at player height.
+        left = -6-6*min(1,max(0,(-z-8)/14))
+        right = 8+.9*(-z-5)
+        if (abs(x)<4 and z>8) or (-23<z<-8 and abs(x-left)<2.9) or (-20<z<-4 and abs(x-right)<3): continue
+        family = families[(cluster+j)%4]
+        plant = bpy.data.objects.new('Hub plant caster',sources[family].data.copy())
+        scene.collection.objects.link(plant)
+        plant.location = (x,-z,height_at(x,z)+.025)
+        size = plant_rng.uniform(.8,1.7) if family=='Low_Shrub' else plant_rng.uniform(.6,1.2)
+        plant.scale = (size,)*3
+        plant.rotation_euler.z = plant_rng.uniform(0,math.tau)
+        plant_casters.append(plant)
+        marker = bpy.data.objects.new('HubPlant_'+family+'_'+str(len(plant_markers)).zfill(3),None)
+        scene.collection.objects.link(marker)
+        marker.location,marker.scale,marker.rotation_euler = plant.location.copy(),plant.scale.copy(),plant.rotation_euler.copy()
+        plant_markers.append(marker)
+
+# Reuse the corner's raw authoring objects, not its old illuminated texture.
+# Translation happens before the bake so shadows agree across the whole junction.
+floor_prefix = ('Fractured limestone slab','Eroded seam bed','Joint edge moss')
+architecture_prefix = ('Eroded wall course','Moss on sheltered wall ledge','Column plinth',
+    'Column course','Fractured column crown','Column base moss','Rooted tree','Buttress root',
+    'Spreading branch','Leaf-bearing twig','Upper crown fork','Fallen wall stone')
+with bpy.data.libraries.load(str(ROOT/'art/source/hub-corner.blend'),link=False) as (src,dst):
+    dst.objects = [n for n in src.objects if n.startswith(floor_prefix+architecture_prefix) or n=='Corner_Foliage']
+corner_paving,corner_stone = [],[]
+for obj in dst.objects:
+    scene.collection.objects.link(obj)
+    obj.hide_set(False)
+    obj.hide_render = False
+    obj.location += Vector((-8,9,0))
+    if obj.name.startswith(floor_prefix): corner_paving.append(obj)
+    elif obj.name.startswith(architecture_prefix): corner_stone.append(obj)
+assert corner_paving and corner_stone, 'Corner authoring source is required'
+
 # Preserve originals for future contextual rebakes and manual authoring.
 author = bpy.data.collections.new('Hub editable stonework')
 scene.collection.children.link(author)
-for obj in paving+ruins+trees:
+for obj in paving+ruins+trees+corner_paving+corner_stone:
     for collection in list(obj.users_collection): collection.objects.unlink(obj)
     author.objects.link(obj)
 targets = []
 for name, objects, size in [('HubArt_Paving',paving,2048),('HubArt_Ruins',ruins,1024),
-                            ('HubArt_Trees',trees,1024)]:
+                            ('HubArt_Trees',trees,2048),('HubArt_CornerPaving',corner_paving,2048),
+                            ('HubArt_CornerStone',corner_stone,1024)]:
     bpy.ops.object.select_all(action='DESELECT')
     for obj in objects: obj.select_set(True)
     bpy.context.view_layer.objects.active = objects[0]
@@ -211,7 +325,7 @@ for name, objects, size in [('HubArt_Paving',paving,2048),('HubArt_Ruins',ruins,
         node.image = atlas
         mat.node_tree.nodes.active = node
     targets.append((target,atlas))
-for obj in paving+ruins+trees:
+for obj in paving+ruins+trees+corner_paving+corner_stone:
     obj.hide_render = True
     obj.hide_set(True)
 scene.render.bake.use_pass_color = True
@@ -251,6 +365,7 @@ foliage.data.materials.clear()
 foliage.data.materials.append(leaf_material)
 for poly in foliage.data.polygons: poly.material_index = 0
 for target,_ in targets: target.select_set(True)
+for obj in plant_prototypes+plant_markers: obj.select_set(True)
 bpy.ops.wm.save_as_mainfile(filepath=str(ROOT / 'art/source/hub-art.blend'),compress=True)
 export = ROOT / 'public/models/hub-art.glb'
 bpy.ops.export_scene.gltf(filepath=str(export),export_format='GLB',use_selection=True,
@@ -258,8 +373,9 @@ bpy.ops.export_scene.gltf(filepath=str(export),export_format='GLB',use_selection
 sys.path.insert(0,str(Path(__file__).parent))
 from world_art_context import export_context
 removed = export_context(include_hub=True)
-report = {'stage':'hub stonework and first vegetation pass','slabs':slab_count,'columns':len(columns),
-          'trees':len(trees),'bytes':export.stat().st_size,'atlases':[2048,1024,1024],'seconds':round(time.monotonic()-started,1),
+report = {'stage':'hub vegetation, planted paving and unified corner lighting','slabs':slab_count,'columns':len(columns),
+          'trees':len(trees),'groundCover':len(plant_markers),'approachSlabs':36,
+          'bytes':export.stat().st_size,'atlases':[2048,1024,2048,2048,1024],'seconds':round(time.monotonic()-started,1),
           'removedContextProxies':removed}
 (OUT/'hub-art-report.json').write_text(json.dumps(report,indent=2)+'\n')
 print('HUB_ART '+json.dumps(report),flush=True)

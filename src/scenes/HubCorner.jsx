@@ -24,7 +24,7 @@ function Ferns({ nodes }) {
 
 // A full-colour diffuse bake contains lighting already. MeshBasicMaterial keeps
 // the temporary hub hemisphere from lighting it twice; glTF supplies UV0 + sRGB.
-export default function HubCorner() {
+export default function HubCorner({ contextual = false }) {
   const { nodes, materials } = useGLTF('/models/hub-corner.glb')
   const gl = useThree((state) => state.gl)
   useLayoutEffect(() => {
@@ -40,12 +40,12 @@ export default function HubCorner() {
   }, [gl, materials])
   return (
     <group position={[-8, 0, -9]}>
-      <mesh geometry={nodes.Corner_Paving.geometry}>
+      {!contextual && <><mesh geometry={nodes.Corner_Paving.geometry}>
         <meshBasicMaterial map={materials.Corner_Paving.map} />
       </mesh>
       <mesh geometry={nodes.Corner_Baked.geometry}>
         <meshBasicMaterial map={materials.Corner_Baked.map} />
-      </mesh>
+      </mesh></>}
       <Ferns nodes={nodes} />
       <mesh geometry={nodes.Corner_Foliage.geometry}>
         <meshBasicMaterial vertexColors side={DoubleSide} />

@@ -1,6 +1,6 @@
 # Current plan — Archive of Impossible Things
 
-Status (revised September 23): complete connected environment scope now covers
+Status (revised September 24): complete connected environment scope now covers
 REF4/5/6/7/8/10. The September 30 deadline and former future phase dates are superseded.
 Accelerated target: October 23, 2026; previous baseline October 25, risk planning
 bound November 1. Availability remains one hour per weekday and three hours per
@@ -21,10 +21,9 @@ light/fog prototype and initial cost checks. September 20 closes the wider camer
 fallback and sustained-cost review. September 21 completes material-transfer and
 repeated-loading review. The kit/prototype gate permits Phase C production.
 September 22’s assembled correction patch is complete. September 23’s hub paving
-and main ruin silhouette pass was completed early on September 22. Next: September
-24 hub vegetation, material scale and contextual lighting, including the old corner.
-The first three-tree vegetation pass started early on September 23; the rest of
-that session remains open.
+and main ruin silhouette pass was completed early on September 22. September 24
+hub vegetation, planted paving, approach stones and contextual corner lighting are
+complete as a production pass. Next: September 25 REF5 forest expansion.
 Existing hub layout and corner technical proof remain reusable; final visual
 approval is open. Final character movement/physics and games follow environment
 completion. Existing movement supports inspection; author collision-ready geometry now.
@@ -68,8 +67,8 @@ per-session test requirements and historical next-step dates below.
   and deployment parity, then record actionable fixes. Recheck only failed items.
 - Keep Iris Xe/mobile budgets in design decisions. Real-phone controls/thermals
   remain user-led at the end. Final delivery still covers all six reference areas.
-- Next production task: finish September 24 hub vegetation, ground cover, material
-  scale and old-corner lighting blend, then continue REF5/6. Next technical review:
+- Next production task: September 25 REF5 path edges, woodland shoulders, trees
+  and ground cover; continue REF6 on September 26. Next technical review:
   September 27. Sessions still require the user's start; this is not an automation.
 
 Accelerated delivery target: **October 23, 2026**, two calendar days earlier than
@@ -77,12 +76,42 @@ the former October 25 target. The revised schedule provides 48 hours from Septem
 22 through October 23 versus the former 54 through October 25: it requires about
 six scheduled hours to be recovered through consolidated checks and less duplicate
 acceptance work. Those hours are a planning assumption, not measured time saved.
-No additional completed days are credited yet; September 24 is only partly done.
+September 24 is now complete on its scheduled date; no additional days saved are
+claimed. The two-day delivery reduction remains a planning assumption.
 Confirm or revise the target at September 27's weekly review using completed art
 coverage. October 25 remains the previous baseline; November 1 is still the risk
 planning bound. Do not omit areas or materials/lighting to claim an earlier finish.
 
-## September 24 — first vegetation pass, started September 23
+## September 24 — hub vegetation and unified lighting completed
+
+- Expanded the hub from three to eight branching trees, retaining established root
+  positions and collision proxies. Removed their coarse crowns and foreground
+  shrub proxies. Simplified leaf fans before export; no additional runtime shadows.
+- Added 136 clustered fern, shrub, grass and broadleaf instances in four batches,
+  irregular moss through selected paving joints, and 36 slope-following approach
+  slabs joining the old corner to the forest patch.
+- Rebuilt the corner's paving and architecture bake in world position with the
+  hub sun and canopy shadows. The opt-in art preview uses this contextual version;
+  the original corner asset and default blockout path remain available.
+- Hub export is 11,404,892 bytes with five diffuse atlases (three 2K, two 1K).
+  Editable source: art/source/hub-art.blend. Payload/foliage density and broader
+  resource costs are queued for September 27, not claimed to pass today.
+- Quick REF4/player comparison: .artifacts/hub-sep24-final-reference.jpg and
+  hub-sep24-final-gameplay.jpg. Better canopy detail and continuous lit paving;
+  remaining major gaps are coarse background forest, bare terrain shoulders and
+  simplified foliage lighting. REF5/6 production and the Phase C finish pass own
+  these gaps. This completes today's production scope, not final visual approval.
+- Production build and changed-JavaScript lint pass. Focused corner-to-forest
+  walking connection and return pass; evidence: hub-sep24-connection.json.
+  No daily FPS, mobile, sustained traversal or full-world test suite was run.
+- Private source remains ignored/untracked (metadata only). The user's existing
+  hub-blockout.blend edit and Blender MCP configuration remain untouched.
+
+Next: September 25 REF5 woodland expansion. Target stays October 23; weekly
+technical review September 27. Older performance figures below describe older
+builds and do not validate today's denser vegetation.
+
+## September 24 — historical first pass, started September 23
 
 The September 22–23 patch/stonework checkpoint is complete and published as
 version 18. The September 24 session is now **in progress**, not complete.

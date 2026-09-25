@@ -163,8 +163,11 @@ September 23 revision above. Sessions require the user's explicit start.
 September 24 status: correction patch, hub stonework and today’s vegetation/lighting
 production pass are complete. Eight hub trees, 136 ground-cover instances, planted
 paving and 36 approach stones are integrated; the old corner shares the hub bake.
-Next is September 25 REF5 expansion. Final visual approval remains open, including
-coarse background crowns and undressed terrain shoulders. The October 23 target
+September 25 REF5 expansion started September 24 and is complete September 25:
+100 flagstones, twelve trees, planted shoulders and contextual bakes extend the
+art to z=-65. Next is September 26 REF5 finish and REF6 dressing. The dated
+production sequence is on schedule; final visual approval stays open, including
+coarse background crowns and side-bank/terrain integration. The October 23 target
 is pending September 27’s review; the two-day saving is planned, not measured.
 Completion evidence and remaining visual mismatches are in plans/CURRENT_PLAN.md.
 
@@ -173,7 +176,7 @@ Completion evidence and remaining visual mismatches are in plans/CURRENT_PLAN.md
 | Sep 22 | 1 h | Completed Sep 22, including the interrupted second half: connected sun/shade patch, fused bark joins, placed bake orientation, canopy/contact shadows and foliage depth. Fixed/player comparisons and route checks pass; final art approval remains open. |
 | Sep 23 | 1 h | Completed early Sep 22: patch correction checkpoint, hub paving and main ruin silhouettes with preserved layout. Comparison, export, traversal and local hardware checks pass. |
 | Sep 24 | 1 h | Completed Sep 24: eight hub trees, 136 ground-cover instances, planted paving, 36 approach stones and unified corner/hub light direction. Quick comparison, affected walking connection, build and lint pass. Broader terrain/canopy art and weekly technical review remain scheduled. |
-| Sep 25 | 1 h | Build REF5 path edges, trunks/crowns, woodland shoulders and ground cover; make a quick visual/route check, then continue building. |
+| Sep 25 | 1 h | Completed Sep 25: REF5 approach expansion with 100 flagstones, twelve branching trees, 264 ground-cover instances, broken roadside masonry and contextual lighting. Affected comparison/walk, build and lint pass. REF5 finish and REF6 expansion remain Sep 26. |
 | Sep 26 | 3 h | Complete REF5 and dress REF6: enclosed canopy, broken ruins, layered foliage and readable light. Maintain the continuous inspection route. |
 | Sep 27 | 3 h | Build hub/forest bakes and transitions for about 2 h. Use the weekly 45–60 minute technical batch for changed-area performance/loading/mobile checks and a coverage-based reforecast. |
 | Sep 28 | 1 h | Finish the largest REF4/5/6 visual gaps and remaining art. No placeholder surfaces in the Phase C candidate; reuse Sep 27 technical results. |

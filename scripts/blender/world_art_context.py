@@ -11,6 +11,7 @@ def export_context(include_hub=None):
     bpy.ops.wm.open_mainfile(filepath=str(ROOT / 'art/source/world-blockout.blend'))
     removed = []
     include_approach = (ROOT/'public/models/forest-approach.glb').exists()
+    include_canopy = (ROOT/'public/models/forest-canopy.glb').exists()
     def numbered(prefix,index): return prefix+('.'+str(index).zfill(3) if index else '')
     hub_trees = {numbered('Tree trunk',i) for i in (0,1,2,3,4,80,81,82)}
     # Distant trees use three crowns, so their crown indices differ from trunks.
@@ -26,18 +27,23 @@ def export_context(include_hub=None):
         hub_plant = hub_region and obj.name.startswith(('Tree trunk','Tree limb','Forest crown','Understory proxy','Woodland shoulder'))
         trunk_proxy = obj.name.startswith('Collision') and obj.dimensions.z > 7 and obj.dimensions.x < 1.2 and obj.dimensions.y < 1.2
         hub_proxy = include_hub and (obj.name.startswith(('Plaza paving', 'Plaza ring', 'Column base', 'Broken column course')) or obj.name in hub_trees or hub_plant)
+        clearing = x < -17 and -77<z<-61
         approach_region = -27<x<4 and -65<z<-40
+        canopy_region = -29<x<4 and -90<z<-65 and not clearing
         approach_plant = obj.name.startswith(('Deep canopy trunk','Deep canopy crown',
             'Forest shoulder','Woodland background trunk','Woodland middle crown',
             'Woodland upper crown','Woodland lower silhouette','Forest crown','Tree trunk','Tree limb','Woodland shoulder'))
         approach_trunk = obj.name.startswith('Collision') and obj.dimensions.z>8 and max(obj.dimensions.x,obj.dimensions.y)<3
-        approach_proxy = include_approach and approach_region and (approach_plant or approach_trunk)
+        approach_proxy = ((include_approach and approach_region) or (include_canopy and canopy_region)) and (approach_plant or approach_trunk)
         if include_approach and obj.name.startswith('Connected paving'):
             # Replace only the dressed road faces, retaining the independent
             # resident collider and the deeper forest's unfinished paving.
             bm = bmesh.new()
             bm.from_mesh(obj.data)
-            covered = [f for f in bm.faces if -65 < -(obj.matrix_world@f.calc_center_median()).y < -40]
+            limit = -90 if include_canopy else -65
+            covered = [f for f in bm.faces if limit < -(obj.matrix_world@f.calc_center_median()).y < -40
+                       and not ((obj.matrix_world@f.calc_center_median()).x < -17
+                                and -77 < -(obj.matrix_world@f.calc_center_median()).y < -61)]
             bmesh.ops.delete(bm,geom=covered,context='FACES')
             bm.to_mesh(obj.data)
             bm.free()

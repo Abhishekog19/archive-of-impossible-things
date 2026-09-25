@@ -10,6 +10,11 @@ from mathutils.bvhtree import BVHTree
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / '.artifacts/blender'
+DEEP = globals().get('DEEP_CANOPY',False)
+STEM = 'forest-canopy' if DEEP else 'forest-approach'
+PREFIX = 'ForestCanopy' if DEEP else 'ForestApproach'
+SHIFT = 25 if DEEP else 0
+def in_clearing(x,z): return DEEP and x < -17 and -77 < z < -61
 rng = random.Random(925)
 bpy.ops.object.select_all(action='SELECT')
 bpy.ops.object.delete(use_global=False)
@@ -74,7 +79,7 @@ def mesh(name,verts,faces,material):
 stone,wood,earth,leaves = [],[],[],[]
 # Four staggered stones follow the existing curved route, from the old patch to REF6.
 for row in range(25):
-    z = -40.6-row
+    z = -40.6-row-SHIFT
     derivative = (road_x(z+.1)-road_x(z-.1))/.2
     for col in range(4):
         x = road_x(z)+(col-1.5)*1.12+.065*math.sin(row*1.8)
@@ -85,7 +90,9 @@ for row in range(25):
 
 # A broken low wall and rock outcrops give the shoulders a readable silhouette.
 for side,z in [(-1,-46),(1,-51),(-1,-58),(1,-62)]:
+    z -= SHIFT
     cx = road_x(z)+side*4.3
+    if in_clearing(cx,z): continue
     for course in range(3):
         for col in range(4-course):
             x = cx+side*course*.1
@@ -118,7 +125,7 @@ links.new(ramp.outputs[0],nodes['Principled BSDF'].inputs['Base Color'])
 nodes['Principled BSDF'].inputs['Roughness'].default_value = 1
 verts,faces = [],[]
 for row in range(26):
-    z = -40.1-row
+    z = -40.1-row-SHIFT
     for col in range(25):
         x = road_x(z)+col-12
         verts.append((x,-z,height(x,z)+.014))
@@ -134,6 +141,8 @@ tree_specs = [(-1,-42.5,5.4,13),(1,-43.7,5.7,14),(-1,-49.4,5.2,15),
     (-1,-63,5.5,14),(1,-62.8,5.3,13),(-1,-45,10,17),
     (1,-47,10,17),(-1,-58,10.5,18),(1,-60,10,17)]
 for i,(side,z,offset,tall) in enumerate(tree_specs):
+    z -= SHIFT
+    if in_clearing(road_x(z)+side*offset,z): continue
     kind,leaf_name = [('Tall','Tree_Tall_Leaves'),('Leaning','Tree_Leaning_Leaves'),
                       ('Broadleaf','Tree_Leaves')][i%3]
     scale = tall/max(v.co.z for v in sources[leaf_name].data.vertices)
@@ -208,13 +217,13 @@ for family in families:
     proto.hide_render = True
     prototypes.append(proto)
 for cluster in range(44):
-    zc = -41.4-(cluster//2)*1.05
+    zc = -41.4-(cluster//2)*1.05-SHIFT
     side = -1 if cluster%2 else 1
     width = rng.uniform(2.7,8)
     for j in range(6):
         z = zc+rng.uniform(-.8,.8)
         x = road_x(z)+side*width+rng.uniform(-.6,.6)
-        if abs(x-road_x(z))<2.45: continue
+        if abs(x-road_x(z))<2.45 or in_clearing(x,z): continue
         family = families[(cluster+j)%4]
         size = rng.uniform(.7,1.45)
         plant = place(family,'Approach plant shadow',x,z,size,rng.random()*math.tau,height(x,z)+.025)
@@ -232,7 +241,7 @@ for name,objects in [('Stone',stone),('Wood',wood),('Ground',earth)]:
     bpy.ops.object.duplicate()
     bpy.ops.object.join()
     target = bpy.context.object
-    target.name = 'ForestApproach_'+name
+    target.name = PREFIX+'_'+name
     bpy.ops.object.transform_apply(location=True,rotation=True,scale=True)
     target.data.validate(clean_customdata=True)
     target.data.update()
@@ -241,7 +250,7 @@ for name,objects in [('Stone',stone),('Wood',wood),('Ground',earth)]:
     bpy.ops.uv.smart_project(angle_limit=math.radians(66),island_margin=.009)
     bpy.ops.object.mode_set(mode='OBJECT')
     atlas = bpy.data.images.new('Approach '+name+' diffuse',width=2048,height=2048,alpha=False)
-    atlas.filepath_raw = str(OUT/('forest-approach-'+name.lower()+'.png'))
+    atlas.filepath_raw = str(OUT/(STEM+'-'+name.lower()+'.png'))
     atlas.file_format = 'PNG'
     for i,original in enumerate(list(target.data.materials)):
         mat = original.copy()
@@ -286,7 +295,7 @@ for o in colliders: o.select_set(True)
 bpy.context.view_layer.objects.active = colliders[0]
 bpy.ops.object.join()
 collision = bpy.context.object
-collision.name = 'ForestApproach_Collision'
+collision.name = PREFIX+'_Collision'
 bpy.ops.object.transform_apply(location=True,rotation=True,scale=True)
 collision.hide_render = True
 bpy.ops.object.select_all(action='DESELECT')
@@ -294,7 +303,7 @@ for o in leaves: o.select_set(True)
 bpy.context.view_layer.objects.active = leaves[0]
 bpy.ops.object.join()
 foliage = bpy.context.object
-foliage.name = 'ForestApproach_Foliage'
+foliage.name = PREFIX+'_Foliage'
 bpy.ops.object.transform_apply(location=True,rotation=True,scale=True)
 mat = bpy.data.materials.new('Approach leaf colour')
 mat.use_nodes = True
@@ -305,14 +314,14 @@ foliage.data.materials.clear()
 foliage.data.materials.append(mat)
 for poly in foliage.data.polygons: poly.material_index = 0
 for o in [collision]+prototypes+markers+[t for t,_ in targets]: o.select_set(True)
-bpy.ops.wm.save_as_mainfile(filepath=str(ROOT/'art/source/forest-approach.blend'),compress=True)
-export = ROOT/'public/models/forest-approach.glb'
+bpy.ops.wm.save_as_mainfile(filepath=str(ROOT/'art/source'/(STEM+'.blend')),compress=True)
+export = ROOT/'public/models'/(STEM+'.glb')
 bpy.ops.export_scene.gltf(filepath=str(export),export_format='GLB',use_selection=True,
     export_image_format='JPEG',export_image_quality=94)
-report = {'stage':'REF5 approach expansion','slabs':100,'trees':len(wood),'groundCover':len(markers),
-    'atlases':[2048]*3,'bytes':export.stat().st_size,'extentZ':[-40.1,-65.1]}
+report = {'stage':'REF6 first production pass' if DEEP else 'REF5 approach expansion','slabs':100,'trees':len(wood),'groundCover':len(markers),
+    'atlases':[2048]*3,'bytes':export.stat().st_size,'extentZ':[-40.1-SHIFT,-65.1-SHIFT]}
 sys.path.insert(0,str(Path(__file__).parent))
 from world_art_context import export_context
 report['removedContextProxies'] = export_context()
-(OUT/'forest-approach-report.json').write_text(json.dumps(report,indent=2)+'\n')
+(OUT/(STEM+'-report.json')).write_text(json.dumps(report,indent=2)+'\n')
 print('FOREST_APPROACH '+json.dumps({k:v for k,v in report.items() if k!='removedContextProxies'}),flush=True)

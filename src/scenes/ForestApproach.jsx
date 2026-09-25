@@ -17,27 +17,28 @@ function GroundCover({ nodes, family }) {
   </instancedMesh>
 }
 
-export default function ForestApproach() {
-  const { nodes } = useGLTF('/models/forest-approach.glb')
+export default function ForestApproach({ deep = false }) {
+  const prefix = deep ? 'ForestCanopy' : 'ForestApproach'
+  const { nodes } = useGLTF(deep ? '/models/forest-canopy.glb' : '/models/forest-approach.glb')
   const gl = useThree((s) => s.gl)
   const surfaces = useMemo(() => ['Stone', 'Wood', 'Ground'].map((part) => {
-    const name = `ForestApproach_${part}`
+    const name = `${prefix}_${part}`
     const map = nodes[name].material.map.clone()
     map.anisotropy = Math.max(1, Math.min(4, gl.capabilities.getMaxAnisotropy()))
     map.needsUpdate = true
     return { name, geometry: nodes[name].geometry, map }
-  }), [gl, nodes])
+  }), [gl, nodes, prefix])
   useEffect(() => () => surfaces.forEach(({ map }) => map.dispose()), [surfaces])
   return <>
     {surfaces.map(({ name, geometry, map }) => <mesh key={name} name={name} geometry={geometry}>
       <meshBasicMaterial map={map} />
     </mesh>)}
-    <mesh geometry={nodes.ForestApproach_Foliage.geometry}>
+    <mesh geometry={nodes[`${prefix}_Foliage`].geometry}>
       <meshBasicMaterial vertexColors side={DoubleSide} />
     </mesh>
     {['Fern', 'Low_Shrub', 'Grass_Tuft', 'Broadleaf_Clump'].map((family) => <GroundCover key={family} nodes={nodes} family={family} />)}
     <RigidBody type="fixed" colliders="trimesh" includeInvisible>
-      <mesh geometry={nodes.ForestApproach_Collision.geometry} visible={false} />
+      <mesh geometry={nodes[`${prefix}_Collision`].geometry} visible={false} />
     </RigidBody>
   </>
 }

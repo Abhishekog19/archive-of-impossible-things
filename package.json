@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "blender:forest-approach": "node scripts/blender/run.cjs forest-approach",
     "blender:patch": "node scripts/blender/run.cjs patch",
     "verify:zone-assets": "node scripts/verify-zone-assets.cjs",
     "blender:cavern": "node scripts/blender/run.cjs cavern",

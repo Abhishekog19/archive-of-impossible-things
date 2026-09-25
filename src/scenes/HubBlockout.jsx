@@ -8,6 +8,7 @@ import { CAVERN_WATER } from '../config/cavern-water'
 const CavernWater = lazy(() => import('./CavernWater'))
 const HubArt = lazy(() => import('./HubArt'))
 const ForestPatch = lazy(() => import('./ForestPatch'))
+const ForestApproach = lazy(() => import('./ForestApproach'))
 
 export default function HubBlockout({ reference = false, cornerView = false, view = 'reference', legacy = false, waterStudy = false, patch = false }) {
   const { nodes } = useGLTF(legacy ? '/models/hub-blockout.glb' : patch ? '/models/world-art-context.glb' : '/models/world-blockout.glb')
@@ -24,7 +25,7 @@ export default function HubBlockout({ reference = false, cornerView = false, vie
   return (
     <>
       <HubCorner contextual={patch} />
-      {patch && <><ForestPatch /><HubArt /></>}
+      {patch && <><ForestPatch /><ForestApproach /><HubArt /></>}
       {Object.values(nodes).filter((node) => node.isMesh && node.name !== 'Collision' && !(waterStudy && node.name === 'Pool_study')).map((node) => (
         <mesh key={node.uuid} geometry={node.geometry} material={node.material} />
       ))}

@@ -24,7 +24,7 @@ September 22’s assembled correction patch is complete. September 23’s hub pa
 and main ruin silhouette pass was completed early on September 22. September 24
 hub vegetation, planted paving, approach stones and contextual corner lighting are
 complete as a production pass. September 25 REF5 approach expansion was completed
-on September 25 after starting September 24. Next: September 26 REF5 finish and REF6 deep-canopy dressing.
+on September 25 after starting September 24. September 26 REF6 first production pass is now started; finishing work remains.
 Existing hub layout and corner technical proof remain reusable; final visual
 approval is open. Final character movement/physics and games follow environment
 completion. Existing movement supports inspection; author collision-ready geometry now.
@@ -68,8 +68,8 @@ per-session test requirements and historical next-step dates below.
   and deployment parity, then record actionable fixes. Recheck only failed items.
 - Keep Iris Xe/mobile budgets in design decisions. Real-phone controls/thermals
   remain user-led at the end. Final delivery still covers all six reference areas.
-- Next production task: September 26 REF5 finish and REF6 deep canopy, broken
-  ruins and layered foliage. Next technical review:
+- Next production task: finish September 26 REF5/6 banks, larger ruin silhouettes,
+  clearing edges, canopy continuity and light transitions. Next technical review:
   September 27. Sessions still require the user's start; this is not an automation.
 
 Accelerated delivery target: **October 23, 2026**, two calendar days earlier than
@@ -83,6 +83,31 @@ planning assumption; do not subtract this early session again from the target.
 Confirm or revise the target at September 27's weekly review using completed art
 coverage. October 25 remains the previous baseline; November 1 is still the risk
 planning bound. Do not omit areas or materials/lighting to claim an earlier finish.
+
+## September 26 — REF6 first pass started September 25
+
+This session is **in progress**, not complete. REF5's scheduled expansion is done.
+
+- Extended the dressed path from z=-65 to z=-90 with another 100 flagstones,
+  nine branching trees, 217 ground-cover instances and roadside stonework.
+  Separate forest-canopy.blend/GLB reuses the placed forest generator and R3F
+  loader. Three 2K atlases; export 5,313,968 bytes.
+- Excluded new trees, plants and stonework from the west game-clearing envelope.
+  Kept its side path and the resident walking floor; added only trunk proxies.
+  Removed replaced coarse forest objects and obsolete road faces locally.
+- REF6 comparison: .artifacts/canopy-sep26-first-reference.jpg and
+  canopy-sep26-first-gameplay.jpg. New foreground trunks/paving and dappled light
+  are present. Coarse background crowns, box-shaped ruin remnants, repetitive
+  shoulder stones and the abrupt archive-side transition remain unfinished.
+- The affected path and return pass (eight grounded waypoints, no app errors),
+  changed-file lint and production build pass. Evidence:
+  .artifacts/canopy-sep26-connection.json. No FPS or mobile matrix was run.
+- Remaining September 26 work: finish REF5/6 side banks and clearing edges,
+  replace larger ruin placeholders, break up repetitive stone/plant silhouettes,
+  and blend canopy/light transitions. Archive facade remains Phase D.
+
+September 26 started early; it is not a completed day saved. October 23 remains
+provisional. Weekly technical batch stays September 27. No gameplay was added.
 
 ## September 25 — REF5 approach expansion completed
 

@@ -1,11 +1,13 @@
 # Current plan — Archive of Impossible Things
 
-Status (revised September 25): complete connected environment scope now covers
-REF4/5/6/7/8/10. The September 30 deadline and former future phase dates are superseded.
-Accelerated target: October 23, 2026; previous baseline October 25, risk planning
-bound November 1. Availability remains one hour per weekday and three hours per
-weekend day. The September 23 build-first revision below supersedes older forecasts
-and verification cadence; reassess area coverage at the September 27 weekly review.
+Status (revised September 26): complete connected environment scope covers
+REF4/5/6/7/8/10. Working target **October 4, 2026**, with October 5–6 contingency.
+The user increased hours to 3x: assume 3 hours per weekday and 9 per weekend day.
+Eight remaining production dates provide 42 hours against 41 hours in the previous
+remaining phase allowances. This is a forecast, not measured effort or days saved.
+The new target is 19 calendar days earlier than October 23. No scope is removed.
+The current dated plan in ../environment-september-plan.md supersedes every older
+forecast and future-date instruction in the historical session records below.
 Phase A (September 12–15) production and bounded route review are complete.
 All six areas are connected, with four reserved game locations and comparison
 cameras. September 15 closes the forest gap and refines archive framing/root
@@ -24,7 +26,7 @@ September 22’s assembled correction patch is complete. September 23’s hub pa
 and main ruin silhouette pass was completed early on September 22. September 24
 hub vegetation, planted paving, approach stones and contextual corner lighting are
 complete as a production pass. September 25 REF5 approach expansion was completed
-on September 25 after starting September 24. September 26 REF6 first production pass is now started; finishing work remains.
+on September 25 after starting September 24. September 26 forest finishing is complete; Phase C art closure remains September 27.
 Existing hub layout and corner technical proof remain reusable; final visual
 approval is open. Final character movement/physics and games follow environment
 completion. Existing movement supports inspection; author collision-ready geometry now.
@@ -61,53 +63,50 @@ per-session test requirements and historical next-step dates below.
   resource/eviction audits, tier matrices, mobile matrices or duplicate deployment
   checks. Queue those for the weekly review. Fix an observed broken load, blocked
   route or crash immediately with a focused check; do not expand it into a broad audit.
-- Weekly review: September 27, October 4, 11 and 18, then the final week's review
-  on October 23. Reserve 45–60 minutes within existing availability; use the rest
+- Weekly review: September 27 and October 4; continue weekly only if delivery slips. Reserve 45–60 minutes within existing availability; use the rest
   of the session for building. Run one representative sustained hardware traversal,
   inspect loading/resources/payload and changed transitions, check mobile layout
   and deployment parity, then record actionable fixes. Recheck only failed items.
 - Keep Iris Xe/mobile budgets in design decisions. Real-phone controls/thermals
   remain user-led at the end. Final delivery still covers all six reference areas.
-- Next production task: finish September 26 REF5/6 banks, larger ruin silhouettes,
-  clearing edges, canopy continuity and light transitions. Next technical review:
-  September 27. Sessions still require the user's start; this is not an automation.
+- Next production task: September 27 Phase C close (outer backdrop, material/light
+  transitions and remaining REF4/5/6 gaps), followed by REF7 facade/tree/root work.
+  Weekly technical review September 27 stays within that day's 9 hours.
+  Sessions still require the user's start; this is not an automation.
 
-Accelerated delivery target: **October 23, 2026**, two calendar days earlier than
-the former October 25 target. The revised schedule provides 48 hours from September
-22 through October 23 versus the former 54 through October 25: it requires about
-six scheduled hours to be recovered through consolidated checks and less duplicate
-acceptance work. Those hours are a planning assumption, not measured time saved.
-September 25’s production session started on September 24 and completed on
-September 25; no full additional day ahead is claimed. The two-day delivery reduction remains a
-planning assumption; do not subtract this early session again from the target.
-Confirm or revise the target at September 27's weekly review using completed art
-coverage. October 25 remains the previous baseline; November 1 is still the risk
-planning bound. Do not omit areas or materials/lighting to claim an earlier finish.
+## September 26 — forest finishing completed
 
-## September 26 — REF6 first pass started September 25
+- REF5/6 now have wider terrain-following moss banks, additional background trees,
+  clustered ground cover, clipped broken masonry and irregular moss on slab edges.
+  REF5: 100 road slabs, 17 trees and 343 plants. REF6: 124 road slabs, 84 clearing/
+  branch slabs, 17 trees and 285 plants; dressed route reaches z=-96.1.
+- Kept the west clearing open and replaced its plain paving. Removed obsolete
+  coarse proxies and local paving faces while preserving the resident walking
+  floor; removed displaced small ruin colliders from the clearing only.
+- Three 2K atlases per forest asset; GLBs are 7,881,984 and 7,932,460 bytes.
+  Added neighbouring crown bake context. Browser review caught duplicate foliage
+  names on library import; exact-name selection and bake-context renaming fix it.
+- Compared REF5/6 with .artifacts/forest-sep26-finish-reference.jpg and
+  canopy-sep26-finish-reference.jpg plus canopy-sep26-finish-gameplay.jpg.
+  Wider banks, broken stonework and planted clearing edges improve the foreground.
+  Coarse outer crowns/terrain, the archive facade, ambient depth and foliage/light
+  consistency remain visible gaps. This completes the scheduled forest session,
+  not Phase C final visual approval or the whole environment.
+- Focused 11-waypoint forest, clearing branch and return check passes: every target
+  reached and grounded, no app errors. Evidence: forest-sep26-finish-connection.json.
+  Production build passes after the corrected export. No JavaScript changed;
+  no routine FPS, full-world, resource or mobile matrix was run.
+- Preserved the user's hub-blockout.blend edit and Blender MCP setup. Private-file
+  safety remains checked through Git metadata only.
 
-This session is **in progress**, not complete. REF5's scheduled expansion is done.
+## Remaining schedule — three-times hours
 
-- Extended the dressed path from z=-65 to z=-90 with another 100 flagstones,
-  nine branching trees, 217 ground-cover instances and roadside stonework.
-  Separate forest-canopy.blend/GLB reuses the placed forest generator and R3F
-  loader. Three 2K atlases; export 5,313,968 bytes.
-- Excluded new trees, plants and stonework from the west game-clearing envelope.
-  Kept its side path and the resident walking floor; added only trunk proxies.
-  Removed replaced coarse forest objects and obsolete road faces locally.
-- REF6 comparison: .artifacts/canopy-sep26-first-reference.jpg and
-  canopy-sep26-first-gameplay.jpg. New foreground trunks/paving and dappled light
-  are present. Coarse background crowns, box-shaped ruin remnants, repetitive
-  shoulder stones and the abrupt archive-side transition remain unfinished.
-- The affected path and return pass (eight grounded waypoints, no app errors),
-  changed-file lint and production build pass. Evidence:
-  .artifacts/canopy-sep26-connection.json. No FPS or mobile matrix was run.
-- Remaining September 26 work: finish REF5/6 side banks and clearing edges,
-  replace larger ruin placeholders, break up repetitive stone/plant silhouettes,
-  and blend canopy/light transitions. Archive facade remains Phase D.
-
-September 26 started early; it is not a completed day saved. October 23 remains
-provisional. Weekly technical batch stays September 27. No gameplay was added.
+See ../environment-september-plan.md for the eight remaining production dates,
+hours and exit checkpoints. October 4 is the working delivery target, with October
+5–6 for contingency. Reassess at September 27 review and September 29 archive
+checkpoint; do not remove art or performance requirements to claim completion.
+Final character/movement/physics polish, phone controls and game insertion follow
+the environment milestone. The records below describe past schedules/builds.
 
 ## September 25 — REF5 approach expansion completed
 

@@ -1,13 +1,14 @@
 # Current plan — Archive of Impossible Things
 
-Status (revised September 26): complete connected environment scope covers
-REF4/5/6/7/8/10. Working target **October 4, 2026**, with October 5–6 contingency.
-The user increased hours to 3x: assume 3 hours per weekday and 9 per weekend day.
-Eight remaining production dates provide 42 hours against 41 hours in the previous
-remaining phase allowances. This is a forecast, not measured effort or days saved.
-The new target is 19 calendar days earlier than October 23. No scope is removed.
-The current dated plan in ../environment-september-plan.md supersedes every older
-forecast and future-date instruction in the historical session records below.
+Status (revised September 26, latest user scope): environment REF4/5/6/7/8/10
+PLUS finished character art/animation, third-person movement, Rapier/ecctrl physics
+and camera polish. Only game insertion and phone controls remain after handoff.
+Use numbered production packages PD01–PD11 in ../environment-september-plan.md;
+target 2–3 packages per active working day. PD01 is the former September 27 work
+and is complete as a production/review checkpoint. Ten packages remain after it, approximately 4–5
+further working days at the requested throughput, with 1–2 days contingency.
+Older calendar forecasts and character/physics deferrals below are historical.
+No automatic sessions, fixed calendar promise or invented days-saved claim.
 Phase A (September 12–15) production and bounded route review are complete.
 All six areas are connected, with four reserved game locations and comparison
 cameras. September 15 closes the forest gap and refines archive framing/root
@@ -28,8 +29,8 @@ hub vegetation, planted paving, approach stones and contextual corner lighting a
 complete as a production pass. September 25 REF5 approach expansion was completed
 on September 25 after starting September 24. September 26 forest finishing is complete; Phase C art closure remains September 27.
 Existing hub layout and corner technical proof remain reusable; final visual
-approval is open. Final character movement/physics and games follow environment
-completion. Existing movement supports inspection; author collision-ready geometry now.
+approval is open. Character/movement/physics and camera polish now belong to this milestone.
+Only games and phone controls follow handoff; keep collision-ready geometry now.
 
 Scope, dates and acceleration strategy: [connected environment plan](../environment-september-plan.md).
 Visual target: [look target](../look-target.md), primary concept `concept/REF4.png`.
@@ -44,7 +45,7 @@ This milestone takes priority over the older full-game roadmap.
 | 3. Art/detail pass | Terrain/ruins → vegetation → materials → lighting/fog → detail; fix the largest 3–5 visual mismatches per iteration. |
 | 4. Optimization/export | Reusable assets and simple colliders export to GLB; textures, draw calls and visible geometry meet existing budgets. |
 | 5. R3F loading | Browser loads GLB with correct scale, materials and lighting; representative export is proven early. |
-| 6. Integration readiness | Separate collision proxies and usable stairs/slopes/clearances; existing controller aids inspection. Final movement/physics integration follows environment delivery. |
+| 6. Integration readiness | Separate collision proxies and usable stairs/slopes/clearances; existing controller aids inspection. Final movement/physics integration and acceptance are required in PD09–11. |
 | 7. Browser/mobile testing | Daily affected-area visual/movement check; build/lint when inputs change. Weekly technical batch covers Iris Xe, resources/loading and mobile layout; user-led real-phone controls/thermals remain at the end. |
 
 ## Build-first cadence — effective September 23
@@ -63,16 +64,56 @@ per-session test requirements and historical next-step dates below.
   resource/eviction audits, tier matrices, mobile matrices or duplicate deployment
   checks. Queue those for the weekly review. Fix an observed broken load, blocked
   route or crash immediately with a focused check; do not expand it into a broad audit.
-- Weekly review: September 27 and October 4; continue weekly only if delivery slips. Reserve 45–60 minutes within existing availability; use the rest
-  of the session for building. Run one representative sustained hardware traversal,
-  inspect loading/resources/payload and changed transitions, check mobile layout
-  and deployment parity, then record actionable fixes. Recheck only failed items.
+- Weekly review: one batch per seven calendar days, independent of PD throughput.
+  PD01 includes the formerly September 27 batch. Next review is seven calendar days
+  after it actually runs. Reserve 45–60 minutes; build for the rest of the session.
+  Inspect one sustained hardware route, loading/resources, mobile layout and deployment
+  parity; record actual failures, recheck only affected items. Reuse evidence at PD11.
 - Keep Iris Xe/mobile budgets in design decisions. Real-phone controls/thermals
   remain user-led at the end. Final delivery still covers all six reference areas.
-- Next production task: September 27 Phase C close (outer backdrop, material/light
-  transitions and remaining REF4/5/6 gaps), followed by REF7 facade/tree/root work.
-  Weekly technical review September 27 stays within that day's 9 hours.
-  Sessions still require the user's start; this is not an automation.
+- Completed: PD01 (former Sep 27): hub/forest backdrop/light production pass,
+  first REF7 facade/tree/root art and the scheduled weekly technical batch.
+- Next: PD02 exterior finish, then PD03 archive hall. No gameplay or phone controls.
+
+## PD01 — former September 27 work completed
+
+- Built 189 replacement background crown/shrub groups in four spatial batches;
+  replaced coarse hub/forest crown proxies. Fuller leaf sprays use 88,080 triangles,
+  half the first iteration, and a 6,874,368-byte GLB. Added terrain vertex-colour
+  variation and 22–115 m placed-world fog to connect the background and forest banks.
+- First REF7 production asset: 298 individually coursed limestone blocks, worn
+  arch stones, fused/smoothed hero tree and wrapping roots, and six broadleaf crowns.
+  Two placed 2K bakes; archive-exterior.glb is 4,954,016 bytes. Retained resident
+  world collision and default blockout isolation. Reproducible Blender commands
+  and editable sources are committed; no Blender MCP changes.
+- Fixed reversed arch normals found during browser comparison. Evidence in
+  .artifacts/: exterior-pd01-final.jpg, hub-pd01-final.jpg, canopy-pd01-final.jpg.
+  The final backdrop uses fuller leaves at half the first iteration geometry. This is a production checkpoint, not final visual
+  approval: remaining priorities are archive courtyard/vines/damage/root refinement
+  (PD02), hub boundary/landmark/foliage density and six-area material/light finish
+  (PD07), and final reference acceptance (PD11). Hall/cavern full art remains open.
+- Build and changed-JavaScript lint pass. Focused 17-waypoint forest, clearing,
+  archive threshold/hall entrance and return passes, grounded at every target,
+  no app errors: pd01-forest-archive-connection.json.
+- Weekly production review completed September 26 (the former Sep 27 batch),
+  next routine batch October 3 if work continues then. Three-minute Iris Xe/D3D11
+  run at 1280×720, Medium DPR 1.25: 59.05 mean FPS, 23.00 FPS 1% low, p95 16.8 ms,
+  max frame 233.4 ms, 57 arrivals, 100% grounded, no hidden frames or app errors.
+  Native visual-review tab was open during the initial portion; no claim of an
+  isolated GPU benchmark or final performance acceptance. Evidence:
+  pd01-weekly-performance.json. No repeated daily performance loop is scheduled.
+- Review findings REQUIRED for PD07: up to 565,640 drawn triangles exceeds the
+  ~300K target; all eight GLBs load eagerly (53,477,680 bytes uncompressed GLB
+  responses on localhost), so the 8 MB staged-entry budget is NOT met. Draws 17–32
+  and geometry/texture counts 49/15 stayed stable across the sampled route.
+  Integrate the proven zone-loading approach and visibility/detail partitioning
+  into placed art, reduce foliage/terrain cost and check stutters after those edits.
+- Mobile 390×844 layout has no horizontal overflow; no phone controls/thermal
+  acceptance claimed. Public Vercel URL redirects to Vercel login, so deployed
+  build/settings parity remains unverified; do not compare that login page's assets
+  with this app. pd01-deployment-parity.json records the bounded inspection.
+- Private source is ignored/untracked (Git metadata only). Existing user
+  hub-blockout.blend hash remains 3389ecf1e55f96a3fa8e53eb8071aa9955502d68.
 
 ## September 26 — forest finishing completed
 
@@ -99,14 +140,11 @@ per-session test requirements and historical next-step dates below.
 - Preserved the user's hub-blockout.blend edit and Blender MCP setup. Private-file
   safety remains checked through Git metadata only.
 
-## Remaining schedule — three-times hours
+## Remaining schedule — production packages
 
-See ../environment-september-plan.md for the eight remaining production dates,
-hours and exit checkpoints. October 4 is the working delivery target, with October
-5–6 for contingency. Reassess at September 27 review and September 29 archive
-checkpoint; do not remove art or performance requirements to claim completion.
-Final character/movement/physics polish, phone controls and game insertion follow
-the environment milestone. The records below describe past schedules/builds.
+The active PD01–PD11 table is in ../environment-september-plan.md. Character,
+movement/physics and camera polish are INCLUDED. Only games and phone controls
+are deferred. Historical session records below retain the previous scope/dates.
 
 ## September 25 — REF5 approach expansion completed
 

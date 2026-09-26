@@ -1,7 +1,7 @@
 # Connected environment production plan
 
-Revised September 26, 2026 (Asia/Calcutta): three-times availability, build-first
-production and weekly technical verification. Filename retained for existing links.
+Revised September 26, 2026 (Asia/Calcutta): numbered production days; target two to
+three production packages per working day. Filename retained for existing links.
 This replaces the September 30 hub-only scope and future phase dates. Completed
 production evidence remains in `plans/CURRENT_PLAN.md`.
 
@@ -26,54 +26,44 @@ spaces must be authored. Reserve four candidate game locations without building 
 Completion includes models, textures/materials, vegetation, water appearance,
 lighting/fog, connecting spaces, GLB exports, R3F loading, optimization and visual
 review of every area. No placeholder surfaces or deferred environment-art passes
-in the delivery candidate. Final character art/animation, movement/physics tuning,
-camera polish, game insertion and phone-control redesign follow this milestone.
-Use the existing controller or inspection camera during production; author usable
-stairs, slopes, clearances and separate collision proxies now to avoid remodeling.
+in the delivery candidate. Character art/animation, third-person movement, Rapier/
+ecctrl physics, camera polish and desktop roaming acceptance are INCLUDED before
+handoff. Only game insertion and phone-control redesign/testing remain afterward.
+Use the existing controller during environment production; author usable stairs,
+slopes, clearances and separate collision proxies now to avoid remodeling.
 
-## Expected finish and assumptions
+## Production-day schedule and throughput
 
-**Working delivery target: October 4, 2026; contingency October 5–6.**
-This supersedes the October 23 forecast. It moves the planned finish 19 calendar
-days earlier; that is a forecast, not measured days saved or a quality guarantee.
-All six reference areas and the environment-delivery requirements above remain.
+A production day (PD) is a deliverable package, not a calendar date or a fixed-hour
+unit. Target **2–3 PD packages per active working day**, completing dependencies
+in order. The prior 3-hour weekday / 9-hour weekend assumptions and October 4
+calendar promise are superseded. Do not multiply the old schedule by three again
+or claim a package complete simply because its time allowance has elapsed.
 
-The user increased work hours to three times the previous baseline. Planning now
-assumes **3 hours per weekday and 9 hours per weekend day**, including production,
-review and export time. Sessions still require the user's start; no automation or
-unattended production is implied. If the intended availability is 3 hours every
-day instead, this forecast must be revised.
+There are 11 packages including the current former-September-27 package. After
+PD01 completion, ten remain: a planning range of **4–5 further active working days**
+at 2–3 packages per day. Allow 1–2 additional working days if hero art, animation,
+baking or technical fixes overrun. This is a throughput goal, not measured speed.
+Sessions begin on the user's request; no unattended work or automation is implied.
 
-After September 26's forest session, the previous plan allocates 41 remaining
-hours: Phase C finish 4, archive D 11, cavern E 11, consistency/optimization F 10,
-and acceptance G 5. September 27–October 4 provides 42 hours over eight production
-dates. These are inherited planning allowances, not measured effort estimates.
-Hero tree/root work, materials, contextual bakes and unresolved performance issues
-can exceed them; increased hours do not automatically triple production speed.
-Reassess after September 27's coverage/technical review and September 29's archive
-checkpoint. October 5–6 provides up to six additional contingency hours, not a
-promise that every possible defect fits that window.
+| Production day | Work and completion checkpoint |
+|---|---|
+| PD01 — former Sep 27 | Hub/forest backdrop and material/light closure pass; one scheduled weekly technical review; first REF7 facade and hero tree/root production. Completed production/review checkpoint; final visual acceptance remains PD11. |
+| PD02 | Finish REF7 exterior: damaged silhouette, courtyard paving, facade moss/vines, tree/root refinement and placed lighting; begin shared hall architecture. |
+| PD03 | Finish REF8 hall arches, columns, roof breaks, floor and vegetation; join exterior, hall and descent. |
+| PD04 | REF10 cavern rock walls, shoreline, overhead opening and descending passage structure. |
+| PD05 | Cavern water/pool appearance, rock textures and shoreline materials. |
+| PD06 | Cavern overhead light, reflections, fog and detail; REF10 reference/player comparison. |
+| PD07 | Finish all connections and six-area material/light consistency; loading/culling, GLB/texture/geometry optimization. Resolve recorded visual and weekly technical findings. |
+| PD08 | Replace capsule presentation with a coherent stylized character, rig and idle/walk/run/jump/land animation states; Blender/GLB/R3F pipeline. Use an authored simple explorer or suitably licensed rig, with provenance retained. |
+| PD09 | Finish desktop movement and Rapier/ecctrl physics: acceleration/deceleration, turn response, grounded jumps, steps/slopes, collisions, fall recovery and pause/resume. Verify all six areas and four future game locations are reachable. |
+| PD10 | Character/animation polish, foot placement and grounding, camera smoothing/collision/occlusion, near-wall character visibility, input/settings clarity and transitions. No phone-control redesign or gameplay. |
+| PD11 | Final six-reference review, complete desktop roam, character/physics/camera acceptance, scalable graphics/mobile layout and release. Reuse weekly evidence if unchanged; recheck affected failures. Only game insertion and phone controls remain. |
 
-## Remaining dated plan
-
-| Date (2026) | Hours | Work and exit checkpoint |
-|---|---:|---|
-| Sep 27, Sunday | 9 | Close Phase C hub/forest art: outer backdrop, material/light transitions and biggest REF4/5/6 gaps (4 h, including weekly technical review). Begin REF7 facade and hero tree/root production (5 h). |
-| Sep 28, Monday | 3 | Continue REF7 exterior: authored stonework, wrapping roots, vegetation and placed materials/light; begin shared REF8 architecture. |
-| Sep 29, Tuesday | 3 | Finish REF8 hall arches, columns, broken roof, floor and vegetation; join forest, exterior and descent. Close Phase D with REF7/8 browser comparisons. |
-| Sep 30, Wednesday | 3 | Build REF10 cavern rock walls, shoreline, overhead opening and descending passage using the proven cavern prototype. |
-| Oct 1, Thursday | 3 | Cavern pool/water appearance, rock materials and shoreline surface art. |
-| Oct 2, Friday | 3 | Cavern overhead light, reflections, fog and shoreline detail; compare REF10 at reference and player heights. |
-| Oct 3, Saturday | 9 | Close cavern art and passage (2 h); unify all six areas' materials/light and connections, then loading/culling, texture and geometry budgets (7 h). |
-| Oct 4, Sunday | 9 | Finish world optimization/export/integration (3 h); six-reference acceptance, weekly technical review, targeted fixes and release (5 h); 1 h reserve. |
-| Oct 5–6, contingency only | Up to 3/day | Use only for unresolved hero-art, baking, loading or acceptance defects. Reforecast if more work remains; do not silently drop scope. |
-
-Phases A/B are complete; Phase C production through September 26 is complete,
-with final hub/forest art closure still due September 27. Phase D uses 11 hours
-September 27–29; E uses 11 hours September 30–October 3; F uses 10 hours October
-3–4; G uses 5 hours October 4. The plan keeps technical review inside those windows.
-Environment content should be complete October 3; final delivery depends on the
-October 4 acceptance gate. Character/physics polish and game insertion follow.
+Suggested working-day batches after PD01: PD02–03; PD04–06; PD07–08; PD09–10;
+PD11. The five-day arrangement reserves room for the larger packages. Merge PD11
+into the fourth day only if preceding gates pass. Keep checkpoints visible rather
+than forcing an unfinished package into the next package's completion claim.
 
 ## Daily building and weekly technical review
 
@@ -83,7 +73,9 @@ runtime/assets push, run one production build and lint changed JavaScript once;
 reuse results until inputs change. Documentation-only edits need no game tests.
 
 Batch routine FPS, sustained traversal, repeated route/loading/resource checks,
-tier/mobile matrices and deployment parity once weekly: **Sep 27 and Oct 4** (continue weekly only if delivery slips). Reserve 45–60 minutes within the existing
+tier/mobile matrices and deployment parity once weekly: **once per seven calendar days**, independent of how many PD packages are completed.
+PD01 completed the former September 27 review on September 26; next routine
+batch October 3 if the project is still active. PD11 reuses valid evidence and checks changed risks. Reserve 45–60 minutes within the existing
 session, not an additional test day. Recheck failures only. Fix an observed crash,
 failed load or blocked route immediately with a targeted check. Do not turn that
 into another broad technical audit. The detailed operating rule is in
@@ -124,24 +116,25 @@ into another broad technical audit. The detailed operating rule is in
   counts after repeated zone transitions. Verify intended deployment build/settings
   parity; the user's Vercel slowdown remains unresolved.
 - Browser/mobile layout and scalable graphics are included. Real-phone thermals,
-  final controls and final physics acceptance remain later and must be labeled pending.
+  and phone controls remain later and must be labeled pending. Desktop character,
+  movement, physics and camera acceptance must pass before this milestone closes.
 
 ## Current state and next action
 
-September 26 forest finishing is complete: widened planted banks, additional tree
-layers, broken masonry, irregular paving moss, clearing paving and the canopy path
-extended to z=-96. The focused forest/clearing/return connection and production
-build pass. The export-name collision found in browser review is fixed. Detailed
-counts, evidence and limits are in plans/CURRENT_PLAN.md.
+PD01 (former September 27) is complete as a production/review checkpoint: hub/forest
+backdrop and terrain-colour/depth pass, REF7 facade/tree/root first art, and the
+weekly technical review. Build/lint and the forest-to-archive connection pass.
+Counts, comparison evidence and review limitations are in plans/CURRENT_PLAN.md.
 
-This is not final visual approval. REF6 still exposes coarse outer background
-crowns/terrain and an undressed archive facade; ambient depth, foliage lighting
-and material consistency need the Phase C close and later world pass. September 27
-closes hub/forest gaps and begins archive production. All six areas have connected
-blockouts, but REF7/8/10 still need their full art passes. Weekly resource/performance
-acceptance remains pending; older FPS results do not validate the new dense assets.
+Next: PD02 exterior finish, then PD03 archive interior. Ten packages remain.
+PD07 must close remaining hub boundaries/landmark/foliage and material/light gaps,
+reduce the sampled ~566K triangle peak and replace eager ~53.5 MB GLB loading
+with staged placed-art loading. The sampled 59.05 average FPS is not final
+performance acceptance: low-percentile spikes and transfer/geometry budgets remain
+open. Vercel build parity is unverified because the public URL redirects to login.
+PD11 requires final six-reference and roaming acceptance, with no art placeholders.
 
-Preserve the user's pre-existing art/source/hub-blockout.blend modification and
-Blender MCP setup. The private source file remains excluded from Git, verified
-through metadata only. Historical production records remain in CURRENT_PLAN.md;
-older dates there are superseded by the schedule above.
+Character art/animation, movement/physics and camera polish are included in PD08–11.
+Only game insertion and phone controls follow handoff. Preserve the user's existing
+hub-blockout.blend edit, private-file exclusion and Blender MCP setup. Older records
+in CURRENT_PLAN.md retain historical dates/scope and do not override this PD plan.

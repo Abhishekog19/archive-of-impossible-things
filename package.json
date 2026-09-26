@@ -20,7 +20,9 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "blender:hub-art": "node scripts/blender/run.cjs hub-art"
+    "blender:hub-art": "node scripts/blender/run.cjs hub-art",
+    "blender:archive-exterior": "node scripts/blender/run.cjs archive-exterior",
+    "blender:woodland-backdrop": "node scripts/blender/run.cjs woodland-backdrop"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.8",

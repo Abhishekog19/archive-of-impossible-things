@@ -26,11 +26,11 @@ for (const [key, folder] of Object.entries({
   fs.mkdirSync(env[key], { recursive: true })
 }
 const mode = process.argv[2] || 'setup'
-if (!['setup', 'version', 'blockout', 'corner', 'world', 'kit', 'zones', 'cavern', 'patch', 'hub-art', 'forest-approach', 'forest-canopy'].includes(mode)) throw new Error('Unknown Blender production mode: '+mode)
+if (!['setup', 'version', 'blockout', 'corner', 'world', 'kit', 'zones', 'cavern', 'patch', 'hub-art', 'forest-approach', 'forest-canopy', 'archive-exterior', 'woodland-backdrop'].includes(mode)) throw new Error('Unknown Blender production mode: '+mode)
 const scripts = { setup: 'setup.py', blockout: 'hub_blockout.py', corner: 'hub_corner.py', world: 'world_blockout.py', kit: 'asset_kit.py', zones: 'zone_kit.py', cavern: 'cavern_study.py', patch: 'forest_patch.py', 'hub-art': 'hub_art.py', 'forest-approach': 'forest_approach.py', 'forest-canopy': 'forest_canopy.py' }
 const args = mode === 'version' ? ['--version'] : [
   '--background', '--factory-startup', '--python-exit-code', '1',
-  '--python', path.join(__dirname, scripts[mode]), '--', '--output', output,
+  '--python', path.join(__dirname, scripts[mode] || mode.replaceAll('-', '_')+'.py'), '--', '--output', output,
 ]
 console.log(`Blender: ${executable}`)
 const result = spawnSync(executable, args, { cwd: root, env, windowsHide: true, stdio: 'inherit' })

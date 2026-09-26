@@ -369,3 +369,10 @@ radial roof-light pattern and close-view atlas density; this is still a risk stu
    completely, and character art is the weakest part of this pipeline — v1 takes a
    free CC0 rig. Mitigation: silhouette-first, no facial detail, and check it against
    these images early rather than at M13.
+
+### Placed world depth — PD01 production override
+
+The opt-in placed-art world (`?patch=1`) uses linear fog from 22–115 m, retaining
+the shared sky/fog colour. The default layout remains 35–150 m. The closer haze
+separates forest layers and softens archive distance without new lights or shadow
+maps. Judge it through REF4/5/6/7 comparisons; the final six-area pass may refine it.

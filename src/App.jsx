@@ -48,7 +48,7 @@ function hasWebGL2() {
  * `far` is matched to the distance at which that fog is ~95% opaque — drawing
  * past it would be drawing things fog has already erased.
  */
-function Atmosphere({ hub = false, cavern = false }) {
+function Atmosphere({ hub = false, cavern = false, patch = false }) {
   const fogEnabled = useGameStore((s) => s.fogEnabled)
   // Density is a tier value (look-target section 9); the store is the one
   // authority on which tier this device is on -- see config/tiers.js.
@@ -57,7 +57,7 @@ function Atmosphere({ hub = false, cavern = false }) {
     <>
       <color attach="background" args={[cavern ? CAVERN_STUDY.fog : PALETTE.sky]} />
       {fogEnabled && (
-        cavern ? <fog attach="fog" args={[CAVERN_STUDY.fog, CAVERN_STUDY.fogNear, CAVERN_STUDY.fogFar]} /> : hub ? <fog attach="fog" args={[FOG.color, 35, 150]} /> : <fogExp2 attach="fog" args={[FOG.color, TIERS[tier].fogDensity]} />
+        cavern ? <fog attach="fog" args={[CAVERN_STUDY.fog, CAVERN_STUDY.fogNear, CAVERN_STUDY.fogFar]} /> : hub ? <fog attach="fog" args={[FOG.color, patch ? 22 : 35, patch ? 115 : 150]} /> : <fogExp2 attach="fog" args={[FOG.color, TIERS[tier].fogDensity]} />
       )}
     </>
   )
@@ -141,7 +141,7 @@ export default function App() {
         camera={{ fov: reference ? 53.13 : CAMERA.fov, near: 0.1, far: greyroom ? TIERS[tier].far : 180 }}
         gl={{ antialias: true }}
       >
-        <Atmosphere hub={!greyroom} cavern={cavernStudy} />
+        <Atmosphere hub={!greyroom} cavern={cavernStudy} patch={patch} />
 
         {/* Temporary lighting. The shipped game has zero runtime lights and
             bakes everything (spec §4.1); §4 allows exactly one hemisphere light

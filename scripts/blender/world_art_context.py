@@ -1,6 +1,7 @@
 """Export art-review context without rewriting the source world."""
 import bpy
 import bmesh
+import math
 from pathlib import Path
 from mathutils import Vector
 ROOT = Path(__file__).resolve().parents[2]
@@ -12,6 +13,8 @@ def export_context(include_hub=None):
     removed = []
     include_approach = (ROOT/'public/models/forest-approach.glb').exists()
     include_canopy = (ROOT/'public/models/forest-canopy.glb').exists()
+    include_exterior = (ROOT/'public/models/archive-exterior.glb').exists()
+    include_backdrop = (ROOT/'public/models/woodland-backdrop.glb').exists()
     def numbered(prefix,index): return prefix+('.'+str(index).zfill(3) if index else '')
     hub_trees = {numbered('Tree trunk',i) for i in (0,1,2,3,4,80,81,82)}
     # Distant trees use three crowns, so their crown indices differ from trunks.
@@ -21,6 +24,14 @@ def export_context(include_hub=None):
         if obj.type != 'MESH': continue
         centre = sum((obj.matrix_world @ Vector(p) for p in obj.bound_box), Vector()) / 8
         x, z = centre.x, -centre.y
+        exterior_proxy = include_exterior and (obj.name.startswith(('Stepped archive facade',
+            'Archive central crown','Archive upper facade','Archive upper broken belt',
+            'Facade broken pinnacle','Archive hero tree','Hero spreading limb','Wrapping facade root',
+            'Hero tree crown','Hero secondary crown')) or
+            (obj.name.startswith('Archive arch') and -117<z<-110))
+        backdrop_proxy = include_backdrop and -108<z<25 and obj.name.startswith((
+            'Woodland middle crown','Woodland upper crown','Woodland lower silhouette',
+            'Forest crown','Deep canopy crown','Understory proxy','Woodland shoulder'))
         local = -21 < x < -4 and -40 < z < -17
         plant_proxy = obj.name.startswith(('Tree trunk', 'Tree limb', 'Forest crown', 'Woodland shoulder'))
         hub_region = abs(x)<27 and -16<z<16
@@ -49,9 +60,29 @@ def export_context(include_hub=None):
             bmesh.ops.delete(bm,geom=covered,context='FACES')
             bm.to_mesh(obj.data)
             bm.free()
-        if (local and (plant_proxy or trunk_proxy)) or hub_proxy or approach_proxy or clearing_ruin:
+        if (local and (plant_proxy or trunk_proxy)) or hub_proxy or approach_proxy or clearing_ruin or exterior_proxy or backdrop_proxy:
             removed.append(obj.name)
             bpy.data.objects.remove(obj, do_unlink=True)
+    # A small vertex-colour terrain pass ties distant banks into the placed moss.
+    # No texture or runtime shader cost; subdivide only the untextured bank skin.
+    if include_backdrop:
+        terrain_mat = bpy.data.materials.new('Terrain bank colours')
+        terrain_mat.use_nodes = True
+        attr = terrain_mat.node_tree.nodes.new('ShaderNodeVertexColor')
+        attr.layer_name = 'BankColor'
+        terrain_mat.node_tree.links.new(attr.outputs['Color'],terrain_mat.node_tree.nodes['Principled BSDF'].inputs['Base Color'])
+        for obj in bpy.context.scene.objects:
+            if obj.type!='MESH' or not obj.name.startswith(('Continuous terrain','Continuous forest bank','Forest extension ground')): continue
+            bm = bmesh.new();bm.from_mesh(obj.data)
+            bmesh.ops.subdivide_edges(bm,edges=list(bm.edges),cuts=2,use_grid_fill=True)
+            bm.to_mesh(obj.data);bm.free()
+            colors = obj.data.color_attributes.new(name='BankColor',type='BYTE_COLOR',domain='CORNER')
+            for poly in obj.data.polygons:
+                for loop in poly.loop_indices:
+                    p = obj.matrix_world@obj.data.vertices[obj.data.loops[loop].vertex_index].co
+                    shade = .72+.13*math.sin(p.x*.73+p.y*.28)+.12*math.sin(p.y*1.17-p.x*.36)
+                    colors.data[loop].color = (.115*shade,.153*shade,.06*shade,1)
+            obj.data.materials.clear();obj.data.materials.append(terrain_mat)
     for mat in list(bpy.data.materials):
         objects = [o for o in bpy.context.scene.objects if o.type == 'MESH' and o.data.materials and o.data.materials[0] == mat]
         if not objects: continue

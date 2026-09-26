@@ -14,7 +14,8 @@ DEEP = globals().get('DEEP_CANOPY',False)
 STEM = 'forest-canopy' if DEEP else 'forest-approach'
 PREFIX = 'ForestCanopy' if DEEP else 'ForestApproach'
 SHIFT = 25 if DEEP else 0
-def in_clearing(x,z): return DEEP and x < -17 and -77 < z < -61
+ROWS = 31 if DEEP else 25
+def in_clearing(x,z): return -32 < x < -17 and -77 < z < -61
 rng = random.Random(925)
 bpy.ops.object.select_all(action='SELECT')
 bpy.ops.object.delete(use_global=False)
@@ -44,7 +45,8 @@ with bpy.data.libraries.load(str(ROOT/'art/source/archive-kit.blend'),link=False
 sources = {o.name:o for o in dst.objects}
 with bpy.data.libraries.load(str(ROOT/'art/source/world-blockout.blend'),link=False) as (src,dst):
     dst.objects = [n for n in src.objects if n.startswith(('Continuous terrain',
-        'Canopy approach','Forest extension ground','Connected paving','Continuous forest bank'))]
+        'Canopy approach','Forest extension ground','Connected paving','Continuous forest bank',
+        'Forest game clearing','Forest courtyard threshold'))]
 vertices,faces = [],[]
 for o in dst.objects:
     offset = len(vertices)
@@ -78,7 +80,7 @@ def mesh(name,verts,faces,material):
 
 stone,wood,earth,leaves = [],[],[],[]
 # Four staggered stones follow the existing curved route, from the old patch to REF6.
-for row in range(25):
+for row in range(ROWS):
     z = -40.6-row-SHIFT
     derivative = (road_x(z+.1)-road_x(z-.1))/.2
     for col in range(4):
@@ -88,7 +90,35 @@ for row in range(25):
         if z>-42: o.rotation_euler.x = math.atan(.055)
         stone.append(o)
 
-# A broken low wall and rock outcrops give the shoulders a readable silhouette.
+# Staggered, clipped masonry replaces both the large ruin boxes and the earlier
+# stacks of stretched paving. Resident ruin collision stays in its old footprint.
+stone_materials = [sources['Author_Slab_'+str(i)].data.materials[0] for i in range(1,7)]
+masonry_rng = random.Random(926+SHIFT)
+def block(x,z,base,width,depth,tall,broken=False):
+    c = masonry_rng.uniform(.055,.14)
+    ring = [(-width/2+c,-depth/2),(width/2-c,-depth/2),(width/2,-depth/2+c),
+            (width/2,depth/2-c),(width/2-c,depth/2),(-width/2+c,depth/2),
+            (-width/2,depth/2-c),(-width/2,-depth/2+c)]
+    verts = [(x+px,-z+py,base) for px,py in ring]
+    verts += [(x+px+masonry_rng.uniform(-.035,.035),-z+py,
+               base+tall-masonry_rng.uniform(.02,.22 if broken else .04)) for px,py in ring]
+    o = mesh('Chipped forest masonry',verts,[tuple(range(8,16))]+
+        [(i,(i+1)%8,(i+1)%8+8,i+8) for i in range(8)],masonry_rng.choice(stone_materials))
+    stone.append(o)
+    return o
+with bpy.data.libraries.load(str(ROOT/'art/source/world-blockout.blend'),link=False) as (src,dst):
+    dst.objects = [n for n in src.objects if n.startswith('Forest ruin remnant')]
+ruin_count = 0
+for original in dst.objects:
+    x,z = original.location.x,-original.location.y
+    if not (-40-SHIFT>z>=(-97 if DEEP else -65)): continue
+    if DEEP and in_clearing(x,z): continue
+    ruin_count += 1
+    for course in range(5):
+        for part in range(2):
+            block(x+masonry_rng.uniform(-.06,.06),z+(part-.5)*.97,
+                  1.65+course*.53,1.5, .94,.51,course==4)
+
 for side,z in [(-1,-46),(1,-51),(-1,-58),(1,-62)]:
     z -= SHIFT
     cx = road_x(z)+side*4.3
@@ -97,16 +127,31 @@ for side,z in [(-1,-46),(1,-51),(-1,-58),(1,-62)]:
         for col in range(4-course):
             x = cx+side*course*.1
             zz = z+(col-1.5)*.9
-            o = place('Author_Slab_'+str(1+(col+course)%6),'Fallen roadside masonry',x,zz,
-                      1,rng.uniform(-.09,.09),height(x,zz)+course*.38)
-            o.scale = (.65,.75,1.8)
-            stone.append(o)
+            block(x,zz,height(x,zz)+course*.42,.75,.86,.4,course==2)
     for j in range(4):
         x,zr = cx+side*rng.uniform(.8,3),z+rng.uniform(-2,2)
         o = place('Author_Slab_'+str(j+1),'Mossy shoulder outcrop',x,zr,1,rng.random()*6.28,
                   height(x,zr)-.12)
-        o.scale = (rng.uniform(1.1,2.4),rng.uniform(1.2,2.2),rng.uniform(3,6))
+        o.scale = (rng.uniform(.8,1.7),rng.uniform(.9,1.6),rng.uniform(2,4))
+        o.rotation_euler.x = rng.uniform(-.3,.3)
+        o.rotation_euler.y = rng.uniform(-.2,.2)
         stone.append(o)
+
+clearing_slabs = 0
+if DEEP:
+    # Reserve a usable empty platform and its branch path for the later game.
+    for row in range(8):
+        z = -64.15-row*1.1
+        for col in range(9):
+            x = -27.45+col*1.1
+            stone.append(place('Author_Slab_'+str(1+(row+col)%6),'Clearing paving',x,z,.92,
+                               .025*math.sin(row+col),1.575))
+            clearing_slabs += 1
+    for col in range(6):
+        for row in range(2):
+            x,z = -17.8+col*.92,-67.5-row
+            stone.append(place('Author_Slab_'+str(1+(col+row)%6),'Clearing approach',x,z,.85,0,1.575))
+            clearing_slabs += 1
 
 # Terrain remains collision-owned by the world. This thin skin receives dappled light.
 soil = bpy.data.materials.new('Approach shaded moss and soil')
@@ -124,12 +169,13 @@ links.new(noise.outputs['Fac'],ramp.inputs[0])
 links.new(ramp.outputs[0],nodes['Principled BSDF'].inputs['Base Color'])
 nodes['Principled BSDF'].inputs['Roughness'].default_value = 1
 verts,faces = [],[]
-for row in range(26):
+bank_offsets = [-20,-18,-16,-14,-12,-10,-8,-6,-4,-3,-2,-1,0,1,2,3,4,6,8,10,12,14,16,18,20]
+for row in range(ROWS+1):
     z = -40.1-row-SHIFT
-    for col in range(25):
-        x = road_x(z)+col-12
+    for col,offset in enumerate(bank_offsets):
+        x = road_x(z)+offset
         verts.append((x,-z,height(x,z)+.014))
-for row in range(25):
+for row in range(ROWS):
     for col in range(24):
         a = row*25+col
         faces.append((a,a+1,a+26,a+25))
@@ -140,6 +186,10 @@ tree_specs = [(-1,-42.5,5.4,13),(1,-43.7,5.7,14),(-1,-49.4,5.2,15),
     (1,-50.2,5.6,13),(-1,-56.2,5.1,14),(1,-56.8,6.0,16),
     (-1,-63,5.5,14),(1,-62.8,5.3,13),(-1,-45,10,17),
     (1,-47,10,17),(-1,-58,10.5,18),(1,-60,10,17)]
+tree_specs += [(side,z,18 if side>0 else 22,14+(i%3)*1.5)
+               for i,z in enumerate((-44,-54,-63)) for side in (-1,1)]
+if DEEP:
+    tree_specs += [(-1,-68.5,5.8,13),(1,-69,6.2,14)]
 for i,(side,z,offset,tall) in enumerate(tree_specs):
     z -= SHIFT
     if in_clearing(road_x(z)+side*offset,z): continue
@@ -176,7 +226,7 @@ for i,(side,z,offset,tall) in enumerate(tree_specs):
     # Keep a sparse subset of leaf silhouettes, six triangles per leaf. More
     # distant crowns use fewer leaves; openings admit dappled light onto the road.
     count = len(old.vertices)//9
-    chosen = range(0,count,3 if i<8 else 4)
+    chosen = range(0,count,3 if i<8 else 7 if i>=12 else 4)
     tints,points,polygons = [],[],[]
     low,high = min(v.co.z for v in old.vertices),max(v.co.z for v in old.vertices)
     for j in chosen:
@@ -232,6 +282,57 @@ for cluster in range(44):
         scene.collection.objects.link(marker)
         marker.location,marker.scale,marker.rotation_euler = plant.location.copy(),plant.scale.copy(),plant.rotation_euler.copy()
         markers.append(marker)
+
+# Additional low growth follows the banks and clearing rim rather than filling
+# the walking lane. Per-zone seeds keep the silhouettes reproducible.
+edge_rng = random.Random(9261+SHIFT)
+for i in range(92):
+    z = edge_rng.uniform(-40.5-SHIFT,-39.8-SHIFT-ROWS)
+    side = -1 if i%2 else 1
+    x = road_x(z)+side*edge_rng.uniform(9,17)
+    if in_clearing(x,z):
+        x = -31.8 if i%3 else -17.1
+        if -72<z<-63: continue
+    family = families[(i+1)%4]
+    plant = place(family,'Bank ground-cover shadow',x,z,edge_rng.uniform(.8,1.6),
+                  edge_rng.random()*math.tau,height(x,z)+.025)
+    casters.append(plant)
+    marker = bpy.data.objects.new('ApproachPlant_'+family+'_'+str(len(markers)).zfill(3),None)
+    scene.collection.objects.link(marker)
+    marker.location,marker.scale,marker.rotation_euler = plant.location.copy(),plant.scale.copy(),plant.rotation_euler.copy()
+    markers.append(marker)
+
+# Project irregular moss onto actual stone tops, avoiding floating green sheets.
+mv,mf = [],[]
+for o in stone:
+    offset = len(mv)
+    mv.extend(o.matrix_basis@v.co for v in o.data.vertices)
+    mf.extend(tuple(offset+j for j in p.vertices) for p in o.data.polygons)
+stone_bvh = BVHTree.FromPolygons(mv,mf)
+for i in range(ROWS*2):
+    z = -40.6-SHIFT-(i//2)
+    x = road_x(z)+(-1 if i%2 else 1)*edge_rng.uniform(1.55,2.0)
+    points = []
+    for j in range(11):
+        a = j*math.tau/11
+        r = edge_rng.uniform(.16,.32)
+        px,pz = x+math.cos(a)*r,z+math.sin(a)*r
+        hit = stone_bvh.ray_cast(Vector((px,-pz,15)),Vector((0,0,-1)))[0]
+        if hit is None: break
+        points.append((hit.x,hit.y,hit.z+.003))
+    if len(points)==11:
+        stone.append(mesh('Stone-edge moss',points,[tuple(reversed(range(11)))],soil))
+
+# Neighbouring crowns are bake-only context at the shared section boundary.
+neighbour = ROOT/'art/source'/('forest-approach.blend' if DEEP else 'forest-canopy.blend')
+if neighbour.exists():
+    with bpy.data.libraries.load(str(neighbour),link=False) as (src,dst):
+        neighbour_name = 'ForestApproach_Foliage' if DEEP else 'ForestCanopy_Foliage'
+        dst.objects = [n for n in src.objects if n == neighbour_name]
+    for o in dst.objects:
+        o.name = 'BakeContext_NeighbourCrown'
+        scene.collection.objects.link(o)
+        o.hide_render = False
 
 targets = []
 for name,objects in [('Stone',stone),('Wood',wood),('Ground',earth)]:
@@ -318,8 +419,9 @@ bpy.ops.wm.save_as_mainfile(filepath=str(ROOT/'art/source'/(STEM+'.blend')),comp
 export = ROOT/'public/models'/(STEM+'.glb')
 bpy.ops.export_scene.gltf(filepath=str(export),export_format='GLB',use_selection=True,
     export_image_format='JPEG',export_image_quality=94)
-report = {'stage':'REF6 first production pass' if DEEP else 'REF5 approach expansion','slabs':100,'trees':len(wood),'groundCover':len(markers),
-    'atlases':[2048]*3,'bytes':export.stat().st_size,'extentZ':[-40.1-SHIFT,-65.1-SHIFT]}
+report = {'stage':'forest ruins, banks and transitions','slabs':ROWS*4,'clearingSlabs':clearing_slabs,
+    'ruinGroups':ruin_count,'trees':len(wood),'groundCover':len(markers),
+    'atlases':[2048]*3,'bytes':export.stat().st_size,'extentZ':[-40.1-SHIFT,-40.1-SHIFT-ROWS]}
 sys.path.insert(0,str(Path(__file__).parent))
 from world_art_context import export_context
 report['removedContextProxies'] = export_context()

@@ -27,27 +27,29 @@ def export_context(include_hub=None):
         hub_plant = hub_region and obj.name.startswith(('Tree trunk','Tree limb','Forest crown','Understory proxy','Woodland shoulder'))
         trunk_proxy = obj.name.startswith('Collision') and obj.dimensions.z > 7 and obj.dimensions.x < 1.2 and obj.dimensions.y < 1.2
         hub_proxy = include_hub and (obj.name.startswith(('Plaza paving', 'Plaza ring', 'Column base', 'Broken column course')) or obj.name in hub_trees or hub_plant)
-        clearing = x < -17 and -77<z<-61
-        approach_region = -27<x<4 and -65<z<-40
-        canopy_region = -29<x<4 and -90<z<-65 and not clearing
+        approach_region = -45<x<16 and -65<z<-40
+        canopy_region = -45<x<16 and -97<z<-65
         approach_plant = obj.name.startswith(('Deep canopy trunk','Deep canopy crown',
             'Forest shoulder','Woodland background trunk','Woodland middle crown',
-            'Woodland upper crown','Woodland lower silhouette','Forest crown','Tree trunk','Tree limb','Woodland shoulder'))
+            'Woodland upper crown','Woodland lower silhouette','Forest crown','Tree trunk','Tree limb','Woodland shoulder',
+            'Forest ruin remnant'))
         approach_trunk = obj.name.startswith('Collision') and obj.dimensions.z>8 and max(obj.dimensions.x,obj.dimensions.y)<3
         approach_proxy = ((include_approach and approach_region) or (include_canopy and canopy_region)) and (approach_plant or approach_trunk)
+        # Existing small ruin boxes must not remain as invisible obstacles inside
+        # the reserved clearing after their visual replacements are omitted.
+        clearing_ruin = include_canopy and -32<x<-17 and -77<z<-65 and obj.name.startswith('Collision') and \
+            abs(obj.dimensions.x-1.5)<.01 and abs(obj.dimensions.y-2)<.01 and abs(obj.dimensions.z-2.7)<.01
         if include_approach and obj.name.startswith('Connected paving'):
             # Replace only the dressed road faces, retaining the independent
             # resident collider and the deeper forest's unfinished paving.
             bm = bmesh.new()
             bm.from_mesh(obj.data)
-            limit = -90 if include_canopy else -65
-            covered = [f for f in bm.faces if limit < -(obj.matrix_world@f.calc_center_median()).y < -40
-                       and not ((obj.matrix_world@f.calc_center_median()).x < -17
-                                and -77 < -(obj.matrix_world@f.calc_center_median()).y < -61)]
+            limit = -97 if include_canopy else -65
+            covered = [f for f in bm.faces if limit < -(obj.matrix_world@f.calc_center_median()).y < -40]
             bmesh.ops.delete(bm,geom=covered,context='FACES')
             bm.to_mesh(obj.data)
             bm.free()
-        if (local and (plant_proxy or trunk_proxy)) or hub_proxy or approach_proxy:
+        if (local and (plant_proxy or trunk_proxy)) or hub_proxy or approach_proxy or clearing_ruin:
             removed.append(obj.name)
             bpy.data.objects.remove(obj, do_unlink=True)
     for mat in list(bpy.data.materials):

@@ -50,17 +50,18 @@ def export_context(include_hub=None):
         # the reserved clearing after their visual replacements are omitted.
         clearing_ruin = include_canopy and -32<x<-17 and -77<z<-65 and obj.name.startswith('Collision') and \
             abs(obj.dimensions.x-1.5)<.01 and abs(obj.dimensions.y-2)<.01 and abs(obj.dimensions.z-2.7)<.01
-        if include_approach and obj.name.startswith('Connected paving'):
+        if include_approach and obj.name.startswith(('Connected paving','Forest courtyard threshold')):
             # Replace only the dressed road faces, retaining the independent
             # resident collider and the deeper forest's unfinished paving.
             bm = bmesh.new()
             bm.from_mesh(obj.data)
-            limit = -97 if include_canopy else -65
+            limit = -114 if include_exterior else -97 if include_canopy else -65
             covered = [f for f in bm.faces if limit < -(obj.matrix_world@f.calc_center_median()).y < -40]
             bmesh.ops.delete(bm,geom=covered,context='FACES')
             bm.to_mesh(obj.data)
             bm.free()
-        if (local and (plant_proxy or trunk_proxy)) or hub_proxy or approach_proxy or clearing_ruin or exterior_proxy or backdrop_proxy:
+        courtyard_proxy = include_exterior and obj.name == 'Archive courtyard'
+        if (local and (plant_proxy or trunk_proxy)) or hub_proxy or approach_proxy or clearing_ruin or exterior_proxy or backdrop_proxy or courtyard_proxy:
             removed.append(obj.name)
             bpy.data.objects.remove(obj, do_unlink=True)
     # A small vertex-colour terrain pass ties distant banks into the placed moss.

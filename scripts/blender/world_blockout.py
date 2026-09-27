@@ -308,7 +308,7 @@ views={
  'canopy':{'position':[-12,4,-67],'target':[-14,6,-89],'ref':'REF6'},
  'exterior':{'position':[-12,8,-87],'target':[-12,12,-115],'ref':'REF7'},
  'interior':{'position':[-14,4.5,-116],'target':[-11.4,6,-137],'ref':'REF8'},
- 'cavern':{'position':[-26,-3,-176],'target':[-12,4,-201],'ref':'REF10'},
+ 'cavern':{'position':[-26,-4,-178],'target':[-12,0,-205],'ref':'REF10'},
 }
 for name,v in views.items():
     bpy.ops.object.camera_add(location=pos(v['position']))

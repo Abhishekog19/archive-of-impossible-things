@@ -15,6 +15,12 @@ def export_context(include_hub=None):
     include_canopy = (ROOT/'public/models/forest-canopy.glb').exists()
     include_exterior = (ROOT/'public/models/archive-exterior.glb').exists()
     include_hall = (ROOT/'public/models/archive-hall.glb').exists()
+    include_cavern = (ROOT/'public/models/cavern-structure.glb').exists()
+    def signature(obj):
+        return tuple(tuple(round(c,4) for c in obj.matrix_world@v.co) for v in obj.data.vertices)
+    replaced_solids = {signature(o) for o in bpy.context.scene.objects
+        if include_cavern and o.type=='MESH' and o.name.startswith(('Cavern wall shell','Continuous descent shell'))}
+    replaced_sizes = {len(s) for s in replaced_solids}
     include_backdrop = (ROOT/'public/models/woodland-backdrop.glb').exists()
     def numbered(prefix,index): return prefix+('.'+str(index).zfill(3) if index else '')
     hub_trees = {numbered('Tree trunk',i) for i in (0,1,2,3,4,80,81,82)}
@@ -25,6 +31,10 @@ def export_context(include_hub=None):
         if obj.type != 'MESH': continue
         centre = sum((obj.matrix_world @ Vector(p) for p in obj.bound_box), Vector()) / 8
         x, z = centre.x, -centre.y
+        if obj.name.startswith('Collision') and len(obj.data.vertices) in replaced_sizes and signature(obj) in replaced_solids:
+            removed.append(obj.name)
+            bpy.data.objects.remove(obj,do_unlink=True)
+            continue
         exterior_proxy = include_exterior and (obj.name.startswith(('Stepped archive facade',
             'Archive central crown','Archive upper facade','Archive upper broken belt',
             'Facade broken pinnacle','Archive hero tree','Hero spreading limb','Wrapping facade root',
@@ -65,7 +75,9 @@ def export_context(include_hub=None):
         hall_proxy = include_hall and (obj.name.startswith(('Archive hall floor',
             'Archive side wall','Hall column','Broken roof shoulder','Archive rear wall')) or
             (obj.name.startswith('Archive arch') and -143<z<-117))
-        if (local and (plant_proxy or trunk_proxy)) or hub_proxy or approach_proxy or clearing_ruin or exterior_proxy or backdrop_proxy or courtyard_proxy or hall_proxy:
+        cavern_proxy = include_cavern and obj.name.startswith(('Cavern wall shell',
+            'Cavern shore','Shore rock lip','Cavern rock buttress','Cavern game shelf','Continuous descent shell'))
+        if (local and (plant_proxy or trunk_proxy)) or hub_proxy or approach_proxy or clearing_ruin or exterior_proxy or backdrop_proxy or courtyard_proxy or hall_proxy or cavern_proxy:
             removed.append(obj.name)
             bpy.data.objects.remove(obj, do_unlink=True)
     # A small vertex-colour terrain pass ties distant banks into the placed moss.

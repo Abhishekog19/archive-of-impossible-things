@@ -1,12 +1,12 @@
 # Current plan — Archive of Impossible Things
 
-Status (revised September 26, latest user scope): environment REF4/5/6/7/8/10
+Status (revised September 27, latest user scope): environment REF4/5/6/7/8/10
 PLUS finished character art/animation, third-person movement, Rapier/ecctrl physics
 and camera polish. Only game insertion and phone controls remain after handoff.
 Use numbered production packages PD01–PD11 in ../environment-september-plan.md;
-target 2–3 packages per active working day. PD01 is the former September 27 work
-and is complete as a production/review checkpoint. Ten packages remain after it, approximately 4–5
-further working days at the requested throughput, with 1–2 days contingency.
+target 2–3 packages per active working day. PD01 and PD02 exterior production
+are complete as of September 27. Nine packages remain:
+approximately 3–5 further active working days, with 1–2 days contingency.
 Older calendar forecasts and character/physics deferrals below are historical.
 No automatic sessions, fixed calendar promise or invented days-saved claim.
 Phase A (September 12–15) production and bounded route review are complete.
@@ -27,7 +27,8 @@ September 22’s assembled correction patch is complete. September 23’s hub pa
 and main ruin silhouette pass was completed early on September 22. September 24
 hub vegetation, planted paving, approach stones and contextual corner lighting are
 complete as a production pass. September 25 REF5 approach expansion was completed
-on September 25 after starting September 24. September 26 forest finishing is complete; Phase C art closure remains September 27.
+on September 25 after starting September 24. September 26 forest finishing and September 27 exterior finishing are complete;
+remaining area art and final acceptance follow the numbered PD schedule.
 Existing hub layout and corner technical proof remain reusable; final visual
 approval is open. Character/movement/physics and camera polish now belong to this milestone.
 Only games and phone controls follow handoff; keep collision-ready geometry now.
@@ -73,7 +74,32 @@ per-session test requirements and historical next-step dates below.
   remain user-led at the end. Final delivery still covers all six reference areas.
 - Completed: PD01 (former Sep 27): hub/forest backdrop/light production pass,
   first REF7 facade/tree/root art and the scheduled weekly technical batch.
-- Next: PD02 exterior finish, then PD03 archive hall. No gameplay or phone controls.
+- Completed: PD02 exterior finish on September 27.
+- Next: PD03 archive hall. No gameplay or phone controls.
+
+## PD02 — exterior finish completed September 27
+
+- Finished REF7 exterior production: 286 varied masonry blocks with broken upper
+  courses, a carved stone medallion, patchy facade moss and ten ivy strips.
+  Twelve tapered root fingers join the hero tree to the courtyard shoulders.
+- Added 255 paving stones, 54 fallen stones and a moss/soil ground plane;
+  six existing crowns plus ivy and 44 broadleaf clusters form 60 vegetation groups.
+  The doorway and main walking lane remain clear. Corrected paving height so
+  stones sit visibly above the moss surface; validated the decimated root mesh.
+- Three placed 2K bakes cover stone, wood and courtyard. Editable Blender source,
+  reproducible exporter and 7,787,312-byte GLB are retained. Removed replaced
+  courtyard/paving visuals from world-art-context while preserving resident collision.
+- Shared stone/moss, tapered-root and ivy helpers begin the REF7/8 production
+  library. Hall art itself is PD03. Reframed the exterior comparison camera in
+  both runtime JSON and the blockout generator; gameplay camera is unchanged.
+- Compared REF7 with browser reference/player views: .artifacts/exterior-pd02-final.jpg
+  and exterior-pd02-gameplay.jpg. Production build passes; focused ten-waypoint
+  courtyard, doorway, hall threshold and return check passes, grounded at every
+  target with no app errors (.artifacts/pd02-exterior-connection.json).
+- No routine performance batch repeated. Next weekly review remains October 3.
+  PD07 retains geometry/loading and cross-area material/light corrections; final
+  reference acceptance remains PD11. This checkpoint does not claim final visual
+  approval or resolution of the earlier performance findings.
 
 ## PD01 — former September 27 work completed
 

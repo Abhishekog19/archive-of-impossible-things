@@ -1,6 +1,6 @@
 # Connected environment production plan
 
-Revised September 26, 2026 (Asia/Calcutta): numbered production days; target two to
+Revised September 27, 2026 (Asia/Calcutta): numbered production days; target two to
 three production packages per working day. Filename retained for existing links.
 This replaces the September 30 hub-only scope and future phase dates. Completed
 production evidence remains in `plans/CURRENT_PLAN.md`.
@@ -41,7 +41,7 @@ calendar promise are superseded. Do not multiply the old schedule by three again
 or claim a package complete simply because its time allowance has elapsed.
 
 There are 11 packages including the current former-September-27 package. After
-PD01 completion, ten remain: a planning range of **4–5 further active working days**
+PD02 completion, nine remain: a planning range of **3–5 further active working days**
 at 2–3 packages per day. Allow 1–2 additional working days if hero art, animation,
 baking or technical fixes overrun. This is a throughput goal, not measured speed.
 Sessions begin on the user's request; no unattended work or automation is implied.
@@ -49,7 +49,7 @@ Sessions begin on the user's request; no unattended work or automation is implie
 | Production day | Work and completion checkpoint |
 |---|---|
 | PD01 — former Sep 27 | Hub/forest backdrop and material/light closure pass; one scheduled weekly technical review; first REF7 facade and hero tree/root production. Completed production/review checkpoint; final visual acceptance remains PD11. |
-| PD02 | Finish REF7 exterior: damaged silhouette, courtyard paving, facade moss/vines, tree/root refinement and placed lighting; begin shared hall architecture. |
+| PD02 — complete Sep 27 | REF7 damaged silhouette, courtyard paving/rubble, facade moss/ivy, tree/root refinement and placed lighting. Shared REF7/8 surface helpers begun; hall art follows in PD03. Build, reference/player comparison and walking connection pass. |
 | PD03 | Finish REF8 hall arches, columns, roof breaks, floor and vegetation; join exterior, hall and descent. |
 | PD04 | REF10 cavern rock walls, shoreline, overhead opening and descending passage structure. |
 | PD05 | Cavern water/pool appearance, rock textures and shoreline materials. |
@@ -60,9 +60,8 @@ Sessions begin on the user's request; no unattended work or automation is implie
 | PD10 | Character/animation polish, foot placement and grounding, camera smoothing/collision/occlusion, near-wall character visibility, input/settings clarity and transitions. No phone-control redesign or gameplay. |
 | PD11 | Final six-reference review, complete desktop roam, character/physics/camera acceptance, scalable graphics/mobile layout and release. Reuse weekly evidence if unchanged; recheck affected failures. Only game insertion and phone controls remain. |
 
-Suggested working-day batches after PD01: PD02–03; PD04–06; PD07–08; PD09–10;
-PD11. The five-day arrangement reserves room for the larger packages. Merge PD11
-into the fourth day only if preceding gates pass. Keep checkpoints visible rather
+Suggested working-day batches after PD02: PD03–04; PD05–06; PD07–08; PD09–10;
+PD11. Merge adjacent batches toward 3–4 working days only if preceding gates pass. Keep checkpoints visible rather
 than forcing an unfinished package into the next package's completion claim.
 
 ## Daily building and weekly technical review
@@ -121,12 +120,14 @@ into another broad technical audit. The detailed operating rule is in
 
 ## Current state and next action
 
-PD01 (former September 27) is complete as a production/review checkpoint: hub/forest
-backdrop and terrain-colour/depth pass, REF7 facade/tree/root first art, and the
-weekly technical review. Build/lint and the forest-to-archive connection pass.
+PD01 and PD02 are complete as production checkpoints. PD01 covered hub/forest
+backdrop, terrain colour/depth, first REF7 art and the weekly technical review.
+PD02 finished the exterior stonework, planted courtyard, ivy, roots and placed
+lighting. Its production build, reference/player comparison and ten-waypoint
+courtyard-to-hall connection pass; no routine FPS review was repeated.
 Counts, comparison evidence and review limitations are in plans/CURRENT_PLAN.md.
 
-Next: PD02 exterior finish, then PD03 archive interior. Ten packages remain.
+Next: PD03 archive interior. Nine packages remain.
 PD07 must close remaining hub boundaries/landmark/foliage and material/light gaps,
 reduce the sampled ~566K triangle peak and replace eager ~53.5 MB GLB loading
 with staged placed-art loading. The sampled 59.05 average FPS is not final

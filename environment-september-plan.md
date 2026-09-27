@@ -41,7 +41,7 @@ calendar promise are superseded. Do not multiply the old schedule by three again
 or claim a package complete simply because its time allowance has elapsed.
 
 There are 11 packages including the current former-September-27 package. After
-PD02 completion, nine remain: a planning range of **3–5 further active working days**
+PD03 completion, eight remain: a planning range of **3–4 further active working days**
 at 2–3 packages per day. Allow 1–2 additional working days if hero art, animation,
 baking or technical fixes overrun. This is a throughput goal, not measured speed.
 Sessions begin on the user's request; no unattended work or automation is implied.
@@ -50,7 +50,7 @@ Sessions begin on the user's request; no unattended work or automation is implie
 |---|---|
 | PD01 — former Sep 27 | Hub/forest backdrop and material/light closure pass; one scheduled weekly technical review; first REF7 facade and hero tree/root production. Completed production/review checkpoint; final visual acceptance remains PD11. |
 | PD02 — complete Sep 27 | REF7 damaged silhouette, courtyard paving/rubble, facade moss/ivy, tree/root refinement and placed lighting. Shared REF7/8 surface helpers begun; hall art follows in PD03. Build, reference/player comparison and walking connection pass. |
-| PD03 | Finish REF8 hall arches, columns, roof breaks, floor and vegetation; join exterior, hall and descent. |
+| PD03 — complete Sep 27 | REF8 hall arcades, fluted columns, broken roof, planted paving, ivy and rear windows/portal. Exterior–hall–reserved space–descent connection, build/lint and reference/player review pass. |
 | PD04 | REF10 cavern rock walls, shoreline, overhead opening and descending passage structure. |
 | PD05 | Cavern water/pool appearance, rock textures and shoreline materials. |
 | PD06 | Cavern overhead light, reflections, fog and detail; REF10 reference/player comparison. |
@@ -60,8 +60,8 @@ Sessions begin on the user's request; no unattended work or automation is implie
 | PD10 | Character/animation polish, foot placement and grounding, camera smoothing/collision/occlusion, near-wall character visibility, input/settings clarity and transitions. No phone-control redesign or gameplay. |
 | PD11 | Final six-reference review, complete desktop roam, character/physics/camera acceptance, scalable graphics/mobile layout and release. Reuse weekly evidence if unchanged; recheck affected failures. Only game insertion and phone controls remain. |
 
-Suggested working-day batches after PD02: PD03–04; PD05–06; PD07–08; PD09–10;
-PD11. Merge adjacent batches toward 3–4 working days only if preceding gates pass. Keep checkpoints visible rather
+Suggested working-day batches after PD03: PD04–05; PD06–07; PD08–09; PD10–11.
+Merge adjacent batches toward three working days only if preceding gates pass. Keep checkpoints visible rather
 than forcing an unfinished package into the next package's completion claim.
 
 ## Daily building and weekly technical review
@@ -120,14 +120,16 @@ into another broad technical audit. The detailed operating rule is in
 
 ## Current state and next action
 
-PD01 and PD02 are complete as production checkpoints. PD01 covered hub/forest
+PD01–PD03 are complete as production checkpoints. PD01 covered hub/forest
 backdrop, terrain colour/depth, first REF7 art and the weekly technical review.
 PD02 finished the exterior stonework, planted courtyard, ivy, roots and placed
 lighting. Its production build, reference/player comparison and ten-waypoint
-courtyard-to-hall connection pass; no routine FPS review was repeated.
+courtyard-to-hall connection pass. PD03 adds the REF8 hall arcades, broken roof,
+planted floor and rear portal/windows; its build/lint, reference/player comparison
+and 13-waypoint hall/descent route pass. No routine FPS review was repeated.
 Counts, comparison evidence and review limitations are in plans/CURRENT_PLAN.md.
 
-Next: PD03 archive interior. Nine packages remain.
+Next: PD04 cavern structure. Eight packages remain.
 PD07 must close remaining hub boundaries/landmark/foliage and material/light gaps,
 reduce the sampled ~566K triangle peak and replace eager ~53.5 MB GLB loading
 with staged placed-art loading. The sampled 59.05 average FPS is not final

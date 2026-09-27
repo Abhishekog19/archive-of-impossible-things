@@ -4,9 +4,9 @@ Status (revised September 27, latest user scope): environment REF4/5/6/7/8/10
 PLUS finished character art/animation, third-person movement, Rapier/ecctrl physics
 and camera polish. Only game insertion and phone controls remain after handoff.
 Use numbered production packages PD01–PD11 in ../environment-september-plan.md;
-target 2–3 packages per active working day. PD01 and PD02 exterior production
-are complete as of September 27. Nine packages remain:
-approximately 3–5 further active working days, with 1–2 days contingency.
+target 2–3 packages per active working day. PD01–PD03 production is complete
+as of September 27. Eight packages remain: approximately 3–4 further active
+working days, with 1–2 days contingency.
 Older calendar forecasts and character/physics deferrals below are historical.
 No automatic sessions, fixed calendar promise or invented days-saved claim.
 Phase A (September 12–15) production and bounded route review are complete.
@@ -75,7 +75,37 @@ per-session test requirements and historical next-step dates below.
 - Completed: PD01 (former Sep 27): hub/forest backdrop/light production pass,
   first REF7 facade/tree/root art and the scheduled weekly technical batch.
 - Completed: PD02 exterior finish on September 27.
-- Next: PD03 archive hall. No gameplay or phone controls.
+- Completed: PD03 archive hall on September 27.
+- Next: PD04 cavern structure. No gameplay or phone controls.
+
+## PD03 — archive hall production completed September 27
+
+- Built REF8 hall arcades and six coursed/fluted columns, worn capitals and bases,
+  broken roof islands, staggered side/rear masonry, two lancet windows, a supported
+  circular window and the descent portal. Added flagstones, rubble, facade/column
+  ivy and branching floor growth. Final export: 640 wall pieces, 260 architectural
+  pieces, 618 floor/ground/rubble pieces and 154 vegetation groups in four meshes.
+- Reused PD02 limestone/moss and foliage helpers. Three placed 2K bakes; GLB
+  10,205,924 bytes. Editable archive-hall.blend and the reproducible
+  npm run blender:archive-hall command are retained. R3F loads the placed hall;
+  replaced hall blockout visuals are omitted from world-art-context while the
+  resident walking floor, boundary and structural colliders remain unchanged.
+- Compared REF8 with reference and player-height screenshots; corrected the
+  regular rear-wall pattern, detached oculus, sparse floor growth and framing.
+  Player review caught inverted faces on the thin beveled earth box: replaced it
+  with an explicitly upward-facing surface and rebaked; the black ground gaps
+  are fixed. Evidence: .artifacts/hall-pd03-final.jpg and hall-pd03-gameplay.jpg.
+- Production build and changed-JavaScript lint pass. The focused 13-waypoint
+  exterior → hall → west reserved space → descent → return route passes, grounded
+  at every target with no app errors (.artifacts/pd03-hall-connection.json).
+  This remains valid after the final visual-only correction; resident colliders
+  and controller did not change. No routine FPS or broad regression batch repeated.
+- Next: PD04 cavern walls, shoreline, overhead opening and descent structure.
+  The cave visible beyond the hall portal is still its blockout. PD07 must soften
+  repetitive stone/foliage patterns, improve the skyline/background through the
+  openings, unify six-area lighting and resolve loading/geometry findings. Final
+  visual acceptance remains PD11; this production pass is not final art approval.
+  Next routine weekly technical review remains October 3.
 
 ## PD02 — exterior finish completed September 27
 

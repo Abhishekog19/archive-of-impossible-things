@@ -6,7 +6,8 @@ and camera polish. Only game insertion and phone controls remain after handoff.
 Use numbered production packages PD01–PD11 in ../environment-september-plan.md;
 target 2–3 packages per active working day. PD01–PD03 production is complete
 as of September 27. Eight packages remain: approximately 3–4 further active
-working days, with 1–2 days contingency.
+working days, with 1–2 days contingency. PD04 structure is built and its final
+build/route pass; the last shoreline visual check is pending browser access.
 Older calendar forecasts and character/physics deferrals below are historical.
 No automatic sessions, fixed calendar promise or invented days-saved claim.
 Phase A (September 12–15) production and bounded route review are complete.
@@ -76,7 +77,37 @@ per-session test requirements and historical next-step dates below.
   first REF7 facade/tree/root art and the scheduled weekly technical batch.
 - Completed: PD02 exterior finish on September 27.
 - Completed: PD03 archive hall on September 27.
-- Next: PD04 cavern structure. No gameplay or phone controls.
+- Current: PD04 structure built; close the final shoreline visual check when browser
+  access resumes, then PD05 rock/shore materials and water. No gameplay or phone controls.
+
+## PD04 — structure built September 27; final visual check pending
+
+- Built the continuous fractured chamber, overlapping cliff plates, irregular
+  overhead opening, fallen rock, broad shore shelves and descending passage.
+  Replaced the old chamber/passage collision with the matching new skin; retained
+  resident flat shore/ramp collision and the pool's non-walkable centre.
+- Reproducible command: npm run blender:cavern-structure. Editable source:
+  art/source/cavern-structure.blend. GLB: 636,868 bytes, 514 structural parts,
+  5,578 visual triangles and 2,162 collision triangles. These are asset counts,
+  not a whole-world performance acceptance claim.
+- Compared REF10 with reference/player views and corrected the embedded camera,
+  regular dome contours and shallow cliff relief. A last geometry pass staggered
+  the shore fractures to remove continuous radial tile joints. Earlier comparison
+  evidence is .artifacts/cavern-pd04-structure.jpg and cavern-pd04-gameplay.jpg;
+  those screenshots precede the final shoreline revision.
+- Final build and changed-JavaScript lint pass. Final 21-waypoint hall/descent,
+  full shore loop, reserved cavern game space and return pass, grounded at every
+  target with no app errors: .artifacts/pd04-cavern-connection.json.
+- Final shoreline browser comparison is NOT complete: automatic approval review
+  blocked navigation because of a usage-limit review failure and rejected the
+  subsequent retry. Do not substitute another browser method. Resume this one
+  focused visual check when approved browser access is available; then close PD04.
+- Colours are deliberately a structural preview. PD05 must prove sharper reusable
+  rock/shore materials at player distance, avoiding one stretched whole-cavern
+  atlas, and finish pool appearance. PD06 owns light/fog/reflections. The user's
+  concern about blurred, repetitive surfaces remains open; PD07 is a substantial
+  cross-area material/shape improvement pass, not merely minor touch-ups.
+- No routine FPS/mobile/full regression batch repeated. Next weekly review October 3.
 
 ## PD03 — archive hall production completed September 27
 

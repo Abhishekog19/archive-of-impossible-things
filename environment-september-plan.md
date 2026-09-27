@@ -51,8 +51,8 @@ Sessions begin on the user's request; no unattended work or automation is implie
 | PD01 — former Sep 27 | Hub/forest backdrop and material/light closure pass; one scheduled weekly technical review; first REF7 facade and hero tree/root production. Completed production/review checkpoint; final visual acceptance remains PD11. |
 | PD02 — complete Sep 27 | REF7 damaged silhouette, courtyard paving/rubble, facade moss/ivy, tree/root refinement and placed lighting. Shared REF7/8 surface helpers begun; hall art follows in PD03. Build, reference/player comparison and walking connection pass. |
 | PD03 — complete Sep 27 | REF8 hall arcades, fluted columns, broken roof, planted paving, ivy and rear windows/portal. Exterior–hall–reserved space–descent connection, build/lint and reference/player review pass. |
-| PD04 | REF10 cavern rock walls, shoreline, overhead opening and descending passage structure. |
-| PD05 | Cavern water/pool appearance, rock textures and shoreline materials. |
+| PD04 — built, review pending | REF10 chamber, fractured walls, shoreline, overhead opening and descent built; final build/lint and full shore-loop connection pass. Final shoreline visual check awaits approved browser access after a usage-limit review block. |
+| PD05 | Cavern water/pool appearance, rock textures and shoreline materials. Prove sharp reusable materials at player distance; avoid stretching one atlas over the whole cavern. |
 | PD06 | Cavern overhead light, reflections, fog and detail; REF10 reference/player comparison. |
 | PD07 | Finish all connections and six-area material/light consistency; loading/culling, GLB/texture/geometry optimization. Resolve recorded visual and weekly technical findings. |
 | PD08 | Replace capsule presentation with a coherent stylized character, rig and idle/walk/run/jump/land animation states; Blender/GLB/R3F pipeline. Use an authored simple explorer or suitably licensed rig, with provenance retained. |

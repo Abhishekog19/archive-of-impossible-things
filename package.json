@@ -22,6 +22,7 @@
     "preview": "vite preview",
     "blender:hub-art": "node scripts/blender/run.cjs hub-art",
     "blender:archive-exterior": "node scripts/blender/run.cjs archive-exterior",
+    "blender:archive-hall": "node scripts/blender/run.cjs archive-hall",
     "blender:woodland-backdrop": "node scripts/blender/run.cjs woodland-backdrop"
   },
   "dependencies": {

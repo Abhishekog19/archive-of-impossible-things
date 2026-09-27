@@ -307,7 +307,7 @@ views={
  'forest':{'position':[-12,4,-43],'target':[-10,5,-64],'ref':'REF5'},
  'canopy':{'position':[-12,4,-67],'target':[-14,6,-89],'ref':'REF6'},
  'exterior':{'position':[-12,8,-87],'target':[-12,12,-115],'ref':'REF7'},
- 'interior':{'position':[-12,4,-116],'target':[-12,8,-140],'ref':'REF8'},
+ 'interior':{'position':[-14,4.5,-116],'target':[-11.4,6,-137],'ref':'REF8'},
  'cavern':{'position':[-26,-3,-176],'target':[-12,4,-201],'ref':'REF10'},
 }
 for name,v in views.items():

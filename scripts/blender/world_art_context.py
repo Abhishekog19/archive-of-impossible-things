@@ -14,6 +14,7 @@ def export_context(include_hub=None):
     include_approach = (ROOT/'public/models/forest-approach.glb').exists()
     include_canopy = (ROOT/'public/models/forest-canopy.glb').exists()
     include_exterior = (ROOT/'public/models/archive-exterior.glb').exists()
+    include_hall = (ROOT/'public/models/archive-hall.glb').exists()
     include_backdrop = (ROOT/'public/models/woodland-backdrop.glb').exists()
     def numbered(prefix,index): return prefix+('.'+str(index).zfill(3) if index else '')
     hub_trees = {numbered('Tree trunk',i) for i in (0,1,2,3,4,80,81,82)}
@@ -61,7 +62,10 @@ def export_context(include_hub=None):
             bm.to_mesh(obj.data)
             bm.free()
         courtyard_proxy = include_exterior and obj.name == 'Archive courtyard'
-        if (local and (plant_proxy or trunk_proxy)) or hub_proxy or approach_proxy or clearing_ruin or exterior_proxy or backdrop_proxy or courtyard_proxy:
+        hall_proxy = include_hall and (obj.name.startswith(('Archive hall floor',
+            'Archive side wall','Hall column','Broken roof shoulder','Archive rear wall')) or
+            (obj.name.startswith('Archive arch') and -143<z<-117))
+        if (local and (plant_proxy or trunk_proxy)) or hub_proxy or approach_proxy or clearing_ruin or exterior_proxy or backdrop_proxy or courtyard_proxy or hall_proxy:
             removed.append(obj.name)
             bpy.data.objects.remove(obj, do_unlink=True)
     # A small vertex-colour terrain pass ties distant banks into the placed moss.

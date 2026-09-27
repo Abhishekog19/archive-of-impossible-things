@@ -28,6 +28,7 @@ export default function HubBlockout({ reference = false, cornerView = false, vie
       <HubCorner contextual={patch} />
       {patch && <><ForestPatch /><ForestApproach /><ForestApproach deep /><HubArt />
         <PlacedArt url="/models/archive-exterior.glb" /><PlacedArt url="/models/woodland-backdrop.glb" />
+        <PlacedArt url="/models/archive-hall.glb" />
       </>}
       {Object.values(nodes).filter((node) => node.isMesh && node.name !== 'Collision' && !(waterStudy && node.name === 'Pool_study')).map((node) => (
         <mesh key={node.uuid} geometry={node.geometry} material={node.material} />

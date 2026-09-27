@@ -4,10 +4,10 @@ Status (revised September 27, latest user scope): environment REF4/5/6/7/8/10
 PLUS finished character art/animation, third-person movement, Rapier/ecctrl physics
 and camera polish. Only game insertion and phone controls remain after handoff.
 Use numbered production packages PD01–PD11 in ../environment-september-plan.md;
-target 2–3 packages per active working day. PD01–PD03 production is complete
-as of September 27. Eight packages remain: approximately 3–4 further active
-working days, with 1–2 days contingency. PD04 structure is built and its final
-build/route pass; the last shoreline visual check is pending browser access.
+target 2–3 packages per active working day. PD01–PD04 production is complete.
+Seven packages remain: approximately 3–4 further active working days, with
+1–2 days contingency. PD04's final shoreline comparison was closed using the
+user-supplied screenshot; no new automated browser verification is claimed.
 Older calendar forecasts and character/physics deferrals below are historical.
 No automatic sessions, fixed calendar promise or invented days-saved claim.
 Phase A (September 12–15) production and bounded route review are complete.
@@ -77,10 +77,10 @@ per-session test requirements and historical next-step dates below.
   first REF7 facade/tree/root art and the scheduled weekly technical batch.
 - Completed: PD02 exterior finish on September 27.
 - Completed: PD03 archive hall on September 27.
-- Current: PD04 structure built; close the final shoreline visual check when browser
-  access resumes, then PD05 rock/shore materials and water. No gameplay or phone controls.
+- Completed: PD04 cavern structure and final shoreline screenshot comparison.
+- Next: PD05 rock/shore materials and water. No gameplay or phone controls.
 
-## PD04 — structure built September 27; final visual check pending
+## PD04 — structure and focused visual review complete
 
 - Built the continuous fractured chamber, overlapping cliff plates, irregular
   overhead opening, fallen rock, broad shore shelves and descending passage.
@@ -98,10 +98,18 @@ per-session test requirements and historical next-step dates below.
 - Final build and changed-JavaScript lint pass. Final 21-waypoint hall/descent,
   full shore loop, reserved cavern game space and return pass, grounded at every
   target with no app errors: .artifacts/pd04-cavern-connection.json.
-- Final shoreline browser comparison is NOT complete: automatic approval review
-  blocked navigation because of a usage-limit review failure and rejected the
-  subsequent retry. Do not substitute another browser method. Resume this one
-  focused visual check when approved browser access is available; then close PD04.
+- Final shoreline comparison closed using the user's attached image
+  codex-clipboard-bf379151-0789-4b92-934b-a30148bcfd8d.png. The visible foreground
+  confirms staggered fracture joints and a continuous shore/pool boundary with no
+  obvious gap or rendering defect in that view. The input overlay obscures part
+  of the lower-right image; this is a focused structural check, not all-angle or
+  final art acceptance. Existing final build/lint/route evidence remains valid.
+- Automated navigation was blocked by approval review after a usage-limit failure;
+  it was not retried through another browser method. User-supplied visual evidence
+  closes this checkpoint without claiming that browser access was restored.
+- REF10 differences remain: the crown still reads as radial facets, the broad
+  rock surfaces lack material relief, the water is flat and the overhead light/
+  atmospheric depth are missing. Retain these explicit priorities for PD05–07.
 - Colours are deliberately a structural preview. PD05 must prove sharper reusable
   rock/shore materials at player distance, avoiding one stretched whole-cavern
   atlas, and finish pool appearance. PD06 owns light/fog/reflections. The user's

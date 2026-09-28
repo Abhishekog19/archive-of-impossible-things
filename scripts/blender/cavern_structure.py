@@ -30,10 +30,12 @@ def mesh(name, points, faces, solid=False, shore=False):
     obj=bpy.data.objects.new(name,data);bpy.context.collection.objects.link(obj)
     colors=data.color_attributes.new(name='RockColor',type='BYTE_COLOR',domain='CORNER')
     uv=data.uv_layers.new(name='StoneMetres')
+    continuous='continuous fractured shell' in name or 'fractured passage' in name
     for poly in data.polygons:
+        poly.use_smooth=continuous
         centre=poly.center
         # Broad structural value groups make planes legible without tiny noise.
-        variation=rng.uniform(.9,1.1)
+        variation=rng.uniform(.98,1.02) if continuous else rng.uniform(.9,1.1)
         facing=.75+.25*abs(poly.normal.x)+.2*max(0,poly.normal.z)
         height=max(0,min(1,(centre.z+8)/27))
         shade=(.68+.5*height)*facing*variation
@@ -45,8 +47,12 @@ def mesh(name, points, faces, solid=False, shore=False):
         # X/Z, cliff faces use their tangent/height; no chamber-sized UV stretch.
         axis=max(range(3),key=lambda k:abs(poly.normal[k]))
         for loop in poly.loop_indices:
-            colors.data[loop].color=tuple(c*shade for c in base)+(1,)
             co=data.vertices[data.loops[loop].vertex_index].co
+            # Continuous bedrock uses a vertex-height gradient, avoiding the
+            # radial triangle colour bands seen in the earlier roof screenshot.
+            # Separate fracture plates retain crisp edges and face values.
+            local_shade=(.72+.42*max(0,min(1,(co.z+8)/27))) if continuous else shade
+            colors.data[loop].color=tuple(c*local_shade for c in base)+(1,)
             pair=(co.y,co.z) if axis==0 else (co.x,co.z) if axis==1 else (co.x,co.y)
             uv.data[loop].uv=(pair[0]/2,pair[1]/2)
     visuals.append(obj)
@@ -220,7 +226,7 @@ for obj in (rock,collision,oculus):obj.select_set(True)
 bpy.ops.wm.save_as_mainfile(filepath=str(ROOT/'art/source/cavern-structure.blend'),compress=True)
 export=ROOT/'public/models/cavern-structure.glb'
 bpy.ops.export_scene.gltf(filepath=str(export),export_format='GLB',use_selection=True)
-report={'stage':'PD06 cavern oculus and atmosphere integration','structuralParts':visual_count,'solidParts':len(solids),
+report={'stage':'PD07 continuous bedrock shading and cavern integration','structuralParts':visual_count,'solidParts':len(solids),
         'bytes':export.stat().st_size,'visualTriangles':sum(len(p.vertices)-2 for p in rock.data.polygons),
         'collisionTriangles':sum(len(p.vertices)-2 for p in collision.data.polygons),
         'openingTriangles':22,

@@ -22,6 +22,7 @@ def export_context(include_hub=None):
         if include_cavern and o.type=='MESH' and o.name.startswith(('Cavern wall shell','Continuous descent shell'))}
     replaced_sizes = {len(s) for s in replaced_solids}
     include_backdrop = (ROOT/'public/models/woodland-backdrop.glb').exists()
+    include_finish = (ROOT/'public/models/world-finish.glb').exists()
     def numbered(prefix,index): return prefix+('.'+str(index).zfill(3) if index else '')
     hub_trees = {numbered('Tree trunk',i) for i in (0,1,2,3,4,80,81,82)}
     # Distant trees use three crowns, so their crown indices differ from trunks.
@@ -29,6 +30,9 @@ def export_context(include_hub=None):
     hub_trees.update(numbered(prefix,i) for prefix in ('Tree limb','Forest crown') for i in range(25))
     for obj in list(bpy.context.scene.objects):
         if obj.type != 'MESH': continue
+        if include_finish and obj.name.startswith(('Tower shaft','Tower belfry pier','Tower crown')):
+            bpy.data.objects.remove(obj,do_unlink=True)
+            continue
         centre = sum((obj.matrix_world @ Vector(p) for p in obj.bound_box), Vector()) / 8
         x, z = centre.x, -centre.y
         if obj.name.startswith('Collision') and len(obj.data.vertices) in replaced_sizes and signature(obj) in replaced_solids:

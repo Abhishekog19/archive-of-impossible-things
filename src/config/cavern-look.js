@@ -6,7 +6,7 @@ export const CAVERN_LOOK = {
   keyPosition: [-12, 17, -205], keyTarget: [-10, -7.4, -211],
   keyColour: '#c3d7e3', keyIntensity: 1500, keyAngle: .52,
   fillPosition: [-12, 10, -205], fillIntensity: 160,
-  shaft: '#b7cbdc', shaftOpacity: .13,
+  shaft: '#b7cbdc', shaftOpacity: .22,
   shaftTop: [-12, 18.2, -205], shaftBottom: [-10, -7.65, -211],
 }
 

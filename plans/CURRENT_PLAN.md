@@ -5,9 +5,9 @@ PLUS finished character art/animation, third-person movement, Rapier/ecctrl phys
 and camera polish. Only game insertion and phone controls remain after handoff.
 Use numbered production packages PD01–PD11 in ../environment-september-plan.md;
 target 2–3 packages per active working day. PD01–PD04 production is complete.
-PD05 materials/water are implemented; browser visual review is pending explicit
+PD05 materials/water and PD06 lighting/fog are implemented; browser review awaits explicit
 authorization after automatic approval review rejected local preview access.
-Six full packages plus that review remain: approximately 3–4 active working days, with
+Five full packages plus those reviews remain: approximately 2–3 active working days, with
 1–2 days contingency. PD04's final shoreline comparison was closed using the
 user-supplied screenshot; no new automated browser verification is claimed.
 Older calendar forecasts and character/physics deferrals below are historical.
@@ -80,8 +80,42 @@ per-session test requirements and historical next-step dates below.
 - Completed: PD02 exterior finish on September 27.
 - Completed: PD03 archive hall on September 27.
 - Completed: PD04 cavern structure and final shoreline screenshot comparison.
-- PD05 implemented September 28; focused browser comparison pending. Next full
-  package: PD06 cavern light/fog. No gameplay or phone controls.
+- PD05/PD06 implemented September 28; focused browser comparisons pending. Next full
+  package: PD07 six-area consistency and optimization. No gameplay or phone controls.
+
+## PD06 — cavern light/fog built; visual checkpoint pending
+
+- Added the Blender-authored oculus sky surface behind the irregular roof opening,
+  a bounded overhead spotlight/fill, and one soft translucent shaft aimed at the
+  far pool edge. Opening and shaft participate in the bounded pool reflection;
+  low-tier water uses an elongated analytic opening cue. This is an authored
+  scattering approximation without bloom, shadow maps or per-frame raymarching.
+- Added one connected-atmosphere owner: outdoor light/background/fog blend into
+  REF10's cool palette through the descent and return to the outdoor settings on
+  exit. Near surfaces stay clear; distance fog is 9–68 m inside the chamber. The
+  fog setting also disables the shaft. Palette and local-light exceptions are
+  recorded in look-target.md; runtime tuning is in src/config/cavern-look.js.
+- Rebalanced the shared pool's deep/grazing colours and reflection tint. Both
+  reference and gameplay routes use the same setup; the old standalone study
+  remains available. No controller, physics or game-insertion changes.
+- Reproducible Blender export is 2,320,472 bytes: existing 5,578 stone triangles
+  plus a 22-triangle opening. Canonical collision comparison against PD05 is
+  identical. Reuse PD04's 21-waypoint route evidence; no repeated traversal/FPS run.
+- Production build (623 modules) and changed-JavaScript lint pass. Focused pure
+  transition check confirms daylight at the hall, increasing cavern blend down
+  the passage, full cavern at the shore and daylight for an aerial camera.
+- Compared the supplied REF10 concept during authoring. A current browser screenshot
+  and player-distance review are still missing: earlier automatic approval denied
+  local-preview access, and the renewed explicit permission request is unanswered.
+  No blocked navigation was retried and no alternative browser was used. Build and
+  export checks do not establish shader compilation or visual quality.
+- Pending combined PD05/06 check: stone sharpness/repetition and wet-edge strength;
+  opening/shaft placement and opacity; foreground/far-wall value separation;
+  reflection alignment and the descent/return atmosphere transition. Correct the
+  biggest mismatches before marking either package complete. Crown geometry and
+  broader material consistency still require PD07 attention.
+- Next full package is PD07. Five full packages plus the two visual checkpoints
+  remain; next weekly technical review stays October 3.
 
 ## PD05 — materials/water built; visual checkpoint pending
 

@@ -41,8 +41,8 @@ calendar promise are superseded. Do not multiply the old schedule by three again
 or claim a package complete simply because its time allowance has elapsed.
 
 There are 11 packages including the current former-September-27 package. After
-PD05 implementation, six full packages plus its pending visual review remain:
-a planning range of **3–4 further active working days**
+PD06 implementation, five full packages plus PD05/06 visual reviews remain:
+a planning range of **2–3 further active working days**
 at 2–3 packages per day. Allow 1–2 additional working days if hero art, animation,
 baking or technical fixes overrun. This is a throughput goal, not measured speed.
 Sessions begin on the user's request; no unattended work or automation is implied.
@@ -54,14 +54,14 @@ Sessions begin on the user's request; no unattended work or automation is implie
 | PD03 — complete Sep 27 | REF8 hall arcades, fluted columns, broken roof, planted paving, ivy and rear windows/portal. Exterior–hall–reserved space–descent connection, build/lint and reference/player review pass. |
 | PD04 — complete | REF10 chamber, fractured walls, shoreline, overhead opening and descent built; final build/lint and full shore-loop connection pass. Final shoreline comparison closed using the user's screenshot; automated browser access remains restricted. Structural checkpoint only; materials/light and final art acceptance remain ahead. |
 | PD05 — built, visual review pending | Metre-scaled 1024px stone colour/normal/roughness, wet shoreline layering and connected reflective water. Build/lint and unchanged collision check pass. Explicit local-preview authorization is required after automatic approval rejection; prove sharpness, shader correctness and water/shore appearance before closing. |
-| PD06 | Cavern overhead light, reflections, fog and detail; REF10 reference/player comparison. |
+| PD06 — built, visual review pending | Authored oculus, bounded overhead lighting, soft shaft, connected descent fog/ambient transition and aligned opening reflection. Build/lint, transition check and unchanged collision check pass; combined PD05/06 reference/player review still awaits local-browser permission. |
 | PD07 | Finish all connections and six-area material/light consistency; loading/culling, GLB/texture/geometry optimization. Resolve recorded visual and weekly technical findings. |
 | PD08 | Replace capsule presentation with a coherent stylized character, rig and idle/walk/run/jump/land animation states; Blender/GLB/R3F pipeline. Use an authored simple explorer or suitably licensed rig, with provenance retained. |
 | PD09 | Finish desktop movement and Rapier/ecctrl physics: acceleration/deceleration, turn response, grounded jumps, steps/slopes, collisions, fall recovery and pause/resume. Verify all six areas and four future game locations are reachable. |
 | PD10 | Character/animation polish, foot placement and grounding, camera smoothing/collision/occlusion, near-wall character visibility, input/settings clarity and transitions. No phone-control redesign or gameplay. |
 | PD11 | Final six-reference review, complete desktop roam, character/physics/camera acceptance, scalable graphics/mobile layout and release. Reuse weekly evidence if unchanged; recheck affected failures. Only game insertion and phone controls remain. |
 
-Suggested working-day batches after PD04: PD05–06; PD07–08; PD09–10; PD11.
+Suggested working-day batches after closing PD05/06 review: PD07–08; PD09–10; PD11.
 Merge adjacent batches toward three working days only if preceding gates pass. Keep checkpoints visible rather
 than forcing an unfinished package into the next package's completion claim.
 
@@ -132,9 +132,10 @@ wall/passage collision; the 21-waypoint shore/descent route passes, and the user
 screenshot closes the final shoreline comparison. No routine FPS review was repeated.
 Counts, comparison evidence and review limitations are in plans/CURRENT_PLAN.md.
 
-PD05 materials/water are implemented September 28; its focused browser visual
-checkpoint remains pending authorization. Six full packages plus that review remain.
-Next: close that comparison, then PD06 overhead light, fog and reflection balance.
+PD05 materials/water and PD06 overhead light/fog are implemented September 28;
+their focused browser visual checkpoints remain pending explicit local-preview
+authorization. Five full packages plus those reviews remain.
+Next: close the combined cavern comparison, then PD07 six-area consistency/optimization.
 PD07 must close remaining hub boundaries/landmark/foliage and material/light gaps,
 reduce the sampled ~566K triangle peak and replace eager ~53.5 MB GLB loading
 with staged placed-art loading. The sampled 59.05 average FPS is not final

@@ -1,7 +1,7 @@
 """PD04 geometry: fractured cavern, open oculus, walkable shores and descent.
 
-PD05 adds metre-scaled UVs and reusable mineral stone textures. PD06 owns the
-full light/fog pass. No full-cavern low-density colour atlas is introduced.
+PD05 adds metre-scaled UVs and reusable mineral stone textures. PD06 adds the
+oculus light surface; light/fog are recreated in R3F. No chamber-sized atlas.
 """
 import bpy
 import math
@@ -198,16 +198,33 @@ collision.data.materials.clear()
 rock=merge('CavernStructure_Rock',visuals)
 rock.data.materials.clear();rock.data.materials.append(stone_material())
 for poly in rock.data.polygons:poly.material_index=0
+# Bright sky beyond the irregular roof slit. The surrounding rock masks this
+# backing surface; it is visual only and belongs to the pool-reflection layer.
+sky_points=[]
+for i in range(24):
+    a=i*math.tau/24
+    r=1+.06*math.sin(a*7)+.04*math.cos(a*3)
+    sky_points.append((-12+5*r*math.cos(a),205-9*r*math.sin(a),20.3))
+sky_data=bpy.data.meshes.new('Cavern oculus sky surface')
+sky_data.from_pydata(sky_points,[],[tuple(range(24))]);sky_data.update()
+oculus=bpy.data.objects.new('Cavern_Oculus',sky_data);bpy.context.collection.objects.link(oculus)
+sky_mat=bpy.data.materials.new('Cavern daylight opening');sky_mat.use_nodes=True
+sky_nodes=sky_mat.node_tree.nodes;sky_nodes.clear()
+emission=sky_nodes.new('ShaderNodeEmission');emission.inputs['Color'].default_value=(.67,.75,.78,1)
+output=sky_nodes.new('ShaderNodeOutputMaterial')
+sky_mat.node_tree.links.new(emission.outputs[0],output.inputs['Surface'])
+oculus.data.materials.append(sky_mat)
 for obj in (collision,rock):obj.data.validate(clean_customdata=True);obj.data.update()
 bpy.ops.object.select_all(action='DESELECT')
-for obj in (rock,collision):obj.select_set(True)
+for obj in (rock,collision,oculus):obj.select_set(True)
 bpy.ops.wm.save_as_mainfile(filepath=str(ROOT/'art/source/cavern-structure.blend'),compress=True)
 export=ROOT/'public/models/cavern-structure.glb'
 bpy.ops.export_scene.gltf(filepath=str(export),export_format='GLB',use_selection=True)
-report={'stage':'PD05 cavern stone materials','structuralParts':visual_count,'solidParts':len(solids),
+report={'stage':'PD06 cavern oculus and atmosphere integration','structuralParts':visual_count,'solidParts':len(solids),
         'bytes':export.stat().st_size,'visualTriangles':sum(len(p.vertices)-2 for p in rock.data.polygons),
         'collisionTriangles':sum(len(p.vertices)-2 for p in collision.data.polygons),
-        'materialStatus':'1024px colour/normal/roughness tiles at 2m repeat; runtime wet shoreline layer; PD06 atmosphere pending',
+        'openingTriangles':22,
+        'materialStatus':'1024px colour/normal/roughness tiles at 2m repeat; runtime wet shoreline, local atmosphere and opening light',
         'texelsPerMetre':512}
 (OUT/'cavern-structure-report.json').write_text(json.dumps(report,indent=2)+'\n')
 from world_art_context import export_context

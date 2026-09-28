@@ -376,3 +376,24 @@ The opt-in placed-art world (`?patch=1`) uses linear fog from 22–115 m, retain
 the shared sky/fog colour. The default layout remains 35–150 m. The closer haze
 separates forest layers and softens archive distance without new lights or shadow
 maps. Judge it through REF4/5/6/7 comparisons; the final six-area pass may refine it.
+
+### Connected cavern — PD05/06 production override
+
+REF10 uses a cool enclosed palette rather than the outdoor six colours. In the
+placed-art route, the descent blends daylight into matching background/fog
+`#53616c`, linear fog at 9–68 m, and cool ambient sky/ground `#8297a6`/`#202c36`.
+The opening is pale `#d5e0e3`; its bounded light is `#c3d7e3`, with a soft shaft
+`#b7cbdc`. Deep/grazing water is `#111d27`/`#475b69`. Runtime values live in
+src/config/cavern-look.js and cavern-water.js; outdoor colours are unchanged.
+
+This area permits one bounded spotlight and one fill light without shadow maps,
+plus the shared ambient light. Reusable 2m stone textures replace a chamber-sized
+colour atlas. A small translucent shaft approximates scattering; it is not a
+volumetric simulation. Medium/high water reflects cavern art, opening, shaft and
+player at 384/512px; low uses the elongated opening cue without a reflection pass.
+No bloom, screen-space reflections or per-frame raymarching are introduced.
+
+The value target is a dark readable foreground, mist-separated far cliff, one
+bright opening and its quiet pool reflection. Browser reference/player review is
+still required before accepting these production settings; this is not a claim
+that the cavern already meets final visual quality. Existing weekly budgets hold.

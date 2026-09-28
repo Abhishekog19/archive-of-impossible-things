@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { Color, Matrix4, Mesh, ShaderMaterial, UniformsLib, UniformsUtils, Vector3 } from 'three'
+import { Color, Matrix4, Mesh, ShaderMaterial, UniformsLib, UniformsUtils, Vector2, Vector3 } from 'three'
 import { Reflector } from 'three/addons/objects/Reflector.js'
 import { useGameStore } from '../store'
 import { CAVERN_WATER } from '../config/cavern-water'
@@ -20,6 +20,7 @@ const shader = {
     openingCentre: { value: new Vector3() },
     openingTint: { value: new Color() },
     openingRadius: { value: 0 },
+    openingScale: { value: new Vector2(1, 1) },
     shoreline: { value: 0 },
   },
   vertexShader: `
@@ -41,6 +42,7 @@ const shader = {
     uniform float time, reflected, texel, ripple, shoreline;
     uniform vec3 openingCentre, openingTint;
     uniform float openingRadius;
+    uniform vec2 openingScale;
     varying vec4 projected;
     varying vec3 worldPoint;
     #include <fog_pars_fragment>
@@ -69,12 +71,12 @@ const shader = {
         reflection += texture2D(tDiffuse, uv - vec2(texel, 0.0)).rgb * .15;
         reflection += texture2D(tDiffuse, uv + vec2(0.0, texel)).rgb * .15;
         reflection += texture2D(tDiffuse, uv - vec2(0.0, texel)).rgb * .15;
-        surface = mix(surface, reflection * vec3(.82, .91, 1.0), (.28 + fresnel * .58) * (1.0 - shallows * .3));
+        surface = mix(surface, reflection * vec3(.93, .97, 1.0), (.28 + fresnel * .58) * (1.0 - shallows * .3));
       } else if (openingRadius > 0.0) {
         // Low: analytic reflection of the opening only, no scene render/texture.
         vec3 ray = reflect(-eye, vec3(0.0, 1.0, 0.0));
         vec2 hit = worldPoint.xz + ray.xz * (openingCentre.y - worldPoint.y) / max(ray.y, .02);
-        vec2 offset = (hit - openingCentre.xz) / openingRadius;
+        vec2 offset = (hit - openingCentre.xz) / (openingRadius * openingScale);
         float glow = exp(-dot(offset, offset) * 1.5);
         surface = mix(surface, openingTint, glow * (.12 + fresnel * .34));
       }
@@ -116,6 +118,7 @@ export default function CavernWater({ geometry, openingLight = null, shoreline =
       mesh.material.uniforms.openingCentre.value.fromArray(openingLight.openingPosition)
       mesh.material.uniforms.openingTint.value.set(openingLight.opening)
       mesh.material.uniforms.openingRadius.value = openingLight.openingRadius
+      mesh.material.uniforms.openingScale.value.fromArray(openingLight.openingScale || [1, 1])
     }
     if (size) {
       const reflect = mesh.onBeforeRender

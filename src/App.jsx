@@ -17,6 +17,7 @@ import { useGameStore } from './store'
 import worldViews from './config/world-views.json'
 import { CAVERN_STUDY } from './config/cavern-study'
 import { WORLD_AND_POOL_LAYERS } from './config/cavern-water'
+import ConnectedAtmosphere from './scenes/ConnectedAtmosphere'
 const AssetKit = lazy(() => import('./scenes/AssetKit'))
 const ZoneLoading = lazy(() => import('./scenes/ZoneLoading'))
 const CavernStudy = lazy(() => import('./scenes/CavernStudy'))
@@ -142,13 +143,13 @@ export default function App() {
         camera={{ fov: reference ? 53.13 : CAMERA.fov, near: 0.1, far: greyroom ? TIERS[tier].far : 180 }}
         gl={{ antialias: true }}
       >
-        <Atmosphere hub={!greyroom} cavern={cavernStudy} patch={patch} />
+        {patch ? <ConnectedAtmosphere /> : <Atmosphere hub={!greyroom} cavern={cavernStudy} />}
 
         {/* Temporary lighting. The shipped game has zero runtime lights and
             bakes everything (spec §4.1); §4 allows exactly one hemisphere light
             in the blockout, which is what this is. Warm above, cool below —
             the cheapest possible stand-in for warm light against cool shade. */}
-        <hemisphereLight layers-mask={WORLD_AND_POOL_LAYERS} args={[PALETTE.sky, PALETTE.ground, greyroom ? 2.2 : 1.6]} />
+        {!patch && <hemisphereLight layers-mask={WORLD_AND_POOL_LAYERS} args={[PALETTE.sky, PALETTE.ground, greyroom ? 2.2 : 1.6]} />}
 
         <Suspense fallback={null}>
           <Physics paused={(!visible || settingsOpen) && !physicsForced}>

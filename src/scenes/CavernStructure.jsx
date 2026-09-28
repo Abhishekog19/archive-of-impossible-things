@@ -5,6 +5,7 @@ import { useThree } from '@react-three/fiber'
 import { DoubleSide } from 'three'
 import { useGameStore } from '../store'
 import { WORLD_AND_POOL_LAYERS } from '../config/cavern-water'
+import CavernLight from './CavernLight'
 
 // Reuse the Blender PBR textures and metre-scaled UVs. The only runtime layer is
 // water staining, anchored to the authored shore contour instead of UV islands.
@@ -58,8 +59,7 @@ export default function CavernStructure() {
   useEffect(() => () => material.dispose(), [material])
   return <>
     <mesh name="CavernStructure_Rock" layers-mask={WORLD_AND_POOL_LAYERS} geometry={nodes.CavernStructure_Rock.geometry} material={material} />
-    {/* Bounded material fill from the actual opening; shaft/fog art follows in PD06. */}
-    <pointLight layers-mask={WORLD_AND_POOL_LAYERS} position={[-12, 13, -205]} color="#c3d7e3" intensity={420} distance={48} decay={2} />
+    <CavernLight openingGeometry={nodes.Cavern_Oculus.geometry} />
     <RigidBody type="fixed" colliders="trimesh" includeInvisible>
       <mesh geometry={nodes.CavernStructure_Collision.geometry} visible={false} />
     </RigidBody>

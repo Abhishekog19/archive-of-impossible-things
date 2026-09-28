@@ -2,6 +2,7 @@ import { forwardRef, useImperativeHandle, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Ecctrl } from 'ecctrl'
 import { CHARACTER, PALETTE } from '../config/look'
+import { WORLD_AND_POOL_LAYERS } from '../config/cavern-water'
 import { useGameStore } from '../store'
 import useMovementInput from './useMovementInput'
 
@@ -173,7 +174,7 @@ const Player = forwardRef(function Player({ recoverFalls = false, recoverToStart
         <group ref={bodyGroupRef} position={[0, REST_Y, 0]}>
           {/* Body. Offset down by the radius so the capsule's straight section
               is centred on the rigid body, matching ecctrl's collider. */}
-          <mesh position={[0, 0, 0]} castShadow={false}>
+          <mesh layers-mask={WORLD_AND_POOL_LAYERS} position={[0, 0, 0]} castShadow={false}>
             <capsuleGeometry
               args={[CHARACTER.capsuleRadius, CHARACTER.capsuleHalfHeight * 2, 6, 12]}
             />
@@ -181,7 +182,7 @@ const Player = forwardRef(function Player({ recoverFalls = false, recoverToStart
           </mesh>
 
           {/* Facing marker -- the "nose". -Z is forward in three.js. */}
-          <mesh position={[0, 0.35, -CHARACTER.capsuleRadius - 0.1]}>
+          <mesh layers-mask={WORLD_AND_POOL_LAYERS} position={[0, 0.35, -CHARACTER.capsuleRadius - 0.1]}>
             <boxGeometry args={[0.16, 0.16, 0.24]} />
             <meshStandardMaterial color={PALETTE.daylight} />
           </mesh>

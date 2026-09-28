@@ -1,7 +1,7 @@
 """PD04 geometry: fractured cavern, open oculus, walkable shores and descent.
 
-Vertex shading is a structural preview; PD05/06 own textures, water and lighting.
-No full-cavern low-density colour atlas is introduced by this pass.
+PD05 adds metre-scaled UVs and reusable mineral stone textures. PD06 owns the
+full light/fog pass. No full-cavern low-density colour atlas is introduced.
 """
 import bpy
 import math
@@ -11,7 +11,8 @@ import sys
 from pathlib import Path
 from mathutils import Vector
 sys.path.insert(0,str(Path(__file__).parent))
-from placed_art import merge, color_material
+from placed_art import merge
+from cavern_materials import stone_material
 
 ROOT=Path(__file__).resolve().parents[2]
 OUT=ROOT/'.artifacts/blender'
@@ -28,6 +29,7 @@ def mesh(name, points, faces, solid=False, shore=False):
     data.update()
     obj=bpy.data.objects.new(name,data);bpy.context.collection.objects.link(obj)
     colors=data.color_attributes.new(name='RockColor',type='BYTE_COLOR',domain='CORNER')
+    uv=data.uv_layers.new(name='StoneMetres')
     for poly in data.polygons:
         centre=poly.center
         # Broad structural value groups make planes legible without tiny noise.
@@ -39,7 +41,14 @@ def mesh(name, points, faces, solid=False, shore=False):
         # Limestone at the hall end settles gradually into the cavern palette.
         transition=max(0,min(1,(174-centre.y)/33)) if 'Descent' in name else 0
         base=tuple(c*(1-transition)+v*transition for c,v in zip(base,(.24,.245,.19)))
-        for loop in poly.loop_indices:colors.data[loop].color=tuple(c*shade for c in base)+(1,)
+        # Dominant-axis projection at 512 texels/metre. Horizontal shelves use
+        # X/Z, cliff faces use their tangent/height; no chamber-sized UV stretch.
+        axis=max(range(3),key=lambda k:abs(poly.normal[k]))
+        for loop in poly.loop_indices:
+            colors.data[loop].color=tuple(c*shade for c in base)+(1,)
+            co=data.vertices[data.loops[loop].vertex_index].co
+            pair=(co.y,co.z) if axis==0 else (co.x,co.z) if axis==1 else (co.x,co.y)
+            uv.data[loop].uv=(pair[0]/2,pair[1]/2)
     visuals.append(obj)
     if solid:solids.append(obj)
     return obj
@@ -186,17 +195,20 @@ for o in solids:
     c=o.copy();c.data=o.data.copy();bpy.context.collection.objects.link(c);copies.append(c)
 collision=merge('CavernStructure_Collision',copies)
 collision.data.materials.clear()
-rock=merge('CavernStructure_Rock',visuals);color_material(rock)
+rock=merge('CavernStructure_Rock',visuals)
+rock.data.materials.clear();rock.data.materials.append(stone_material())
+for poly in rock.data.polygons:poly.material_index=0
 for obj in (collision,rock):obj.data.validate(clean_customdata=True);obj.data.update()
 bpy.ops.object.select_all(action='DESELECT')
 for obj in (rock,collision):obj.select_set(True)
 bpy.ops.wm.save_as_mainfile(filepath=str(ROOT/'art/source/cavern-structure.blend'),compress=True)
 export=ROOT/'public/models/cavern-structure.glb'
 bpy.ops.export_scene.gltf(filepath=str(export),export_format='GLB',use_selection=True)
-report={'stage':'PD04 cavern structure','structuralParts':visual_count,'solidParts':len(solids),
+report={'stage':'PD05 cavern stone materials','structuralParts':visual_count,'solidParts':len(solids),
         'bytes':export.stat().st_size,'visualTriangles':sum(len(p.vertices)-2 for p in rock.data.polygons),
         'collisionTriangles':sum(len(p.vertices)-2 for p in collision.data.polygons),
-        'materialStatus':'vertex-colour structural preview; PD05/06 texture, water and lighting passes pending'}
+        'materialStatus':'1024px colour/normal/roughness tiles at 2m repeat; runtime wet shoreline layer; PD06 atmosphere pending',
+        'texelsPerMetre':512}
 (OUT/'cavern-structure-report.json').write_text(json.dumps(report,indent=2)+'\n')
 from world_art_context import export_context
 export_context()

@@ -16,6 +16,7 @@ import Settings from './ui/Settings'
 import { useGameStore } from './store'
 import worldViews from './config/world-views.json'
 import { CAVERN_STUDY } from './config/cavern-study'
+import { WORLD_AND_POOL_LAYERS } from './config/cavern-water'
 const AssetKit = lazy(() => import('./scenes/AssetKit'))
 const ZoneLoading = lazy(() => import('./scenes/ZoneLoading'))
 const CavernStudy = lazy(() => import('./scenes/CavernStudy'))
@@ -147,7 +148,7 @@ export default function App() {
             bakes everything (spec §4.1); §4 allows exactly one hemisphere light
             in the blockout, which is what this is. Warm above, cool below —
             the cheapest possible stand-in for warm light against cool shade. */}
-        <hemisphereLight args={[PALETTE.sky, PALETTE.ground, greyroom ? 2.2 : 1.6]} />
+        <hemisphereLight layers-mask={WORLD_AND_POOL_LAYERS} args={[PALETTE.sky, PALETTE.ground, greyroom ? 2.2 : 1.6]} />
 
         <Suspense fallback={null}>
           <Physics paused={(!visible || settingsOpen) && !physicsForced}>

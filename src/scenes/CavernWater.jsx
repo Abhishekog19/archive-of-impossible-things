@@ -20,6 +20,7 @@ const shader = {
     openingCentre: { value: new Vector3() },
     openingTint: { value: new Color() },
     openingRadius: { value: 0 },
+    shoreline: { value: 0 },
   },
   vertexShader: `
     uniform mat4 textureMatrix;
@@ -37,7 +38,7 @@ const shader = {
   fragmentShader: `
     uniform sampler2D tDiffuse;
     uniform vec3 color, grazing;
-    uniform float time, reflected, texel, ripple;
+    uniform float time, reflected, texel, ripple, shoreline;
     uniform vec3 openingCentre, openingTint;
     uniform float openingRadius;
     varying vec4 projected;
@@ -48,6 +49,16 @@ const shader = {
       float fresnel = pow(1.0 - max(eye.y, 0.0), 3.0);
       float wave = sin(worldPoint.x * .62 + worldPoint.z * .37 + time * .32);
       vec3 surface = mix(color, grazing, fresnel * .32) * (1.0 + wave * .025);
+      vec2 fromPool = worldPoint.xz - vec2(-12.0, -195.0);
+      float shoreAngle = atan(fromPool.y, fromPool.x);
+      float shoreRadius = 15.5 + 1.2 * sin(3.0 * shoreAngle) + .7 * cos(5.0 * shoreAngle);
+      float depth = max(0.0, shoreRadius - length(fromPool));
+      float shallows = (1.0 - smoothstep(.05, 1.8, depth)) * shoreline;
+      float submergedStone = sin(worldPoint.x * 7.2 + sin(worldPoint.z * 3.1))
+        * sin(worldPoint.z * 5.8 + sin(worldPoint.x * 2.4));
+      // Subtle mineral bed at the edge; deep water stays clear and quiet, without
+      // a bright foam outline or an opaque green disk.
+      surface = mix(surface, vec3(.095, .125, .13) * (1.0 + submergedStone * .1), shallows * .6);
       if (reflected > .5) {
         vec2 uv = projected.xy / projected.w;
         uv += vec2(wave, sin(worldPoint.z * .83 - worldPoint.x * .21 + time * .24)) * ripple;
@@ -58,7 +69,7 @@ const shader = {
         reflection += texture2D(tDiffuse, uv - vec2(texel, 0.0)).rgb * .15;
         reflection += texture2D(tDiffuse, uv + vec2(0.0, texel)).rgb * .15;
         reflection += texture2D(tDiffuse, uv - vec2(0.0, texel)).rgb * .15;
-        surface = mix(surface, reflection * vec3(.82, .91, 1.0), .20 + fresnel * .58);
+        surface = mix(surface, reflection * vec3(.82, .91, 1.0), (.28 + fresnel * .58) * (1.0 - shallows * .3));
       } else if (openingRadius > 0.0) {
         // Low: analytic reflection of the opening only, no scene render/texture.
         vec3 ray = reflect(-eye, vec3(0.0, 1.0, 0.0));
@@ -76,7 +87,7 @@ const shader = {
 }
 
 /** Reuses the authored GLB shoreline; owns only its clone and reflection target. */
-export default function CavernWater({ geometry, openingLight = null }) {
+export default function CavernWater({ geometry, openingLight = null, shoreline = false }) {
   const group = useRef(null)
   const water = useRef(null)
   const tier = useGameStore((s) => s.tier)
@@ -94,11 +105,12 @@ export default function CavernWater({ geometry, openingLight = null }) {
     }) : new Mesh(local, new ShaderMaterial({
       ...shader, uniforms: UniformsUtils.clone(shader.uniforms),
     }))
-    mesh.name = 'CavernWaterPrototype'
+    mesh.name = shoreline ? 'CavernWater' : 'CavernWaterPrototype'
     mesh.position.copy(centre)
     mesh.rotation.x = -Math.PI / 2
     mesh.material.uniforms.reflected.value = size ? 1 : 0
     mesh.material.uniforms.texel.value = size ? 1 / size : 0
+    mesh.material.uniforms.shoreline.value = shoreline ? 1 : 0
     mesh.material.fog = true
     if (openingLight) {
       mesh.material.uniforms.openingCentre.value.fromArray(openingLight.openingPosition)
@@ -108,6 +120,9 @@ export default function CavernWater({ geometry, openingLight = null }) {
     if (size) {
       const reflect = mesh.onBeforeRender
       mesh.onBeforeRender = function (renderer, scene, camera) {
+        // Connected pool reflections draw only cavern art and the player, not
+        // all of the outdoor foliage hidden behind the cave walls.
+        if (shoreline) this.getReflectionCamera(camera).layers.set(1)
         // Keep the additional pass in renderer.info; nested render normally resets it.
         const autoReset = renderer.info.autoReset
         renderer.info.autoReset = false
@@ -124,9 +139,15 @@ export default function CavernWater({ geometry, openingLight = null }) {
       else mesh.material.dispose()
       local.dispose()
     }
-  }, [geometry, tier, openingLight])
-  useFrame((_, delta) => {
-    if (water.current) water.current.material.uniforms.time.value += Math.min(delta, .1)
+  }, [geometry, tier, openingLight, shoreline])
+  useFrame(({ camera }, delta) => {
+    if (water.current) {
+      // The enclosed pool cannot be seen from the outdoor route. Do not request
+      // reflection renders there; low tier never allocates a reflection target.
+      water.current.visible = !shoreline || (camera.position.z < -145 && camera.position.y < 12
+        && camera.position.distanceToSquared(water.current.position) < 60 * 60)
+      water.current.material.uniforms.time.value += Math.min(delta, .1)
+    }
   })
   return <group ref={group} />
 }

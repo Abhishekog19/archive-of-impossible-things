@@ -32,10 +32,10 @@ export default function HubBlockout({ reference = false, cornerView = false, vie
         <PlacedArt url="/models/archive-hall.glb" />
         <CavernStructure />
       </>}
-      {Object.values(nodes).filter((node) => node.isMesh && node.name !== 'Collision' && !(waterStudy && node.name === 'Pool_study')).map((node) => (
+      {Object.values(nodes).filter((node) => node.isMesh && node.name !== 'Collision' && !((waterStudy || patch) && node.name === 'Pool_study')).map((node) => (
         <mesh key={node.uuid} geometry={node.geometry} material={node.material} />
       ))}
-      {waterStudy && <CavernWater geometry={nodes.Pool_study.geometry} />}
+      {(waterStudy || patch) && <CavernWater geometry={nodes.Pool_study.geometry} shoreline={patch} openingLight={patch ? CAVERN_WATER.opening : null} />}
       <RigidBody type="fixed" colliders="trimesh" includeInvisible>
         <mesh geometry={nodes.Collision.geometry} visible={false} />
       </RigidBody>

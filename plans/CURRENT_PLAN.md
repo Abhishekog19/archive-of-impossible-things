@@ -1,11 +1,13 @@
 # Current plan — Archive of Impossible Things
 
-Status (revised September 27, latest user scope): environment REF4/5/6/7/8/10
+Status (revised September 28, latest user scope): environment REF4/5/6/7/8/10
 PLUS finished character art/animation, third-person movement, Rapier/ecctrl physics
 and camera polish. Only game insertion and phone controls remain after handoff.
 Use numbered production packages PD01–PD11 in ../environment-september-plan.md;
 target 2–3 packages per active working day. PD01–PD04 production is complete.
-Seven packages remain: approximately 3–4 further active working days, with
+PD05 materials/water are implemented; browser visual review is pending explicit
+authorization after automatic approval review rejected local preview access.
+Six full packages plus that review remain: approximately 3–4 active working days, with
 1–2 days contingency. PD04's final shoreline comparison was closed using the
 user-supplied screenshot; no new automated browser verification is claimed.
 Older calendar forecasts and character/physics deferrals below are historical.
@@ -78,7 +80,41 @@ per-session test requirements and historical next-step dates below.
 - Completed: PD02 exterior finish on September 27.
 - Completed: PD03 archive hall on September 27.
 - Completed: PD04 cavern structure and final shoreline screenshot comparison.
-- Next: PD05 rock/shore materials and water. No gameplay or phone controls.
+- PD05 implemented September 28; focused browser comparison pending. Next full
+  package: PD06 cavern light/fog. No gameplay or phone controls.
+
+## PD05 — materials/water built; visual checkpoint pending
+
+- Replaced the structural flat-colour preview with Blender-authored reusable
+  colour, tangent-normal and roughness textures, each 1024px. Dominant-axis UVs
+  repeat every two metres (512 texels/metre) across walls, shelves and descent;
+  grazing-angle anisotropic filtering avoids a single stretched cavern atlas.
+- Added broken wet/dry shoreline staining and lower wet-stone roughness, subtle
+  broad mineral variation, and a bounded opening light to read material relief.
+  Full overhead lighting, shaft, fog and final reflection balance remain PD06.
+- Connected the existing calm reflective-water renderer to the production patch:
+  shallow mineral colour at the edge, restrained ripples, and a low-tier analytic
+  opening reflection. Medium/high use bounded 384/512 targets. Their reflection
+  camera draws cavern stone, lights and the player only; the hidden outdoor forest
+  is excluded. Pool rendering is disabled outside the enclosed cavern approach.
+- Reproduce with npm run blender:cavern-structure; reusable texture authoring is
+  scripts/blender/cavern_materials.py. Editable source packs the textures into
+  art/source/cavern-structure.blend; GLB is 2,318,932 bytes. Visual triangles stay
+  5,578. Canonical collision-triangle comparison against PD04 is identical, so its
+  passing 21-waypoint route remains applicable; no repeated FPS/route suite run.
+- Production build (620 modules) and changed-JavaScript lint pass. Export inspection
+  confirms UVs, vertex colours and all three 1024px maps. These checks do not prove
+  browser shader compilation, appearance or final visual acceptance.
+- Browser navigation to the local preview was again rejected by automatic approval
+  review, citing the prior restriction and requiring explicit authorization. A
+  specific permission request is pending; no alternate browser surface was used.
+  Do not mark PD05 complete until one REF10/reference and player-distance material
+  comparison is recorded, including water/shore continuity and any shader errors.
+- Remaining biggest comparisons: sharpness and repetition at walking distance,
+  normal/wet-layer strength, reflection/shore balance. Previously recorded angular
+  crown shape and missing light/fog remain PD06/07 concerns, not final-quality claims.
+- Next weekly technical batch remains October 3. Preserve the private-file exclusion
+  and the pre-existing user edit in art/source/hub-blockout.blend.
 
 ## PD04 — structure and focused visual review complete
 

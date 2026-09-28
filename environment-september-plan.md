@@ -1,6 +1,6 @@
 # Connected environment production plan
 
-Revised September 27, 2026 (Asia/Calcutta): numbered production days; target two to
+Revised September 28, 2026 (Asia/Calcutta): numbered production days; target two to
 three production packages per working day. Filename retained for existing links.
 This replaces the September 30 hub-only scope and future phase dates. Completed
 production evidence remains in `plans/CURRENT_PLAN.md`.
@@ -41,7 +41,8 @@ calendar promise are superseded. Do not multiply the old schedule by three again
 or claim a package complete simply because its time allowance has elapsed.
 
 There are 11 packages including the current former-September-27 package. After
-PD04 completion, seven remain: a planning range of **3–4 further active working days**
+PD05 implementation, six full packages plus its pending visual review remain:
+a planning range of **3–4 further active working days**
 at 2–3 packages per day. Allow 1–2 additional working days if hero art, animation,
 baking or technical fixes overrun. This is a throughput goal, not measured speed.
 Sessions begin on the user's request; no unattended work or automation is implied.
@@ -52,7 +53,7 @@ Sessions begin on the user's request; no unattended work or automation is implie
 | PD02 — complete Sep 27 | REF7 damaged silhouette, courtyard paving/rubble, facade moss/ivy, tree/root refinement and placed lighting. Shared REF7/8 surface helpers begun; hall art follows in PD03. Build, reference/player comparison and walking connection pass. |
 | PD03 — complete Sep 27 | REF8 hall arcades, fluted columns, broken roof, planted paving, ivy and rear windows/portal. Exterior–hall–reserved space–descent connection, build/lint and reference/player review pass. |
 | PD04 — complete | REF10 chamber, fractured walls, shoreline, overhead opening and descent built; final build/lint and full shore-loop connection pass. Final shoreline comparison closed using the user's screenshot; automated browser access remains restricted. Structural checkpoint only; materials/light and final art acceptance remain ahead. |
-| PD05 | Cavern water/pool appearance, rock textures and shoreline materials. Prove sharp reusable materials at player distance; avoid stretching one atlas over the whole cavern. |
+| PD05 — built, visual review pending | Metre-scaled 1024px stone colour/normal/roughness, wet shoreline layering and connected reflective water. Build/lint and unchanged collision check pass. Explicit local-preview authorization is required after automatic approval rejection; prove sharpness, shader correctness and water/shore appearance before closing. |
 | PD06 | Cavern overhead light, reflections, fog and detail; REF10 reference/player comparison. |
 | PD07 | Finish all connections and six-area material/light consistency; loading/culling, GLB/texture/geometry optimization. Resolve recorded visual and weekly technical findings. |
 | PD08 | Replace capsule presentation with a coherent stylized character, rig and idle/walk/run/jump/land animation states; Blender/GLB/R3F pipeline. Use an authored simple explorer or suitably licensed rig, with provenance retained. |
@@ -131,7 +132,9 @@ wall/passage collision; the 21-waypoint shore/descent route passes, and the user
 screenshot closes the final shoreline comparison. No routine FPS review was repeated.
 Counts, comparison evidence and review limitations are in plans/CURRENT_PLAN.md.
 
-Next: PD05 cavern rock/shore materials and water. Seven packages remain.
+PD05 materials/water are implemented September 28; its focused browser visual
+checkpoint remains pending authorization. Six full packages plus that review remain.
+Next: close that comparison, then PD06 overhead light, fog and reflection balance.
 PD07 must close remaining hub boundaries/landmark/foliage and material/light gaps,
 reduce the sampled ~566K triangle peak and replace eager ~53.5 MB GLB loading
 with staged placed-art loading. The sampled 59.05 average FPS is not final

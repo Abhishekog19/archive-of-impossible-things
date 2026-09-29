@@ -2,6 +2,11 @@
 
 PD08 work in progress, based on the user's selected Image 3 turnaround. This is
 not an accepted final character and does not replace `explorer.glb` in gameplay.
+The first study was rejected for cartoon-like appearance. The current revision
+uses `scripts/blender/ruin_runner_head.py` for connected facial relief, fitted eye
+patches/lids, lips, skin detail and closed textured hair locks. These eye surfaces
+are a neutral sculpt technique, not production eye/face deformation topology.
+The outfit adds a draped cowl and flat overlapping cloth bindings.
 
 - Build: `npm run blender:ruin-runner` (installed Blender, isolated runner).
 - Editable source: `art/source/ruin-runner-study.blend`, with individually named
@@ -11,6 +16,8 @@ not an accepted final character and does not replace `explorer.glb` in gameplay.
 - Review: `npm run dev`, then `/?scene=character-study`. The local ignored
   `concept/character/ruin-runner-approved.png` is needed only for the reference
   pane. The model still loads without it. Review UI is excluded from production.
+  Face mode crops the supplied portrait in the UI without editing the reference.
+  Studio lights and ground shadows are confined to this review route.
 - Neutral front/side/back/face Blender renders and browser comparisons are saved
   locally under `.artifacts/ruin-runner/`.
 

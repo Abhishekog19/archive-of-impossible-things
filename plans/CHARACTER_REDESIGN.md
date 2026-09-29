@@ -56,6 +56,23 @@ references, without claiming to reproduce either game's internal implementation.
 
 ## Status and scheduling
 
+Latest user correction: the first study was rejected as low quality/cartoon-like.
+Keep Image 3's identity and costume, but pursue more believable anatomy and material
+response. Additional polygons or detail maps are not evidence of matching the reference.
+
+The second study replaces the oval head/separate pin-like nose with a continuous
+facial relief surface (cheeks, sockets, nose bridge/tip, chin and jaw). Added fitted
+eyelids, lip surfaces, ear cartilage, restrained skin colour variation/freckles and
+pore normals. Closed swept hair locks now carry directional colour/normal detail.
+Replaced tube-like collar/wrap rings with a folded cowl and overlapping flat cloth
+bindings. The review's Face view includes the reference portrait at close range;
+studio ground shadows and fill light are review-only, not gameplay lighting changes.
+
+Visual review still finds a likeness gap: eye/brow expression, cheek/jaw character,
+natural hair grouping and believable garment drape require further art direction.
+The study is not accepted, photoreal, rigged or runtime-budget compliant. Continue
+the reference comparison before adding more microdetail or promoting it into gameplay.
+
 September 29: neutral-model production started. `npm run blender:ruin-runner`
 creates the separate editable `art/source/ruin-runner-study.blend`, UV-textured
 `public/models/ruin-runner-study.glb` and four local review renders. The development
@@ -69,10 +86,11 @@ trousers, wraps and boots. Browser comparison prompted tunic/leg intersection fi
 recessed eyes, narrower upper-body proportions and lighter exported textile colours.
 This is still an unapproved neutral study, not a finished replacement.
 
-Largest remaining mismatches, in order: facial likeness and cheek/eye shape; hair
-volume and natural lock grouping; convincing loose garment folds and overlapping
-shoulder cloth; flat criss-cross bindings and worn boot construction; painted
-material variation/seams/wear. The current study retains separate modeling parts
+Largest remaining mismatches, in order: facial likeness and cheek/eye expression;
+hair volume and natural lock grouping; convincing loose garment folds and overlapping
+shoulder cloth; worn boot construction; painted material variation/seams/wear.
+Flat criss-cross bindings now exist but still need an authored wear pass.
+The current study retains separate modeling parts
 and substantially more geometry/materials than the live explorer; merge/bake and
 retopology are required before gameplay integration. Do not ship it as-is.
 

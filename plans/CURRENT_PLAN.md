@@ -91,6 +91,20 @@ per-session test requirements and historical next-step dates below.
 
 ## PD08 — Ruin Runner neutral study started September 29
 
+- User rejected the first neutral study as cartoon-like/low quality. Second art
+  pass rebuilds connected facial contours, sockets/eyelids, lips/ears, skin colour
+  and pore detail; replaces flat hair blades with textured volumetric locks, collar
+  tubes with a folded cowl and calf/forearm rings with flat cloth bindings.
+- Face review now includes a direct portrait comparison. Likeness and natural hair/
+  cloth shaping still fall short; PD08 stays open. No rig, locomotion or cloth
+  simulation acceptance is implied. The counts below describe the first study;
+  `src/config/ruin-runner-study.json` contains the latest export counts.
+- Second-pass checks: Blender export/render, production build and changed viewer
+  lint pass. Compared final portrait and full-body browser views with Image 3;
+  evidence `.artifacts/ruin-runner/refined-face.png` and `refined-full.png`.
+  Latest study: 1.72 m, 148,368 triangles, 304 separate parts and 7,244,172 bytes.
+  It is deliberately not integrated into the player; retopology, atlasing and
+  consolidation are required. Likeness remains below target despite added detail.
 - Separate Blender source and GLB study now exist, with shaped garment layers,
   face/hair, hands, cloth UVs, rope ties, side satchel and wrapped boots. Generate
   with `npm run blender:ruin-runner`; inspection route `/?scene=character-study`

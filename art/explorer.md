@@ -1,5 +1,9 @@
 # Archive explorer — PD08
 
+Status: rejected character prototype. The user selected the Image 3 Ruin Runner
+turnaround on September 29. See plans/CHARACTER_REDESIGN.md; the model below is
+retained for continuity until the replacement is ready, not an approved design.
+
 Original character model, rig and six animations authored in this repository by
 scripts/blender/explorer.py. No external models, motion capture, textures or rigs
 were used; no third-party attribution or license grant is implied.

@@ -4,15 +4,15 @@ Status (revised September 29, latest user scope): environment REF4/5/6/7/8/10
 PLUS finished character art/animation, third-person movement, Rapier/ecctrl physics
 and camera polish. Only game insertion and phone controls remain after handoff.
 Use numbered production packages PD01–PD11 in ../environment-september-plan.md;
-target 2–3 packages per active working day. PD01–PD08 production is implemented.
-PD07 export/loading and PD08 character/animation production are complete; final
-visual acceptance and movement/camera polish remain PD09–PD11.
+target 2–3 packages per active working day where quality permits. PD07 production
+is implemented. PD08 is REOPENED: the user rejected the explorer design and current
+locomotion. Image 3 (Ruin Runner) is the selected replacement reference.
+Follow CHARACTER_REDESIGN.md for the model, reactive clothing and locomotion gates.
 Explicit local-preview permission was received September 28 and six reference
 views plus cavern player-height were reviewed. Connected transition review and
-the recorded art-quality corrections remain open. Three full packages plus these
-remaining checks/corrections remain:
-approximately 1–2 active working days, with
-1–2 days contingency. PD04's final shoreline comparison was closed using the
+the recorded art-quality corrections remain open. PD08 redesign and PD09–PD11
+remain; the prior 1–2 active-day estimate is withdrawn pending the new character
+and secondary-motion proof. PD04's final shoreline comparison was closed using the
 user-supplied screenshot; PD07/08 browser evidence is recorded below.
 Older calendar forecasts and character/physics deferrals below are historical.
 No automatic sessions, fixed calendar promise or invented days-saved claim.
@@ -85,10 +85,33 @@ per-session test requirements and historical next-step dates below.
 - Completed: PD03 archive hall on September 27.
 - Completed: PD04 cavern structure and final shoreline screenshot comparison.
 - PD07 finished September 29 with lighter resident crowns and 24 m mesh cells.
-- PD08 character and animation production complete September 29. Next: PD09
-  desktop movement/physics. No gameplay or phone-control redesign.
+- PD08 initial character rejected September 29. Next: reference-matched redesign
+  under CHARACTER_REDESIGN.md, alongside targeted locomotion correction. No gameplay
+  or phone-control redesign.
 
-## PD08 — explorer character and animation production complete
+## PD08 — Ruin Runner neutral study started September 29
+
+- Separate Blender source and GLB study now exist, with shaped garment layers,
+  face/hair, hands, cloth UVs, rope ties, side satchel and wrapped boots. Generate
+  with `npm run blender:ruin-runner`; inspection route `/?scene=character-study`
+  is local development only and presents Image 3 next to the GLB.
+- Compared neutral renders and browser export against the selected turnaround.
+  Fixed trousers cutting through the tunic, protruding eyes, dark exported textile
+  colours and over-wide shoulders; retained independent front/side/back/face views.
+- PD08 remains open: model does not yet meet reference quality. Next work is face
+  likeness/hair grouping, draped folds and overlapping mantle, criss-cross wraps/
+  worn boots, then material wear. Rigging and reactive cloth follow that shape gate.
+- This study is unskinned and not used by the production player. Model optimization
+  and deformation review remain necessary; no movement or FPS claim follows from
+  a successful static load. Original explorer and controller are unchanged.
+- Verification: background Blender export/render succeeds; local R3F comparison
+  loads the model and reference and switches review cameras. Changed JavaScript
+  lint and production build pass. No routine FPS or broad regression run. The
+  separate study is 1.72 m, 96,384 triangles and about 3.45 MB before optimization;
+  it is not a runtime-budget-compliant replacement. Local screenshot evidence:
+  `.artifacts/ruin-runner/browser-front.png`, `browser-side.png`, `browser-back.png`.
+
+## PD08 — initial implementation record; design rejected and package reopened
 
 - Authored an original stylized explorer in Blender: sage coat, warm woven scarf,
   shirt, belt, satchel, boots, face and hair. One skinned mesh/material, 17 bones,
@@ -165,8 +188,8 @@ per-session test requirements and historical next-step dates below.
   counter reads 133 draws / 237,474 triangles including the character. That single
   view is not a hardware/performance pass. Asset/collision tests pass after regeneration.
 - PD07 production and initial comparison are complete; final visual/technical
-  acceptance remains open. Three full packages PD09–PD11 plus the recorded corrections
-  remain after PD08. Preserve the user's hub-blockout.blend edit. PD05/06 permission notes below
+  acceptance remains open. Reopened PD08 character redesign, PD09–PD11 and the recorded
+  corrections remain. Preserve the user's hub-blockout.blend edit. PD05/06 permission notes below
   are historical; local-preview authorization is now granted.
 
 ## PD06 — cavern light/fog built; visual checkpoint pending

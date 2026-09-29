@@ -40,11 +40,13 @@ in order. The prior 3-hour weekday / 9-hour weekend assumptions and October 4
 calendar promise are superseded. Do not multiply the old schedule by three again
 or claim a package complete simply because its time allowance has elapsed.
 
-There are 11 packages including the current former-September-27 package. After
-PD08 implementation, three full packages plus recorded visual/transition corrections remain:
-a planning range of **1–2 further active working days**
-at 2–3 packages per day. Allow 1–2 additional working days if hero art, animation,
-baking or technical fixes overrun. This is a throughput goal, not measured speed.
+There are 11 packages including the current former-September-27 package. PD08 is
+reopened after the user rejected its character and requested the Image 3 Ruin Runner
+design plus reactive clothing and substantially better locomotion. PD08 redesign
+and PD09–PD11 remain, together with recorded environment corrections. The previous
+1–2 active-day forecast is withdrawn; re-estimate after the model and one-panel
+secondary-motion proof in plans/CHARACTER_REDESIGN.md. Throughput is a goal, not
+permission to skip visual acceptance.
 Sessions begin on the user's request; no unattended work or automation is implied.
 
 | Production day | Work and completion checkpoint |
@@ -56,12 +58,13 @@ Sessions begin on the user's request; no unattended work or automation is implie
 | PD05 — built, initial review recorded | Metre-scaled 1024px stone colour/normal/roughness, wet shoreline layering and connected reflective water. Build/lint and unchanged collision check pass. PD07's authorized reference/player review confirms rendering; excessive stone grain corrected. Final material acceptance remains open. |
 | PD06 — built, initial review recorded | Authored oculus, bounded overhead lighting, soft shaft, connected descent fog/ambient transition and aligned opening reflection. Build/lint and pure transition check pass. PD07 reviews reference/player appearance; physical descent/return comparison remains open. |
 | PD07 — implemented and initially reviewed | Shared outdoor stone detail, articulated landmark/perimeter ruins and smoother cavern shell; seven streamed visual packages, resident collision/backdrop, mesh cells and optimized GLBs/textures. Build/lint and five focused tests pass. Six-area screenshots reviewed; three immediate visual corrections made. Recorded art gaps, connected transition checks and technical budgets remain open. |
-| PD08 — production complete Sep 29 | Original 1.70 m explorer, coat/scarf/satchel/boots, 17-bone skin and idle/walk/run/jump/fall/land clips. Runtime crossfades from live controller state; Blender source/provenance retained. Build/lint, four focused character tests and browser pose/readability review pass. Motion feel and final polish follow PD09/10. |
+| PD08 — reopened Sep 29 | Replace rejected prototype with approved Image 3 Ruin Runner design: face/hair, natural proportions, layered tunic, asymmetric shoulder cloth, side satchel, rope ties and wraps. Compare front/side/back before detailed skinning and animation. Existing passing export tests do not establish design acceptance. |
 | PD09 | Finish desktop movement and Rapier/ecctrl physics: acceleration/deceleration, turn response, grounded jumps, steps/slopes, collisions, fall recovery and pause/resume. Verify all six areas and four future game locations are reachable. |
-| PD10 | Character/animation polish, foot placement and grounding, camera smoothing/collision/occlusion, near-wall character visibility, input/settings clarity and transitions. No phone-control redesign or gameplay. |
+| PD10 | Reactive cape/scarf, hems, hair/rope and satchel with inertia, settling and body collision constraints; foot planting, animation/camera smoothing, occlusion and near-wall visibility. Review run/stop/turn/jump/land and pause/respawn. No phone-control redesign or gameplay. |
 | PD11 | Final six-reference review, complete desktop roam, character/physics/camera acceptance, scalable graphics/mobile layout and release. Reuse weekly evidence if unchanged; recheck affected failures. Only game insertion and phone controls remain. |
 
-Suggested working-day batches: PD09–10 with affected art corrections; PD11 final review.
+Next batches: PD08 model/design proof with a targeted PD09 locomotion slice; then
+finish rig/animation and PD09/10 secondary motion/camera work; PD11 final review.
 Combine the remaining batches only if preceding gates pass. Keep checkpoints visible rather
 than forcing an unfinished package into the next package's completion claim.
 
@@ -134,10 +137,14 @@ Counts, comparison evidence and review limitations are in plans/CURRENT_PLAN.md.
 
 PD05 materials/water, PD06 overhead light/fog and PD07 consistency/staged loading
 are implemented September 28. Explicit local-preview permission was received and
-six fixed reference views plus cavern player-height were reviewed. PD08 adds the
-original explorer and six clips on September 29. Three full packages plus recorded
-art/transition corrections remain. Next: PD09 movement/physics, including the
-connected loading/atmosphere route check with the new character.
+six fixed reference views plus cavern player-height were reviewed. The original
+PD08 explorer and six clips were implemented September 29, then rejected by the
+user for character quality and locomotion. PD08 is reopened around the selected
+Image 3 Ruin Runner turnaround; see plans/CHARACTER_REDESIGN.md. A separate neutral
+study and local reference/GLB comparison page now exist. Face/hair, draped clothing,
+wraps and material wear still need visual correction before skinning. Improved
+locomotion and a reactive cloth-panel proof follow. PD08 redesign, PD09–PD11 and
+recorded art/transition corrections remain.
 PD07 replaces eager placed-art loading with seven visual packages and resident
 collision, adds shared stone detail and landmark/boundary geometry, and smooths the
 cavern crown. Corrected missing distant crowns, whole-area visibility cutoffs and

@@ -1,0 +1,17 @@
+{
+  "name": "Archive explorer",
+  "heightMetres": 1.7,
+  "forward": "+Z in glTF",
+  "triangles": 4644,
+  "bones": 17,
+  "clips": [
+    "Idle",
+    "Walk",
+    "Run",
+    "Jump",
+    "Fall",
+    "Land"
+  ],
+  "bytes": 537556,
+  "provenance": "Original procedural modelling, rigging and animation authored for this repository. No external asset inputs."
+}

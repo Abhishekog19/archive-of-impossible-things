@@ -1,25 +1,12 @@
 import { forwardRef, useImperativeHandle, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Ecctrl } from 'ecctrl'
-import { CHARACTER, PALETTE } from '../config/look'
-import { WORLD_AND_POOL_LAYERS } from '../config/cavern-water'
+import { CHARACTER } from '../config/look'
+import Explorer from './Explorer'
 import { useGameStore } from '../store'
 import useMovementInput from './useMovementInput'
 
-/**
- * The player: an ecctrl capsule with a placeholder body.
- *
- * No character art here on purpose. look-target.md section 11 item 7 flags that
- * no reference image contains a figure at all, and character work is the weakest
- * part of this pipeline -- so M1 tests the *capsule*, at exactly the specified
- * 1.70 m x 0.35 m, and the CC0 rig arrives later. Anything taller or shorter
- * than 1.70 m would invalidate every camera number in section 2.
- *
- * The placeholder is deliberately readable rather than a bare capsule: a nose
- * block, because without one you cannot tell which way you are facing, and
- * "which way am I facing" is half of what the 90-second walk gate is judging.
- */
-
+/** ecctrl owns movement and collision; Explorer supplies skinned visual art. */
 const SPAWN = [0, 2, 6]
 const CORNER_SPAWN = [-8, 2, -4]
 const WORLD_SPAWNS = {
@@ -43,25 +30,6 @@ const WORLD_SPAWNS = {
 const MOVE = {
   maxWalkVel: 3.0, // was 2.2 -- measured as trudging at the walk gate
   maxRunVel: 5.4, // was 4.2 -- keeps roughly the same walk-to-run ratio
-}
-
-// Ecctrl floats the physics capsule `floatHeight` above the ground on a spring
-// (that float is what makes stairs and bumps feel smooth, and it stays). The
-// hovering *look* was the visual mesh being centred on the rigid body, leaving
-// a visible air gap under the feet. The fix is visual only: the whole body
-// group sits floatHeight lower, so the rendered capsule touches the ground
-// while the physics is untouched -- checks 3-5 keep their measured behaviour.
-const REST_Y = -CHARACTER.floatHeight
-
-// The walk cycle, as motion on the visual group only. Phase advances with
-// distance covered rather than time, so cadence tracks speed for free and
-// stops when the character stops.
-const BOB = {
-  strideLength: 1.1, // metres per full cycle (two footfalls)
-  bobAmp: 0.05, // vertical rise between footfalls
-  swayAmp: 0.04, // radians of side-to-side roll, alternating per step
-  leanAmp: 0.07, // radians of forward lean at full run speed
-  settle: 8, // how quickly motion eases in/out (per second)
 }
 
 /** Feeds ecctrl runtime state into the store for the dev HUD. */
@@ -99,50 +67,8 @@ function StateProbe({ controllerRef, recoverFalls, respawn = SPAWN }) {
   return null
 }
 
-/**
- * Animates the visual body group with a walk cycle: a per-step vertical bob,
- * an alternating sway, and a speed-proportional forward lean. Purely visual --
- * the rigid body and camera pivot never move, so the camera stays steady while
- * the character visibly works, which is the stable-camera / animated-body split
- * that readable third-person movement wants.
- */
-function BodyMotion({ controllerRef, groupRef }) {
-  const phase = useRef(0)
-  const intensity = useRef(0)
-
-  useFrame((_, delta) => {
-    const c = controllerRef.current
-    const g = groupRef.current
-    if (!c || !g) return
-
-    const speed = c.moveSpeed || 0
-    const moving = c.isOnGround && speed > 0.15
-
-    if (moving) {
-      phase.current += (speed * delta * Math.PI * 2) / BOB.strideLength
-    }
-
-    // Intensity eases in and out so stopping mid-stride settles instead of
-    // freezing the pose, and airborne frames (stairs, the jump) fade the cycle
-    // rather than cutting it.
-    const target = moving ? Math.min(speed / MOVE.maxRunVel, 1) : 0
-    intensity.current += (target - intensity.current) * Math.min(1, BOB.settle * delta)
-    const k = intensity.current
-
-    // abs(sin) gives two footfalls per cycle: the body is lowest at each
-    // contact and rises between them, so the feet never visually sink.
-    g.position.y = REST_Y + Math.abs(Math.sin(phase.current)) * BOB.bobAmp * k
-    g.rotation.z = Math.sin(phase.current) * BOB.swayAmp * k
-    // -Z is forward, so leaning forward is a negative rotation about X.
-    g.rotation.x = -BOB.leanAmp * k
-  })
-
-  return null
-}
-
 const Player = forwardRef(function Player({ recoverFalls = false, recoverToStart = false, cornerStart = false, start }, ref) {
   const controllerRef = useRef(null)
-  const bodyGroupRef = useRef(null)
 
   useMovementInput(controllerRef)
   useImperativeHandle(ref, () => controllerRef.current, [])
@@ -151,6 +77,7 @@ const Player = forwardRef(function Player({ recoverFalls = false, recoverToStart
     <>
       <Ecctrl
         ref={controllerRef}
+        rotation={[0, Math.PI, 0]}
         position={cornerStart ? CORNER_SPAWN : Object.hasOwn(WORLD_SPAWNS, start) ? WORLD_SPAWNS[start] : SPAWN}
         capsuleHalfHeight={CHARACTER.capsuleHalfHeight}
         capsuleRadius={CHARACTER.capsuleRadius}
@@ -167,31 +94,11 @@ const Player = forwardRef(function Player({ recoverFalls = false, recoverToStart
         maxWalkVel={MOVE.maxWalkVel}
         maxRunVel={MOVE.maxRunVel}
       >
-        {/* Visual body group. Sits REST_Y lower than the rigid body so the
-            rendered capsule touches the ground the physics floats above, and
-            carries the BodyMotion walk cycle. Visual only -- colliders and the
-            camera pivot are unaffected. */}
-        <group ref={bodyGroupRef} position={[0, REST_Y, 0]}>
-          {/* Body. Offset down by the radius so the capsule's straight section
-              is centred on the rigid body, matching ecctrl's collider. */}
-          <mesh layers-mask={WORLD_AND_POOL_LAYERS} position={[0, 0, 0]} castShadow={false}>
-            <capsuleGeometry
-              args={[CHARACTER.capsuleRadius, CHARACTER.capsuleHalfHeight * 2, 6, 12]}
-            />
-            <meshStandardMaterial color={PALETTE.stone} />
-          </mesh>
-
-          {/* Facing marker -- the "nose". -Z is forward in three.js. */}
-          <mesh layers-mask={WORLD_AND_POOL_LAYERS} position={[0, 0.35, -CHARACTER.capsuleRadius - 0.1]}>
-            <boxGeometry args={[0.16, 0.16, 0.24]} />
-            <meshStandardMaterial color={PALETTE.daylight} />
-          </mesh>
-        </group>
+        <Explorer controllerRef={controllerRef} />
       </Ecctrl>
 
       <StateProbe controllerRef={controllerRef} recoverFalls={recoverFalls}
         respawn={recoverToStart && Object.hasOwn(WORLD_SPAWNS, start) ? WORLD_SPAWNS[start] : SPAWN} />
-      <BodyMotion controllerRef={controllerRef} groupRef={bodyGroupRef} />
     </>
   )
 })

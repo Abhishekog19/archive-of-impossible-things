@@ -4,6 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "blender:explorer": "node scripts/blender/run.cjs explorer",
+    "verify:explorer": "node --test scripts/explorer.test.mjs",
     "prepare:world": "node scripts/prepare-placed-world.mjs",
     "verify:placed-world": "node --test scripts/placed-world.test.mjs",
     "blender:world-finish": "node scripts/blender/run.cjs world-finish",

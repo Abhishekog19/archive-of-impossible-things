@@ -48,7 +48,7 @@ function splitCells(doc) {
       const tri = [indices.getScalar(i), indices.getScalar(i + 1), indices.getScalar(i + 2)]
       let x = 0, z = 0
       for (const index of tri) { positions.getElement(index, point); x += point[0] / 3; z += point[2] / 3 }
-      const key = `${Math.floor(x / 16)}_${Math.floor(z / 16)}`
+      const key = `${Math.floor(x / 24)}_${Math.floor(z / 24)}`
       if (!cells.has(key)) cells.set(key, [])
       cells.get(key).push(...tri)
     }

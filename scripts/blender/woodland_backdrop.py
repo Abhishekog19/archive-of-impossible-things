@@ -31,7 +31,7 @@ groups = {i:[] for i in range(5)}
 for i,(centre,radius) in enumerate(placements):
     zone = max(0,min(4,int(centre[1]/30)+1))
     groups[zone].append(leaf_crown('Backdrop broadleaf sprays',centre,radius,92700+i,
-        360 if max(radius)>3 else 120,leaf_scale=2.1 if max(radius)>3 else 1.5))
+        140 if max(radius)>3 else 60,leaf_scale=3.2 if max(radius)>3 else 2.1))
 exports = []
 for zone,objects in groups.items():
     if not objects: continue

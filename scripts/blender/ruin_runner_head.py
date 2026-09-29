@@ -35,9 +35,9 @@ def build_head(mesh, loft, orb, cord, materials, material):
         mat.node_tree.links.new(nt.outputs['Color'],nm.inputs['Color'])
         mat.node_tree.links.new(nm.outputs['Normal'],bsdf.inputs['Normal'])
     profile = np.array([
-        [1.467,.019,.030,-.008], [1.479,.035,.045,-.004],
-        [1.497,.055,.060,.002], [1.521,.073,.070,.008],
-        [1.548,.080,.079,.010], [1.575,.086,.083,.012],
+        [1.461,.010,.016,.018], [1.467,.022,.028,.008], [1.479,.037,.044,.004],
+        [1.497,.057,.059,.005], [1.521,.072,.070,.008],
+        [1.548,.081,.079,.010], [1.575,.084,.083,.012],
         [1.600,.081,.083,.014], [1.627,.082,.082,.015],
         [1.657,.079,.078,.017], [1.682,.064,.062,.018],
         [1.704,.029,.032,.019], [1.711,.002,.002,.019],
@@ -63,16 +63,23 @@ def build_head(mesh, loft, orb, cord, materials, material):
         x=rx*np.cos(a)
         y=cy+ry*np.sin(a)
         front=np.maximum(0,-np.sin(a))**6
-        relief=(.014*gaussian(x,z,0,1.589,.012,.035)
-            + .025*gaussian(x,z,0,1.558,.012,.012)
+        relief=(.015*gaussian(x,z,0,1.586,.014,.036)
+            + .019*gaussian(x,z,0,1.558,.017,.018)
             + .009*gaussian(x,z,0,1.525,.035,.018)
-            + .010*gaussian(x,z,0,1.487,.029,.016))
+            + .004*gaussian(x,z,0,1.490,.038,.022))
         for s in (-1,1):
-            relief += .011*gaussian(x,z,s*.051,1.572,.024,.021)
-            relief += .009*gaussian(x,z,s*.033,1.622,.025,.012)
-            relief -= .008*gaussian(x,z,s*.035,1.600,.022,.013)
-            relief -= .004*gaussian(x,z,s*.059,1.533,.016,.018)
+            relief += .007*gaussian(x,z,s*.051,1.572,.029,.027)
+            relief += .006*gaussian(x,z,s*.033,1.622,.028,.014)
+            relief -= .0055*gaussian(x,z,s*.035,1.600,.024,.016)
+            relief -= .0015*gaussian(x,z,s*.059,1.533,.021,.022)
             relief += .004*gaussian(x,z,s*.012,1.550,.007,.007)
+            # The superior lid crease belongs to the continuous skin surface.
+            # It fades before either corner instead of tracing an entire ring.
+            u=np.clip((x-s*.034)/.021,-1,1)
+            fade=np.maximum(0,1-u*u)**.70
+            lid_z=1.601+.0016*s*u+.010*fade
+            relief -= .0008*fade*np.exp(-((z-lid_z-.003)/.0011)**2)
+            relief += .0006*fade*np.exp(-((z-lid_z-.001)/.0012)**2)
         return x,y-front*relief,z
 
     # Painted skin variation follows anatomy; small freckles on cheeks and nose.
@@ -115,7 +122,7 @@ def build_head(mesh, loft, orb, cord, materials, material):
     face.node_tree.links.new(nm.outputs['Normal'],bsdf.inputs['Normal'])
     M['face']=face
     M['lid']=material('Eyelid warm skin',(.46,.255,.175),roughness=.7)
-    M['lips']=material('Natural muted lips',(.33,.15,.107),roughness=.64)
+    M['lips']=material('Natural muted lips',(.40,.22,.16),roughness=.64)
     M['crease']=material('Soft facial creases',(.12,.05,.03))
 
     verts=[];uv=[];faces=[]
@@ -137,6 +144,15 @@ def build_head(mesh, loft, orb, cord, materials, material):
         radius=float(profile_value(z,1))
         return float(surface(-math.acos(max(-1,min(1,x/radius))),z)[1])
 
+    eye_width=.021
+
+    def eye_edge(u,side,upper):
+        # Unequal arcs, with a lower tear duct and lifted outer corner. A circle
+        # makes both the aperture and the lid look like an applied plastic ring.
+        fullness=max(0,1-u*u)**.70
+        corner=.0016*side*u
+        return corner+(.0100 if upper else -.0066)*fullness
+
     def eye_surface(name,cx,cz,rx,rz,mat,offset):
         verts=[(cx,front_y(cx,cz)-offset,cz)];faces=[]
         for j in range(1,7):
@@ -144,9 +160,13 @@ def build_head(mesh, loft, orb, cord, materials, material):
             for i in range(49):
                 a=i/48*math.tau
                 x=cx+rx*r*math.cos(a);z=cz+rz*r*math.sin(a)
+                side=1 if cx>0 else -1
+                if mat=='white':
+                    z=cz+eye_edge(math.cos(a),side,math.sin(a)>=0)*r
                 if mat in ('iris','pupil'):
-                    aperture=.0078*math.sqrt(max(0,1-((x-cx)/.019)**2))
-                    z=max(1.601-aperture+.00025,min(1.601+aperture-.00025,z))
+                    u=(x-cx)/eye_width
+                    z=max(1.601+eye_edge(u,side,False)+.00015,
+                        min(1.601+eye_edge(u,side,True)-.00015,z))
                 verts.append((x,front_y(x,z)-offset-.001*(1-r*r),z))
         for i in range(48):faces.append((0,1+i,2+i))
         for j in range(5):
@@ -158,9 +178,9 @@ def build_head(mesh, loft, orb, cord, materials, material):
         cx=s*.034;cz=1.601
         # Fit the visible corneal patch to the sculpted socket. A whole sphere
         # intersects this neutral sculpt; deformation topology is a later gate.
-        eye_surface('Fitted almond eye',cx,cz,.019,.0078,'white',.0012)
-        eye_surface('Hazel iris',cx,cz+.0013,.007,.007,'iris',.0024)
-        eye_surface('Pupil',cx,cz+.0013,.003,.0035,'pupil',.0032)
+        eye_surface('Fitted almond eye',cx,cz,eye_width,.010,'white',.0009)
+        eye_surface('Hazel iris',cx,cz+.001,.0081,.0081,'iris',.0020)
+        eye_surface('Pupil',cx,cz+.001,.0035,.0035,'pupil',.0027)
         # Small directional fibre strokes give the iris depth without a giant
         # anime highlight or painted black outline around the entire eye.
         for k in range(26):
@@ -171,41 +191,53 @@ def build_head(mesh, loft, orb, cord, materials, material):
                 points.append((x,front_y(x,z)-.0032,z))
             cord('Iris radial fibre',points,.00015,'hairlight',1)
         orb('Corneal highlight',(cx-.002,front_y(cx-.002,cz+.002)-.004,cz+.002),(.00065,.0003,.00065),'white',12,8)
-        verts=[];faces=[];uv=[]
-        for row in range(4):
-            t=row/3
-            for i in range(49):
-                a=i/48*math.tau
-                dx=(.019+.006*t)*math.cos(a)
-                dz=(.0078+.006*t)*math.sin(a)
-                xx=cx+dx;zz=cz+dz
-                radius=float(profile_value(zz,1))
-                _,outer,_=surface(-math.acos(max(-1,min(1,xx/radius))),zz)
-                yy=float(outer)-.0012*(1-t)-.0012*math.sin(t*math.pi)
-                verts.append((cx+dx,yy,cz+dz))
-                uv.append(((-math.acos(max(-1,min(1,xx/radius))))%math.tau/math.tau,
-                    (zz-profile[0,0])/(profile[-1,0]-profile[0,0])))
-        for row in range(3):
-            for i in range(48):
-                k=row*49+i;faces.append((k,k+49,k+50,k+1))
-        mesh('Contoured upper and lower eyelid',verts,faces,'face',uv,sub=1)
-        cord('Fine upper eyelash edge',[(cx+.019*math.cos(a),
-            front_y(cx+.019*math.cos(a),cz+.0078*math.sin(a))-.002,
-            cz+.0078*math.sin(a)) for a in np.linspace(.08,math.pi-.08,25)],.00048,'hair')
-        cord('Brow base',[(s*(.015+t*.046),-.075+.025*t*t,1.621+.006*math.sin(t*math.pi)-.004*t)
-            for t in np.linspace(0,1,18)],.0015,'hair')
-        for k in range(40):
-            t=k/39
-            xx=s*(.015+t*.046)
-            zz=1.621+.006*math.sin(t*math.pi)-.004*t
-            yy=-.075+.025*t*t
-            cord('Individual brow hair',[(xx,yy,zz),(xx+s*.003,yy-.001,zz+.0025*(1-t))],.00045,'hair',1)
+        for upper in (True,False):
+            verts=[];faces=[];uv=[]
+            for row in range(6):
+                t=row/5
+                for i in range(49):
+                    u=i/24-1
+                    xx=cx+u*(eye_width+.005*t)
+                    edge=eye_edge(u,s,upper)
+                    zz=cz+edge+(1 if upper else -1)*.005*t*max(0,1-u*u)**.5
+                    radius=float(profile_value(zz,1))
+                    # Flush outside edge and restrained waterline thickness.
+                    yy=front_y(xx,zz)-.0008*(1-t)**2
+                    verts.append((xx,yy,zz))
+                    uv.append(((-math.acos(max(-1,min(1,xx/radius))))%math.tau/math.tau,
+                        (zz-profile[0,0])/(profile[-1,0]-profile[0,0])))
+            for row in range(5):
+                for i in range(48):
+                    k=row*49+i;faces.append((k,k+49,k+50,k+1))
+            mesh('Upper lid transition' if upper else 'Lower lid transition',verts,faces,'face',uv)
+        cord('Fine upper lash line',[(cx+u*eye_width,
+            front_y(cx+u*eye_width,cz+eye_edge(u,s,True))-.0013,
+            cz+eye_edge(u,s,True)) for u in np.linspace(-.97,.97,32)],.00035,'hair')
+        # Broad feathered brow silhouette, seated on the actual forehead rather
+        # than a floating constant-depth curve.
+        verts=[];faces=[]
+        for i in range(33):
+            t=i/32;xx=s*(.013+t*.049)
+            zz=1.624+.004*math.sin(t*math.pi)-.004*t
+            width=.0002+.0035*math.sin(math.pi*(.025+.975*t))**.5
+            for dz in (-width,width):
+                verts.append((xx,front_y(xx,zz+dz)-.0006,zz+dz))
+        for i in range(32):
+            k=i*2;faces.append((k,k+2,k+3,k+1))
+        mesh('Tapered feathered brow',verts,faces,'hair')
+        for k in range(26):
+            t=k/25;xx=s*(.013+t*.048)
+            zz=1.624+.004*math.sin(t*math.pi)-.004*t
+            endz=zz+.0025*(1-t)
+            cord('Individual brow hair',[(xx,front_y(xx,zz)-.0009,zz),
+                (xx+s*.002,front_y(xx+s*.002,endz)-.0009,endz)],.00022,'hairlight',1)
         # Ear rim, concha and tragus; no flat dark oval pasted on the ear.
         orb('Ear cartilage',(s*.084,.011,1.570),(.015,.015,.028),'skin',24,16)
-        orb('Ear concha',(s*.093,-.001,1.571),(.007,.006,.015),'lid',20,12)
+        orb('Ear concha',(s*.090,.003,1.571),(.006,.003,.012),'lid',20,12)
         cord('Ear helix',[(s*(.085+.013*math.cos(a)),-.003+.006*math.cos(a),1.572+.026*math.sin(a))
             for a in np.linspace(-1.8,1.8,20)],.0025,'skin')
-        orb('Nostril',(s*.008,-.09,1.551),(.0018,.001,.0012),'crease',16,8)
+        nx=s*.0075;nz=1.548
+        orb('Nostril',(nx,front_y(nx,nz)-.0005,nz),(.0014,.0007,.00065),'crease',16,8)
 
     # Cupid's bow and lips are surfaces with a tapered vermilion border.
     for upper in (True,False):
@@ -213,19 +245,20 @@ def build_head(mesh, loft, orb, cord, materials, material):
         for j in range(4):
             t=j/3
             for i in range(41):
-                x=(i/40-.5)*.052
-                f=max(0,1-(x/.026)**2)
-                seam=1.526+.0017*(abs(x)/.026)**2
-                height=(.0035+.002*math.exp(-((abs(x)-.008)/.004)**2)) if upper else -.006
+                x=(i/40-.5)*.059
+                f=max(0,1-(x/.0295)**2)
+                seam=1.526+.004*(abs(x)/.0295)**2+.0008*x/.0295
+                height=(.002+.0015*math.exp(-((abs(x)-.008)/.004)**2)) if upper else -.004
                 z=seam+height*t*f
-                y=-.073-.007*f-.002*math.sin(t*math.pi)*f
+                y=front_y(x,z)-.0006-.002*math.sin(t*math.pi)*f
                 verts.append((x,y,z))
         for j in range(3):
             for i in range(40):
                 k=j*41+i;faces.append((k,k+1,k+42,k+41))
         mesh('Upper lip cupid bow' if upper else 'Lower lip volume',verts,faces,'lips',sub=1)
-    cord('Mouth separation',[(x,-.0805+.007*(x/.026)**2,1.526+.0017*(x/.026)**2)
-        for x in np.linspace(-.025,.025,30)],.00045,'crease')
+    cord('Mouth separation',[(x,front_y(x,1.526+.004*(x/.0295)**2+.0008*x/.0295)-.001,
+        1.526+.004*(x/.0295)**2+.0008*x/.0295)
+        for x in np.linspace(-.029,.029,30)],.0003,'crease')
 
     # Closed, tapered locks follow cubic curves in a transported local frame.
     # Unlike flat strips, they retain volume from side/back and cannot reveal
@@ -243,10 +276,10 @@ def build_head(mesh, loft, orb, cord, materials, material):
             normal=(p-Vector((0,.017,1.62))).normalized()
             across=tangent.cross(normal).normalized()
             normal=across.cross(tangent).normalized()
-            taper=max(.015,math.sin(math.pi*(.18+.82*t))**.65)
+            taper=max(.008,math.sin(math.pi*(.10+.90*t))**.8)
             for i in range(sides+1):
                 a=i/sides*math.tau
-                ridge=1+.10*math.sin(a*5+phase+t*4)
+                ridge=1+.06*math.sin(a*5+phase+t*4)
                 q=p+across*(math.cos(a)*width*taper)+normal*(math.sin(a)*depth*taper*ridge)
                 verts.append(tuple(q));uv.append((i/sides,t))
         for j in range(segments):
@@ -258,21 +291,36 @@ def build_head(mesh, loft, orb, cord, materials, material):
     loft('Fitted hair mass',[(1.594,.073,.064,0,.023),(1.63,.088,.079,0,.02),
         (1.672,.078,.07,0,.019),(1.705,.045,.044,-.006,.018),
         (1.720,.004,.006,-.009,.018)],'hair',n=36,sub=1)
-    # Deliberately varied direction, length and grouping around an offset part.
+    # Art-directed primary groups. The reference has a raised offset part and
+    # broad swept masses with broken ends, not one evenly spaced comb fringe.
     rng=np.random.default_rng(17)
-    for k in range(27):
-        x=-.075+k/26*.145
-        lift=float(rng.uniform(-.008,.012))
-        lock('Swept volumetric fringe',[(.035+.012*math.sin(k),.015,1.69),
-            (x+.041,-.035,1.737+lift),(x-.027,-.091,1.68+lift),
-            (x-.036,-.084,1.615+float(rng.uniform(-.004,.04)))],
-            float(rng.uniform(.005,.010)),.0045,k+1)
+    groups=[
+        ([(.033,-.019,1.696),(.025,-.058,1.766),(-.047,-.105,1.704),(-.098,-.051,1.670)],.024,.008),
+        ([(.027,-.035,1.701),(.014,-.090,1.747),(-.055,-.105,1.665),(-.087,-.076,1.621)],.021,.007),
+        ([(.026,-.050,1.700),(.009,-.100,1.718),(-.021,-.104,1.651),(-.047,-.078,1.624)],.018,.006),
+        ([(.036,-.042,1.696),(.046,-.090,1.720),(.030,-.104,1.657),(.012,-.085,1.642)],.013,.006),
+        ([(.044,-.022,1.697),(.085,-.057,1.744),(.086,-.080,1.677),(.077,-.063,1.639)],.021,.008),
+        ([(.050,.001,1.696),(.096,-.019,1.720),(.104,-.044,1.665),(.121,-.015,1.643)],.020,.007),
+        ([(.017,.016,1.701),(-.006,-.009,1.757),(-.074,-.037,1.724),(-.118,-.005,1.710)],.025,.009),
+        ([(-.015,.020,1.701),(-.044,.010,1.742),(-.106,-.025,1.692),(-.123,-.020,1.670)],.022,.008),
+        ([(-.055,-.020,1.674),(-.095,-.063,1.689),(-.094,-.066,1.631),(-.107,-.029,1.610)],.018,.007),
+        ([(.065,-.007,1.674),(.099,-.037,1.649),(.081,-.043,1.601),(.088,-.008,1.577)],.017,.006),
+    ]
+    for k,(control,width,depth) in enumerate(groups):
+        lock('Sculpted swept hair group',control,width,depth,k+101)
+        # A few attached sub-locks split each mass near its tip; their roots and
+        # direction follow the primary volume so they cannot float like a comb.
+        for j in (-1,1):
+            shift=j*width*.42
+            fine=[(x+shift,y-.003,z+.0015) for x,y,z in control]
+            fine[-1]=(fine[-1][0]+j*.004,fine[-1][1],fine[-1][2]+j*.006)
+            lock('Attached split hair tip',fine,width*.27,depth*.35,k*2+j+160)
     for k in range(16):
         a=k/16*math.tau
         lock('Broken crown silhouette',[(.048*math.cos(a),.018+.044*math.sin(a),1.679),
-            (.085*math.cos(a+.25),.018+.08*math.sin(a+.25),1.726),
+            (.085*math.cos(a+.25),.018+.08*math.sin(a+.25),1.726+.009*math.sin(k*2)),
             (.108*math.cos(a+.45),.018+.10*math.sin(a+.45),1.698),
-            (.11*math.cos(a+.55),.018+.107*math.sin(a+.55),1.66)],.012,.006,k+30)
+            (.11*math.cos(a+.55),.018+.107*math.sin(a+.55),1.66+.012*math.cos(k*3))],.016,.006,k+30)
     for k in range(24):
         a=k/23*math.pi
         # Side and back arc only; leave the forehead / eyes exposed.

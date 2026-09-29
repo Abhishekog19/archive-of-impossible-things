@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "blender:ruin-runner": "node scripts/blender/run.cjs ruin-runner",
     "blender:explorer": "node scripts/blender/run.cjs explorer",
     "verify:explorer": "node --test scripts/explorer.test.mjs",
     "prepare:world": "node scripts/prepare-placed-world.mjs",

@@ -91,6 +91,17 @@ per-session test requirements and historical next-step dates below.
 
 ## PD08 — Ruin Runner neutral study started September 29
 
+- Latest continuation: replaced raised oval eye rims with asymmetric lid transitions,
+  added a shallow upper-lid crease, reshaped brows/mouth/jaw and softened the nose.
+  Ten authored swept hair groups with attached split tips replace the uniform fringe.
+  The static sculpt still reads simplified; likeness and naturalness remain below
+  the requested quality. PD08 is open; do not promote this study into gameplay.
+- Continuation checks: Blender export/four review renders and production build pass;
+  browser portrait and side silhouette compared with Image 3. Evidence:
+  `.artifacts/ruin-runner/contour-face.png` and `contour-side.png`. Current study:
+  1.742 m including raised hair, 148,424 triangles, 281 parts, 7,215,768 bytes.
+  No runtime JavaScript changed; no new FPS or movement claims. Private source
+  remains ignored/untracked and the unrelated hub Blender edit was preserved.
 - User rejected the first neutral study as cartoon-like/low quality. Second art
   pass rebuilds connected facial contours, sockets/eyelids, lips/ears, skin colour
   and pore detail; replaces flat hair blades with textured volumetric locks, collar
@@ -102,7 +113,7 @@ per-session test requirements and historical next-step dates below.
 - Second-pass checks: Blender export/render, production build and changed viewer
   lint pass. Compared final portrait and full-body browser views with Image 3;
   evidence `.artifacts/ruin-runner/refined-face.png` and `refined-full.png`.
-  Latest study: 1.72 m, 148,368 triangles, 304 separate parts and 7,244,172 bytes.
+  Second-pass checkpoint: 1.72 m, 148,368 triangles, 304 parts and 7,244,172 bytes.
   It is deliberately not integrated into the player; retopology, atlasing and
   consolidation are required. Likeness remains below target despite added detail.
 - Separate Blender source and GLB study now exist, with shaped garment layers,

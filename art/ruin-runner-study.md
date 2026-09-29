@@ -7,6 +7,9 @@ uses `scripts/blender/ruin_runner_head.py` for connected facial relief, fitted e
 patches/lids, lips, skin detail and closed textured hair locks. These eye surfaces
 are a neutral sculpt technique, not production eye/face deformation topology.
 The outfit adds a draped cowl and flat overlapping cloth bindings.
+The latest head pass uses asymmetric upper/lower lids that blend into the face,
+a shallow lid crease and ten authored swept hair groups with attached split tips.
+It addresses the ringed eyes and uniform fringe; natural likeness is still pending.
 
 - Build: `npm run blender:ruin-runner` (installed Blender, isolated runner).
 - Editable source: `art/source/ruin-runner-study.blend`, with individually named

@@ -73,6 +73,20 @@ natural hair grouping and believable garment drape require further art direction
 The study is not accepted, photoreal, rigged or runtime-budget compliant. Continue
 the reference comparison before adding more microdetail or promoting it into gameplay.
 
+Latest continuation removes the raised oval eye rims in favour of asymmetric
+upper/lower transitions and a shallow superior-lid crease. Broader tapered brows,
+a wider subtly asymmetric mouth, rounded chin and softer nose replace the previous
+forms. Ten individually shaped primary hair groups and attached split tips replace
+the repeated comb fringe. These changes improve specific defects, but the face
+still reads as a simplified sculpt; the user's requested naturalness is not achieved.
+
+Alternate-base tooling was checked without changing Blender setup: Blender MCP
+could not reach its add-on. The installed Higgsfield CLI can list the existing
+workspace after network access, but that workspace reports zero credits and none
+is selected. No generation job, purchase, installation or account change was made.
+The procedural study remains an editable checkpoint, not proof that a generated
+or manually sculpted higher-quality base has been obtained.
+
 September 29: neutral-model production started. `npm run blender:ruin-runner`
 creates the separate editable `art/source/ruin-runner-study.blend`, UV-textured
 `public/models/ruin-runner-study.glb` and four local review renders. The development

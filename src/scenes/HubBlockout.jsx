@@ -1,4 +1,4 @@
-import { lazy, useEffect } from 'react'
+import { lazy, useEffect, useMemo } from 'react'
 import { useGLTF } from '@react-three/drei'
 import { useThree } from '@react-three/fiber'
 import { RigidBody } from '@react-three/rapier'
@@ -11,8 +11,30 @@ const ForestPatch = lazy(() => import('./ForestPatch'))
 const ForestApproach = lazy(() => import('./ForestApproach'))
 const PlacedArt = lazy(() => import('./PlacedArt'))
 const CavernStructure = lazy(() => import('./CavernStructure'))
+const StreamedWorld = lazy(() => import('./StreamedWorld'))
 
-export default function HubBlockout({ reference = false, cornerView = false, view = 'reference', legacy = false, waterStudy = false, patch = false }) {
+function PlacedWorldScene({ reference, cornerView, view }) {
+  const camera = useThree(s => s.camera)
+  const pose = useMemo(() => cornerView ? { position: [-8, 5, 1], target: [-8, 1.9, -10] }
+    : view === 'patch' ? { position: [-12, 3.4, -18], target: [-12, 3.4, -33] }
+      : worldViews[view] || worldViews.reference, [cornerView, view])
+  const start = new URLSearchParams(window.location.search).get('start')
+  const anchorZ = reference ? pose.position[2] : start === 'cavern' ? -174 : start === 'patch' ? -20
+    : worldViews[start]?.position[2] || 6
+  useEffect(() => {
+    if (!reference) return
+    camera.position.fromArray(pose.position)
+    camera.lookAt(...pose.target)
+    camera.updateProjectionMatrix()
+  }, [camera, reference, pose])
+  return <StreamedWorld anchorZ={anchorZ} />
+}
+
+export default function HubBlockout(props) {
+  return props.patch ? <PlacedWorldScene {...props} /> : <BlockoutScene {...props} />
+}
+
+function BlockoutScene({ reference = false, cornerView = false, view = 'reference', legacy = false, waterStudy = false, patch = false }) {
   const { nodes } = useGLTF(legacy ? '/models/hub-blockout.glb' : patch ? '/models/world-art-context.glb' : '/models/world-blockout.glb')
   const camera = useThree((s) => s.camera)
   useEffect(() => {

@@ -32,6 +32,8 @@ const initialTier = detectInitialTier()
  * the numbers differ.
  */
 export const useGameStore = create((set, get) => ({
+  // Pause only while the current area's visuals are unavailable; colliders stay resident.
+  worldLoading: false,
   // --- M1 dev HUD ------------------------------------------------------------
 
   // Camera state, so the HUD can prove the §2 numbers rather than assert them.

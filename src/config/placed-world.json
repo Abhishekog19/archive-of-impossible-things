@@ -1,0 +1,115 @@
+{
+  "resident": {
+    "url": "/models/placed/resident.glb",
+    "bytes": 3580540,
+    "trianglesBefore": 231078,
+    "triangles": 140738
+  },
+  "zones": [
+    {
+      "id": "hub",
+      "files": [
+        "hub-art"
+      ],
+      "minZ": -23,
+      "maxZ": 35,
+      "load": 38,
+      "keep": 72,
+      "draw": 58,
+      "url": "/models/placed/hub.glb",
+      "bytes": 4852932,
+      "trianglesBefore": 157220,
+      "triangles": 129084
+    },
+    {
+      "id": "patch",
+      "files": [
+        "forest-patch"
+      ],
+      "minZ": -42,
+      "maxZ": -18,
+      "load": 38,
+      "keep": 68,
+      "draw": 32,
+      "url": "/models/placed/patch.glb",
+      "bytes": 1915604,
+      "trianglesBefore": 81506,
+      "triangles": 81506
+    },
+    {
+      "id": "approach",
+      "files": [
+        "forest-approach"
+      ],
+      "minZ": -68,
+      "maxZ": -38,
+      "load": 38,
+      "keep": 68,
+      "draw": 32,
+      "url": "/models/placed/approach.glb",
+      "bytes": 2942296,
+      "trianglesBefore": 117130,
+      "triangles": 79034
+    },
+    {
+      "id": "canopy",
+      "files": [
+        "forest-canopy"
+      ],
+      "minZ": -100,
+      "maxZ": -63,
+      "load": 38,
+      "keep": 68,
+      "draw": 32,
+      "url": "/models/placed/canopy.glb",
+      "bytes": 2927800,
+      "trianglesBefore": 118181,
+      "triangles": 80409
+    },
+    {
+      "id": "exterior",
+      "files": [
+        "archive-exterior"
+      ],
+      "minZ": -131,
+      "maxZ": -92,
+      "load": 55,
+      "keep": 82,
+      "draw": 62,
+      "url": "/models/placed/exterior.glb",
+      "bytes": 3632696,
+      "trianglesBefore": 98434,
+      "triangles": 77644
+    },
+    {
+      "id": "hall",
+      "files": [
+        "archive-hall"
+      ],
+      "minZ": -144,
+      "maxZ": -113,
+      "load": 32,
+      "keep": 58,
+      "draw": 35,
+      "url": "/models/placed/hall.glb",
+      "bytes": 5120288,
+      "trianglesBefore": 100644,
+      "triangles": 100644
+    },
+    {
+      "id": "cavern",
+      "files": [
+        "cavern-structure"
+      ],
+      "minZ": -225,
+      "maxZ": -141,
+      "load": 32,
+      "keep": 58,
+      "draw": 35,
+      "url": "/models/placed/cavern.glb",
+      "bytes": 876092,
+      "trianglesBefore": 5600,
+      "triangles": 5600
+    }
+  ]
+}

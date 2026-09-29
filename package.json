@@ -4,6 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "prepare:world": "node scripts/prepare-placed-world.mjs",
+    "verify:placed-world": "node --test scripts/placed-world.test.mjs",
+    "blender:world-finish": "node scripts/blender/run.cjs world-finish",
     "blender:forest-canopy": "node scripts/blender/run.cjs forest-canopy",
     "blender:forest-approach": "node scripts/blender/run.cjs forest-approach",
     "blender:patch": "node scripts/blender/run.cjs patch",
@@ -38,6 +41,9 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@gltf-transform/core": "^4.5.0",
+    "@gltf-transform/extensions": "^4.5.0",
+    "@gltf-transform/functions": "^4.5.0",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "@vitejs/plugin-react": "^6.1.0",
@@ -45,6 +51,8 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.4",
     "globals": "^17.11.0",
+    "meshoptimizer": "^1.3.0",
+    "sharp": "^0.35.5",
     "vite": "^8.2.2"
   }
 }

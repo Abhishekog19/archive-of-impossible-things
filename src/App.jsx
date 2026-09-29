@@ -109,6 +109,7 @@ export default function App() {
   const visible = usePageVisible()
   const [webglSupported] = useState(hasWebGL2)
   const settingsOpen = useGameStore((s) => s.settingsOpen)
+  const worldLoading = useGameStore((s) => s.worldLoading)
   // Dev stepping overrides the visibility pause — see store.js.
   const physicsForced = useGameStore((s) => s.physicsForced)
   // The detected/overridden tier and whatever resolution the governor has shed
@@ -152,7 +153,7 @@ export default function App() {
         {!patch && <hemisphereLight layers-mask={WORLD_AND_POOL_LAYERS} args={[PALETTE.sky, PALETTE.ground, greyroom ? 2.2 : 1.6]} />}
 
         <Suspense fallback={null}>
-          <Physics paused={(!visible || settingsOpen) && !physicsForced}>
+          <Physics paused={worldLoading || ((!visible || settingsOpen) && !physicsForced)}>
             {cavernStudy ? <CavernStudy reference={reference} view={view} /> : zones ? <ZoneLoading playerRef={playerRef} reference={reference} view={view} /> : kit ? <AssetKit reference={reference} /> : greyroom ? <GreyRoom playerRef={playerRef} /> : <HubBlockout reference={reference} cornerView={cornerView} view={view} legacy={params.get('scene') === 'hub'} waterStudy={waterStudy} patch={patch} />}
             {!reference && <Player ref={playerRef} recoverFalls={!greyroom} recoverToStart={cavernStudy} cornerStart={!kit && !zones && !waterStudy && !cavernStudy && cornerStart} start={cavernStudy ? 'cavern' : greyroom || kit || zones ? undefined : params.get('start') || (waterStudy ? 'cavern' : undefined)} />}
             {!reference && <FollowCamera bodyRef={playerRef} />}

@@ -39,8 +39,7 @@ function shorelineLayer(shader) {
   `)
 }
 
-export default function CavernStructure() {
-  const { nodes } = useGLTF('/models/cavern-structure.glb')
+export function CavernSurfaces({ nodes, collision = true }) {
   const gl = useThree((s) => s.gl)
   const tier = useGameStore((s) => s.tier)
   const material = useMemo(() => {
@@ -60,8 +59,13 @@ export default function CavernStructure() {
   return <>
     <mesh name="CavernStructure_Rock" layers-mask={WORLD_AND_POOL_LAYERS} geometry={nodes.CavernStructure_Rock.geometry} material={material} />
     <CavernLight openingGeometry={nodes.Cavern_Oculus.geometry} />
-    <RigidBody type="fixed" colliders="trimesh" includeInvisible>
+    {collision && <RigidBody type="fixed" colliders="trimesh" includeInvisible>
       <mesh geometry={nodes.CavernStructure_Collision.geometry} visible={false} />
-    </RigidBody>
+    </RigidBody>}
   </>
+}
+
+export default function CavernStructure() {
+  const { nodes } = useGLTF('/models/cavern-structure.glb')
+  return <CavernSurfaces nodes={nodes} />
 }

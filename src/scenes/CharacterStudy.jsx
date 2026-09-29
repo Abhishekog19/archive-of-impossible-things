@@ -1,4 +1,4 @@
-import { Suspense, useLayoutEffect, useRef, useState } from 'react'
+import { Suspense, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { Canvas, useThree } from '@react-three/fiber'
 import { OrbitControls, useGLTF, Html } from '@react-three/drei'
 
@@ -6,12 +6,19 @@ const VIEWS = {
   Front: { position: [0, .94, 4], target: [0, .88, 0], zoom: 290 },
   Side: { position: [4, .94, 0], target: [0, .88, 0], zoom: 290 },
   Back: { position: [0, .94, -4], target: [0, .88, 0], zoom: 290 },
-  Face: { position: [.22, 1.62, 3], target: [0, 1.58, 0], zoom: 1150 },
+  Face: { position: [.22, 1.62, 3], target: [0, 1.60, 0], zoom: 1450 },
 }
 
 function StudyModel() {
   const { scene } = useGLTF('/models/ruin-runner-study.glb')
-  return <primitive object={scene} dispose={null} />
+  const model = useMemo(() => {
+    const copy = scene.clone(true)
+    // Grounding shadow only: the small head cannot be judged through coarse
+    // directional shadow-map self-shadow bands. Surface lighting stays live.
+    copy.traverse(node => { if (node.isMesh) { node.castShadow = true; node.receiveShadow = false } })
+    return copy
+  }, [scene])
+  return <primitive object={model} dispose={null} />
 }
 
 function ReviewCamera({ view }) {
@@ -47,15 +54,23 @@ export default function CharacterStudy() {
     <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', flex: 1, minHeight: 0 }}>
       <figure style={{ margin: 0, minHeight: 0, display: 'flex', flexDirection: 'column', background: '#ddd9d0' }}>
         <figcaption style={{ padding: '8px 16px', color: '#35362e', fontSize: 13 }}>Selected reference · Image 3</figcaption>
-        <img src="/concept/character/ruin-runner-approved.png" alt="Approved Ruin Runner front, side and back concept" style={{ width: '100%', flex: 1, minHeight: 0, objectFit: 'contain' }} />
+        {view === 'Face' ? <svg viewBox="855 23 245 315" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Selected reference face close-up" style={{ width: '100%', flex: 1, minHeight: 0, overflow: 'hidden' }}>
+          <image href="/concept/character/ruin-runner-approved.png" width="1122" height="1402" />
+        </svg> : <img src="/concept/character/ruin-runner-approved.png" alt="Approved Ruin Runner front, side and back concept" style={{ width: '100%', flex: 1, minHeight: 0, objectFit: 'contain' }} />}
       </figure>
       <section aria-label="Interactive character study" style={{ minWidth: 0, minHeight: 0 }}>
-        <Canvas orthographic frameloop="demand" dpr={[1, 1.5]} camera={{ position: [0, .94, 4], zoom: 290, near: .01, far: 30 }}>
+        <Canvas shadows orthographic frameloop="demand" dpr={[1, 1.5]} camera={{ position: [0, .94, 4], zoom: 290, near: .01, far: 30 }}>
           <color attach="background" args={['#a5a093']} />
-          <hemisphereLight args={['#fff3de', '#67634e', 1.8]} />
-          <directionalLight position={[-3, 4, 4]} color="#fff0d8" intensity={2.4} />
+          <hemisphereLight args={['#fff3de', '#67634e', 1.2]} />
+          <directionalLight position={[-3, 4, 4]} color="#fff0d8" intensity={2.4} castShadow
+            shadow-mapSize={[1024, 1024]} shadow-camera-left={-1.5} shadow-camera-right={1.5}
+            shadow-camera-top={2.2} shadow-camera-bottom={-1} shadow-camera-near={.1} shadow-camera-far={12} shadow-normalBias={.001} />
           <directionalLight position={[3, 2, -2]} color="#dbe6f0" intensity={1.5} />
+          <directionalLight position={[2, 1.5, 4]} color="#f2e5d6" intensity={.8} />
           <Suspense fallback={<Html center>Loading model…</Html>}><StudyModel /></Suspense>
+          <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow position={[0, -.004, 0]}>
+            <planeGeometry args={[20, 20]} /><meshStandardMaterial color="#a5a093" roughness={1} />
+          </mesh>
           <ReviewCamera view={view} />
         </Canvas>
       </section>

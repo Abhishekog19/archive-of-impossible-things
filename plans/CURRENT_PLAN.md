@@ -1,15 +1,19 @@
 # Current plan — Archive of Impossible Things
 
-Status (revised September 28, latest user scope): environment REF4/5/6/7/8/10
+Status (revised September 29, latest user scope): environment REF4/5/6/7/8/10
 PLUS finished character art/animation, third-person movement, Rapier/ecctrl physics
 and camera polish. Only game insertion and phone controls remain after handoff.
 Use numbered production packages PD01–PD11 in ../environment-september-plan.md;
-target 2–3 packages per active working day. PD01–PD04 production is complete.
-PD05 materials/water and PD06 lighting/fog are implemented; browser review awaits explicit
-authorization after automatic approval review rejected local preview access.
-Five full packages plus those reviews remain: approximately 2–3 active working days, with
+target 2–3 packages per active working day. PD01–PD08 production is implemented.
+PD07 export/loading and PD08 character/animation production are complete; final
+visual acceptance and movement/camera polish remain PD09–PD11.
+Explicit local-preview permission was received September 28 and six reference
+views plus cavern player-height were reviewed. Connected transition review and
+the recorded art-quality corrections remain open. Three full packages plus these
+remaining checks/corrections remain:
+approximately 1–2 active working days, with
 1–2 days contingency. PD04's final shoreline comparison was closed using the
-user-supplied screenshot; no new automated browser verification is claimed.
+user-supplied screenshot; PD07/08 browser evidence is recorded below.
 Older calendar forecasts and character/physics deferrals below are historical.
 No automatic sessions, fixed calendar promise or invented days-saved claim.
 Phase A (September 12–15) production and bounded route review are complete.
@@ -80,8 +84,90 @@ per-session test requirements and historical next-step dates below.
 - Completed: PD02 exterior finish on September 27.
 - Completed: PD03 archive hall on September 27.
 - Completed: PD04 cavern structure and final shoreline screenshot comparison.
-- PD05/PD06 implemented September 28; focused browser comparisons pending. Next full
-  package: PD07 six-area consistency and optimization. No gameplay or phone controls.
+- PD07 finished September 29 with lighter resident crowns and 24 m mesh cells.
+- PD08 character and animation production complete September 29. Next: PD09
+  desktop movement/physics. No gameplay or phone-control redesign.
+
+## PD08 — explorer character and animation production complete
+
+- Authored an original stylized explorer in Blender: sage coat, warm woven scarf,
+  shirt, belt, satchel, boots, face and hair. One skinned mesh/material, 17 bones,
+  4,644 triangles, 537,556-byte GLB; no third-party assets or image textures.
+  Editable source and deterministic regeneration are retained; provenance and
+  conventions live in art/explorer.md and src/config/explorer.json.
+- Six authored in-place clips: idle, walk, run, jump, fall and landing. R3F clones
+  the skeleton, crossfades clips from actual controller speed/grounding/vertical
+  speed, debounces brief missed ground rays and holds a short landing recovery.
+  Walk/run cadence follows speed within bounds. Skeleton/mixer resources clean up.
+- Replaced the capsule presentation and its procedural bob; physics capsule,
+  spring height, walking/running speeds and camera dimensions are unchanged.
+  The visual feet sit at the existing grounded offset. Initial yaw faces the route.
+  The model participates in the bounded cavern reflection.
+- Four focused tests pass: locomotion/jump/landing transitions, speed hysteresis,
+  exported clips/skin weights/height and finite deformed vertices across every clip
+  with no root travel. World pipeline's five tests also pass after the final export;
+  final build (631 modules) and changed-JavaScript lint pass.
+- Browser comparison checks character scale/palette against the world (the supplied
+  concepts contain no figure), front/back clothing, walk/run/airborne poses in the
+  local clip preview, and cavern readability. Evidence: .artifacts/pd08-explorer-first,
+  pd08-walk, pd08-run, pd08-jump-pose and pd08-cavern.jpg. Clip preview does not prove
+  full walking/jumping acceptance. Live motion feel and the complete connected route
+  are PD09; foot planting/stride and camera occlusion are PD10. Final art acceptance
+  is PD11. No phone controls or games were added.
+
+## PD07 — consistency and staged loading built; focused visual review recorded
+
+- Replaced the plain distant tower with coursed limestone, recessed openings,
+  buttresses and a damaged belfry; added broken perimeter masonry seated on the
+  existing outer ridges. New editable world-finish source adds 4,440 triangles.
+  Smoothed the continuous cavern shell and removed per-face colour bands while
+  retaining the separate hard fracture plates. Collision coordinates are unchanged.
+- Added one shared two-metre stone-grain layer to outdoor paving/ruins, preserving
+  their authored diffuse lighting. This improves close surface breakup; it does
+  not replace silhouette work or establish final texture quality without review.
+- Production patch now loads seven nearby visual packages separately. Terrain,
+  distant woodland crowns and all collision remain resident; required-area loading pauses physics, with a
+  retry message on failure. Abandoned requests abort; evicted parses dispose their
+  geometry, textures and instancing buffers. Nearby areas prefetch after startup.
+- Reproducible prepare:world derives Meshopt GLBs, WebP colour maps at unchanged
+  resolution, simplified terrain/wood and 24 m static mesh cells for frustum culling.
+  Source Blender exports stay editable; stone/foliage/collision positions are not
+  simplified. WebP reduces transfer size, not decoded GPU texture memory.
+- Final derived GLBs total 24,231,668 bytes. Initial resident+hub+detail assets total
+  6,927,542 bytes; PD08's explorer brings that to 7,465,098 bytes, excluding
+  JavaScript/physics and subsequent prefetch.
+  This is an asset-size calculation, not measured network transfer or proof of the
+  complete 8 MB initial-load target. Visible triangle/draw-call/FPS acceptance and
+  Vercel parity remain unverified; next weekly technical review stays October 3.
+- Production build and changed-JavaScript lint pass. Five focused tests pass:
+  streaming selection/hysteresis, exact canonical collision coordinates, compressed
+  package decoding/content, instance placement/disposal and failed/aborted loading.
+  These checks do not establish browser shader compilation or visual/movement quality.
+- User explicitly authorized the local in-app preview. Reviewed all six fixed
+  reference views and cavern player-height. Evidence: .artifacts/pd07-{hub,forest,
+  canopy,exterior,hall,cavern}.jpg and the hub-final/cavern-final/cavern-player images.
+  The comparison exposed three immediate mismatches: bare distant trunks, abrupt
+  whole-area visibility cutoffs and excessive cavern grain. Corrected these with
+  resident distant crowns, native mesh-cell culling while an area remains loaded,
+  and lower colour/normal texture contrast. Increased the soft shaft opacity to .22.
+  Rechecked corrected hub/cavern views; water reflection and stone shaders render.
+- Forest entry and cavern shore report grounded; short forward input moves the
+  forest player. This is not a full transition traversal. Review descent/return
+  atmosphere, loading/eviction transitions and failure recovery in the connected
+  route before final acceptance. No new sustained FPS run was performed.
+- Remaining reference gaps: sparse hub shoulder planting and faceted banks;
+  forest bark softness/canopy massing; regular archive masonry/root silhouettes;
+  cavern plate edges and broad value separation. These are explicit art-quality
+  corrections, not a claim of an 80% match. Do not lose them during character work.
+- September 29: reduced distant crown geometry from 88,080 to 36,920 triangles with
+  larger grouped leaves, then increased cell width from 16 to 24 m to reduce draw
+  overhead. The hub player screenshot shows preserved distant crowns; its incidental
+  counter reads 133 draws / 237,474 triangles including the character. That single
+  view is not a hardware/performance pass. Asset/collision tests pass after regeneration.
+- PD07 production and initial comparison are complete; final visual/technical
+  acceptance remains open. Three full packages PD09–PD11 plus the recorded corrections
+  remain after PD08. Preserve the user's hub-blockout.blend edit. PD05/06 permission notes below
+  are historical; local-preview authorization is now granted.
 
 ## PD06 — cavern light/fog built; visual checkpoint pending
 

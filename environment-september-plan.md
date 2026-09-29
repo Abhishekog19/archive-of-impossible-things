@@ -1,6 +1,6 @@
 # Connected environment production plan
 
-Revised September 28, 2026 (Asia/Calcutta): numbered production days; target two to
+Revised September 29, 2026 (Asia/Calcutta): numbered production days; target two to
 three production packages per working day. Filename retained for existing links.
 This replaces the September 30 hub-only scope and future phase dates. Completed
 production evidence remains in `plans/CURRENT_PLAN.md`.
@@ -41,8 +41,8 @@ calendar promise are superseded. Do not multiply the old schedule by three again
 or claim a package complete simply because its time allowance has elapsed.
 
 There are 11 packages including the current former-September-27 package. After
-PD06 implementation, five full packages plus PD05/06 visual reviews remain:
-a planning range of **2–3 further active working days**
+PD08 implementation, three full packages plus recorded visual/transition corrections remain:
+a planning range of **1–2 further active working days**
 at 2–3 packages per day. Allow 1–2 additional working days if hero art, animation,
 baking or technical fixes overrun. This is a throughput goal, not measured speed.
 Sessions begin on the user's request; no unattended work or automation is implied.
@@ -53,16 +53,16 @@ Sessions begin on the user's request; no unattended work or automation is implie
 | PD02 — complete Sep 27 | REF7 damaged silhouette, courtyard paving/rubble, facade moss/ivy, tree/root refinement and placed lighting. Shared REF7/8 surface helpers begun; hall art follows in PD03. Build, reference/player comparison and walking connection pass. |
 | PD03 — complete Sep 27 | REF8 hall arcades, fluted columns, broken roof, planted paving, ivy and rear windows/portal. Exterior–hall–reserved space–descent connection, build/lint and reference/player review pass. |
 | PD04 — complete | REF10 chamber, fractured walls, shoreline, overhead opening and descent built; final build/lint and full shore-loop connection pass. Final shoreline comparison closed using the user's screenshot; automated browser access remains restricted. Structural checkpoint only; materials/light and final art acceptance remain ahead. |
-| PD05 — built, visual review pending | Metre-scaled 1024px stone colour/normal/roughness, wet shoreline layering and connected reflective water. Build/lint and unchanged collision check pass. Explicit local-preview authorization is required after automatic approval rejection; prove sharpness, shader correctness and water/shore appearance before closing. |
-| PD06 — built, visual review pending | Authored oculus, bounded overhead lighting, soft shaft, connected descent fog/ambient transition and aligned opening reflection. Build/lint, transition check and unchanged collision check pass; combined PD05/06 reference/player review still awaits local-browser permission. |
-| PD07 | Finish all connections and six-area material/light consistency; loading/culling, GLB/texture/geometry optimization. Resolve recorded visual and weekly technical findings. |
-| PD08 | Replace capsule presentation with a coherent stylized character, rig and idle/walk/run/jump/land animation states; Blender/GLB/R3F pipeline. Use an authored simple explorer or suitably licensed rig, with provenance retained. |
+| PD05 — built, initial review recorded | Metre-scaled 1024px stone colour/normal/roughness, wet shoreline layering and connected reflective water. Build/lint and unchanged collision check pass. PD07's authorized reference/player review confirms rendering; excessive stone grain corrected. Final material acceptance remains open. |
+| PD06 — built, initial review recorded | Authored oculus, bounded overhead lighting, soft shaft, connected descent fog/ambient transition and aligned opening reflection. Build/lint and pure transition check pass. PD07 reviews reference/player appearance; physical descent/return comparison remains open. |
+| PD07 — implemented and initially reviewed | Shared outdoor stone detail, articulated landmark/perimeter ruins and smoother cavern shell; seven streamed visual packages, resident collision/backdrop, mesh cells and optimized GLBs/textures. Build/lint and five focused tests pass. Six-area screenshots reviewed; three immediate visual corrections made. Recorded art gaps, connected transition checks and technical budgets remain open. |
+| PD08 — production complete Sep 29 | Original 1.70 m explorer, coat/scarf/satchel/boots, 17-bone skin and idle/walk/run/jump/fall/land clips. Runtime crossfades from live controller state; Blender source/provenance retained. Build/lint, four focused character tests and browser pose/readability review pass. Motion feel and final polish follow PD09/10. |
 | PD09 | Finish desktop movement and Rapier/ecctrl physics: acceleration/deceleration, turn response, grounded jumps, steps/slopes, collisions, fall recovery and pause/resume. Verify all six areas and four future game locations are reachable. |
 | PD10 | Character/animation polish, foot placement and grounding, camera smoothing/collision/occlusion, near-wall character visibility, input/settings clarity and transitions. No phone-control redesign or gameplay. |
 | PD11 | Final six-reference review, complete desktop roam, character/physics/camera acceptance, scalable graphics/mobile layout and release. Reuse weekly evidence if unchanged; recheck affected failures. Only game insertion and phone controls remain. |
 
-Suggested working-day batches after closing PD05/06 review: PD07–08; PD09–10; PD11.
-Merge adjacent batches toward three working days only if preceding gates pass. Keep checkpoints visible rather
+Suggested working-day batches: PD09–10 with affected art corrections; PD11 final review.
+Combine the remaining batches only if preceding gates pass. Keep checkpoints visible rather
 than forcing an unfinished package into the next package's completion claim.
 
 ## Daily building and weekly technical review
@@ -132,15 +132,23 @@ wall/passage collision; the 21-waypoint shore/descent route passes, and the user
 screenshot closes the final shoreline comparison. No routine FPS review was repeated.
 Counts, comparison evidence and review limitations are in plans/CURRENT_PLAN.md.
 
-PD05 materials/water and PD06 overhead light/fog are implemented September 28;
-their focused browser visual checkpoints remain pending explicit local-preview
-authorization. Five full packages plus those reviews remain.
-Next: close the combined cavern comparison, then PD07 six-area consistency/optimization.
-PD07 must close remaining hub boundaries/landmark/foliage and material/light gaps,
-reduce the sampled ~566K triangle peak and replace eager ~53.5 MB GLB loading
-with staged placed-art loading. The sampled 59.05 average FPS is not final
-performance acceptance: low-percentile spikes and transfer/geometry budgets remain
-open. Vercel build parity is unverified because the public URL redirects to login.
+PD05 materials/water, PD06 overhead light/fog and PD07 consistency/staged loading
+are implemented September 28. Explicit local-preview permission was received and
+six fixed reference views plus cavern player-height were reviewed. PD08 adds the
+original explorer and six clips on September 29. Three full packages plus recorded
+art/transition corrections remain. Next: PD09 movement/physics, including the
+connected loading/atmosphere route check with the new character.
+PD07 replaces eager placed-art loading with seven visual packages and resident
+collision, adds shared stone detail and landmark/boundary geometry, and smooths the
+cavern crown. Corrected missing distant crowns, whole-area visibility cutoffs and
+overstrong cavern grain after browser comparison. Lighter distant crowns and 24 m
+cells complete the export pass. Derived world GLBs total 24.23 MB; startup hub
+assets including the explorer/detail tile are 7.47 MB, excluding engine/runtime
+and later prefetch. The complete 8 MB target is not yet proven. Counts are calculated file sizes, not browser
+transfer measurements. The earlier ~566K triangle peak, 59.05 average FPS and
+~53.5 MB transfer sample predate the latest area art and are historical evidence.
+Visible geometry, low-percentile spikes and complete initial-load budgets remain
+open until measured in the weekly batch. Vercel build parity is still unverified.
 PD11 requires final six-reference and roaming acceptance, with no art placeholders.
 
 Character art/animation, movement/physics and camera polish are included in PD08–11.

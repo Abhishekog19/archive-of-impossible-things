@@ -397,3 +397,19 @@ The value target is a dark readable foreground, mist-separated far cliff, one
 bright opening and its quiet pool reflection. Browser reference/player review is
 still required before accepting these production settings; this is not a claim
 that the cavern already meets final visual quality. Existing weekly budgets hold.
+
+PD07 reference/player comparison reduces colour/normal grain strength so the
+continuous bedrock reads as broad mineral planes; separate fracture plates retain
+hard edges. The shaft opacity is .22 after the in-browser comparison. Shared outdoor
+stone detail uses the same restrained two-metre tile over existing diffuse bakes.
+Final value separation, plate shapes and the six-area material match remain open.
+
+### Explorer — PD08 character palette override
+
+The original explorer uses matte sage cloth, warm ochre scarf, linen, dark brown
+leather/hair and warm skin. This extends the environment palette for readable
+human clothing/skin, without emissive or futuristic accents. Colour constants,
+metre scale and original-asset provenance live in scripts/blender/explorer.py
+and art/explorer.md. Supplied environment references contain no character;
+evaluate its silhouette, scale and fit in daylight/cavern views. Final stride,
+foot planting and camera polish follow PD09/10.

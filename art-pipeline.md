@@ -136,3 +136,19 @@ and temporary entry gates protect movement while packages load or fail.
 This proves lifecycle behaviour with kit-family packages. Full-world zoning,
 contextual bakes, LOD and sustained hardware acceptance remain later integration
 work; do not treat these test sections as finished environment art.
+
+## Placed-world production packages (PD07)
+
+Run `npm run blender:world-finish` for the landmark/perimeter source and contextual
+terrain export. It reads world-blockout.blend and does not touch hub-blockout.blend.
+After changing any placed Blender export, run `npm run prepare:world`; commit the
+derived public/models/placed GLBs, shared stone-grain texture and placed-world.json
+with the changed source. The runtime production patch uses these derived packages.
+Source GLBs remain available for the older inspection routes.
+
+The derivation keeps resident collision, separates seven visual zones, simplifies
+only terrain/wood, partitions static meshes into cells, and compresses geometry and
+colour-map transfer without reducing texture resolution. Native position precision
+is retained. `npm run verify:placed-world` checks collision identity, package content,
+selection and resource ownership when this pipeline changes. Compare browser
+reference/player views after export; data checks do not prove visual quality.

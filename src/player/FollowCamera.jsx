@@ -62,6 +62,7 @@ export default function FollowCamera({ bodyRef }) {
   // exists to catch — a ref is the sanctioned home for per-frame mutable state.
   const scratchRef = useRef(null)
   const initialised = useRef(false)
+  const lastRecovery = useRef(0)
 
   // --- Yaw input -------------------------------------------------------------
   // Pointer events rather than mouse events, so a touch drag already works.
@@ -140,9 +141,12 @@ export default function FollowCamera({ bodyRef }) {
 
     // Snap on the first frame. Without this the camera flies in from wherever
     // the initial camera prop put it, which looks like a bug on every reload.
-    if (!initialised.current) {
+    const recovery = useGameStore.getState().recoveryCount
+    if (!initialised.current || recovery !== lastRecovery.current ||
+        scratch.smoothedPivot.distanceToSquared(scratch.pivot) > 64) {
       scratch.smoothedPivot.copy(scratch.pivot)
       initialised.current = true
+      lastRecovery.current = recovery
     } else {
       scratch.smoothedPivot.lerp(scratch.pivot, damp(CAMERA.damping, delta))
     }

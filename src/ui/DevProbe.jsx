@@ -248,6 +248,7 @@ export default function DevProbe({ playerRef }) {
 
       /** The player's rigid body, for tests that need it directly. */
       body: () => playerRef?.current?.body ?? null,
+      controller: () => playerRef?.current ?? null,
 
       /**
        * Drop the capsule at a spot, kill its momentum, let it settle.

@@ -21,6 +21,7 @@ import ConnectedAtmosphere from './scenes/ConnectedAtmosphere'
 const AssetKit = lazy(() => import('./scenes/AssetKit'))
 const ZoneLoading = lazy(() => import('./scenes/ZoneLoading'))
 const CavernStudy = lazy(() => import('./scenes/CavernStudy'))
+const MovementReview = import.meta.env.DEV ? lazy(() => import('./ui/MovementReview')) : null
 
 /**
  * Does this browser support WebGL2?
@@ -112,6 +113,7 @@ export default function App() {
   const worldLoading = useGameStore((s) => s.worldLoading)
   // Dev stepping overrides the visibility pause — see store.js.
   const physicsForced = useGameStore((s) => s.physicsForced)
+  const movementActive = !worldLoading && !settingsOpen && (visible || physicsForced)
   // The detected/overridden tier and whatever resolution the governor has shed
   // past it. Computed here and passed as a prop so <Canvas dpr> is the single
   // authority on resolution -- TierGovernor never calls setDpr imperatively.
@@ -153,9 +155,9 @@ export default function App() {
         {!patch && <hemisphereLight layers-mask={WORLD_AND_POOL_LAYERS} args={[PALETTE.sky, PALETTE.ground, greyroom ? 2.2 : 1.6]} />}
 
         <Suspense fallback={null}>
-          <Physics paused={worldLoading || ((!visible || settingsOpen) && !physicsForced)}>
+          <Physics paused={!movementActive}>
             {cavernStudy ? <CavernStudy reference={reference} view={view} /> : zones ? <ZoneLoading playerRef={playerRef} reference={reference} view={view} /> : kit ? <AssetKit reference={reference} /> : greyroom ? <GreyRoom playerRef={playerRef} /> : <HubBlockout reference={reference} cornerView={cornerView} view={view} legacy={params.get('scene') === 'hub'} waterStudy={waterStudy} patch={patch} />}
-            {!reference && <Player ref={playerRef} recoverFalls={!greyroom} recoverToStart={cavernStudy} cornerStart={!kit && !zones && !waterStudy && !cavernStudy && cornerStart} start={cavernStudy ? 'cavern' : greyroom || kit || zones ? undefined : params.get('start') || (waterStudy ? 'cavern' : undefined)} />}
+            {!reference && <Player ref={playerRef} active={movementActive} recoverFalls={!greyroom} recoverToStart={cavernStudy} cornerStart={!kit && !zones && !waterStudy && !cavernStudy && cornerStart} start={cavernStudy ? 'cavern' : greyroom || kit || zones ? undefined : params.get('start') || (waterStudy ? 'cavern' : undefined)} />}
             {!reference && <FollowCamera bodyRef={playerRef} />}
             {/* Dev-only scene handle for stepping the loop and running the M1
                 audit. Inside <Physics> because it raycasts against the same
@@ -171,6 +173,8 @@ export default function App() {
       {!reference && <DevHud hub={!greyroom} label={cavernStudy ? 'Phase B · cavern light study' : waterStudy ? 'Phase B · water-only study' : zones ? 'Phase B · zone loading' : kit ? 'Phase B · asset preview' : undefined} />}
       {!reference && <MobileControls />}
       {!reference && <Settings />}
+      {import.meta.env.DEV && params.get('movement-review') === '1' &&
+        <Suspense fallback={null}><MovementReview /></Suspense>}
     </>
   )
 }

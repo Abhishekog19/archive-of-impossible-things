@@ -7,6 +7,10 @@ uses `scripts/blender/ruin_runner_head.py` for connected facial relief, fitted e
 patches/lids, lips, skin detail and closed textured hair locks. These eye surfaces
 are a neutral sculpt technique, not production eye/face deformation topology.
 The outfit adds a draped cowl and flat overlapping cloth bindings.
+`scripts/blender/ruin_runner_garments.py` replaces the initial cowl and uniform
+tunic with a folded scarf, separate back cape, gathered shirt, three cut tunic
+pieces and open cuffs. Cloth normals/roughness and worn edges export in the GLB.
+These shapes are authored rest poses; no Blender or browser cloth solver is active.
 The latest head pass uses asymmetric upper/lower lids that blend into the face,
 a shallow lid crease and ten authored swept hair groups with attached split tips.
 It addresses the ringed eyes and uniform fringe; natural likeness is still pending.

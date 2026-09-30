@@ -91,6 +91,21 @@ per-session test requirements and historical next-step dates below.
 
 ## PD08 — Ruin Runner neutral study started September 29
 
+- September 30: continued PD08 at the user's clarification (not PD09). Rebuilt the
+  shirt with belt/strap tension folds, three overlapping tunic pieces, open short
+  sleeves and turned cuffs. Replaced the bell collar/poncho with a folded scarf
+  and separate asymmetric back cape. Added restrained woven normals, worn-edge
+  colour and roughness maps. Fixed sleeve-root gaps found in the first render and
+  the exposed rear skull/cape attachment found during browser comparison.
+  Fitted the satchel straps to the new garment surfaces after the side view exposed
+  floating segments from the old fixed-depth path.
+  These are static rest shapes; final likeness, convincing drape, boots/hands,
+  optimization, skinning and animation remain open. Do not call PD08 complete.
+  Blender generation/four renders and production build pass; front/back/side
+  browser comparisons are saved as `.artifacts/ruin-runner/garment-*.png`.
+  Latest counts live in `src/config/ruin-runner-study.json`; this is still an authoring
+  asset requiring consolidation/retopology, not a runtime-budget claim. No runtime
+  JavaScript changed, routine FPS batch run, or character gameplay replacement.
 - Latest continuation: replaced raised oval eye rims with asymmetric lid transitions,
   added a shallow upper-lid crease, reshaped brows/mouth/jaw and softened the nose.
   Ten authored swept hair groups with attached split tips replace the uniform fringe.

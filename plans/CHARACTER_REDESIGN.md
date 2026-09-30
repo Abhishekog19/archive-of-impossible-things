@@ -56,6 +56,18 @@ references, without claiming to reproduce either game's internal implementation.
 
 ## Status and scheduling
 
+September 30 garment pass: `scripts/blender/ruin_runner_garments.py` now authors
+the gathered shirt, three overlapping tunic pieces, uncapped sleeves/turned cuffs,
+folded neck scarf and a separate diagonal back cape. UV textile normal/roughness
+maps and edge abrasion accompany the shaped folds. Browser review exposed sleeve
+root gaps and rear scalp/cape attachment errors; these were corrected. The new
+hair foundation follows the skull surface to prevent the exposed rear crescent.
+Satchel strap meshes now follow the shirt/scarf/cape surfaces through geometric
+projection; the old fixed-depth path visibly floated in the side comparison.
+This is a neutral rest-shape pass, not simulated cloth or a finished character.
+Face likeness/naturalness and garment/boot/hand finish still require acceptance
+before final topology, skinning and locomotion integration.
+
 Latest user correction: the first study was rejected as low quality/cartoon-like.
 Keep Image 3's identity and costume, but pursue more believable anatomy and material
 response. Additional polygons or detail maps are not evidence of matching the reference.

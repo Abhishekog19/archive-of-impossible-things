@@ -1,16 +1,18 @@
 # Current plan — Archive of Impossible Things
 
-Status (revised September 29, latest user scope): environment REF4/5/6/7/8/10
+Status (revised September 30, latest user scope): environment REF4/5/6/7/8/10
 PLUS finished character art/animation, third-person movement, Rapier/ecctrl physics
 and camera polish. Only game insertion and phone controls remain after handoff.
 Use numbered production packages PD01–PD11 in ../environment-september-plan.md;
 target 2–3 packages per active working day where quality permits. PD07 production
-is implemented. PD08 is REOPENED: the user rejected the explorer design and current
-locomotion. Image 3 (Ruin Runner) is the selected replacement reference.
-Follow CHARACTER_REDESIGN.md for the model, reactive clothing and locomotion gates.
+is implemented. PD08 is PARKED by user direction on September 30; its art remains
+unapproved. Image 3 (Ruin Runner) remains the selected replacement reference.
+PD09 desktop movement/physics is implemented and its focused checks pass using
+the existing gameplay explorer. Follow CHARACTER_REDESIGN.md when model and
+reactive-clothing work resumes; this movement pass does not approve character art.
 Explicit local-preview permission was received September 28 and six reference
 views plus cavern player-height were reviewed. Connected transition review and
-the recorded art-quality corrections remain open. PD08 redesign and PD09–PD11
+the recorded art-quality corrections remain open. PD08 redesign and PD10–PD11
 remain; the prior 1–2 active-day estimate is withdrawn pending the new character
 and secondary-motion proof. PD04's final shoreline comparison was closed using the
 user-supplied screenshot; PD07/08 browser evidence is recorded below.
@@ -85,11 +87,41 @@ per-session test requirements and historical next-step dates below.
 - Completed: PD03 archive hall on September 27.
 - Completed: PD04 cavern structure and final shoreline screenshot comparison.
 - PD07 finished September 29 with lighter resident crowns and 24 m mesh cells.
-- PD08 initial character rejected September 29. Next: reference-matched redesign
+- PD08 initial character rejected September 29; redesign parked September 30. Later: reference-matched redesign
   under CHARACTER_REDESIGN.md, alongside targeted locomotion correction. No gameplay
   or phone-control redesign.
 
-## PD08 — Ruin Runner neutral study started September 29
+## PD09 — desktop movement implemented and checked September 30
+
+- User parked PD08 to proceed with PD09. Existing explorer stays in gameplay;
+  the unapproved Ruin Runner study was not changed or promoted.
+- Hold Shift to run; independent physical key bindings; ignore keyboard repeat;
+  120 ms single-use landing jump buffer. Loading, settings, focus loss and recovery
+  clear input. Physics and the controller now share the same pause state.
+- Explicit acceleration/braking, directional rejection and turn damping; movement
+  impulse applied at the body centre. Shape ground detection, 45-degree slope limit,
+  gentler falling gravity and continuous collision detection for the capsule.
+- Reached area checkpoints replace the unconditional return to the hub. Recovery
+  clears velocity, forces and input; the follow camera snaps to the recovered body.
+- Focused browser control results: walk 2.99 m/s; run 5.36 m/s; release Shift
+  returns to 3.13 m/s after half a second; stop distance 0.39 m; reverse velocity
+  2.72 m/s after half a second; jump rise 1.22 m; pause drift 0 m; wall blocks capsule.
+- Uneven 28.57 m road, 8%/25% ramps and 18 cm stairs pass. Connected keyboard-driven
+  traversal reaches REF4/5/6/7/8/10 and all four reserved game locations, without
+  fall recovery during traversal. Intentional cavern fall recovers at (-12, -174).
+  Separate cavern ascent/return and an uphill jump also pass.
+- Five focused input/checkpoint tests, changed-JS lint and production build pass.
+  Development-only `?movement-review=1` provides visible controls for these checks;
+  use with `?scene=greyroom` or `?patch=1`. Excluded from the production bundle.
+- Evidence: `.artifacts/pd09/movement-results.txt`, `cavern-recovery.png` and
+  `return-results.txt`. Player view shows stable grounding; comparison with REF10
+  retains the existing open gaps in rock/material naturalness and lighting depth.
+  This is movement completion, not final art, cloth, foot-planting or user feel approval.
+- Next: PD10 camera/animation polish; final Ruin Runner cloth/rig work still depends
+  on resuming and approving PD08. PD11 acceptance and the October 3 weekly technical
+  batch remain. No phone-control redesign or game insertion in this pass.
+
+## PD08 — Ruin Runner neutral study started September 29 (now parked)
 
 - September 30: continued PD08 at the user's clarification (not PD09). Rebuilt the
   shirt with belt/strap tension folds, three overlapping tunic pieces, open short

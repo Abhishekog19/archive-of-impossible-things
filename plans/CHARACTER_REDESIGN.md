@@ -6,6 +6,10 @@ concept/character/ruin-runner-approved.png. The other two supplied images are
 supporting costume references; do not blend their faces or bark armour into this design.
 The existing explorer is a temporary implementation, not approved final character art.
 
+September 30 user direction: park this redesign and move to PD09. Desktop movement
+was implemented and checked with the existing explorer. Model approval, skinning,
+final animation and reactive clothing remain open; resume these only when requested.
+
 ## Required appearance
 
 - Match the turnaround's youthful stylized face, swept layered dark hair, expressive

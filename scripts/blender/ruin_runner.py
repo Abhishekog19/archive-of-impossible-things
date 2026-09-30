@@ -40,6 +40,11 @@ def material(name, colour, kind=None, roughness=.8):
         dye = .045 * np.sin(u * 14 + np.sin(v * 9)) + .025 * np.cos(v * 27 - u * 11)
         rgb = np.broadcast_to(np.array(colour), (size, size, 3)).copy()
         rgb *= (1 + weave + dye)[..., None]
+        # Quiet edge abrasion and uneven dye coverage, carried in UV space.
+        # Main folds stay in geometry; this only describes the textile surface.
+        edge=np.exp(-((v-.025)/.022)**2)+np.exp(-((v-.975)/.022)**2)
+        abrasion=edge*(.5+.5*np.sin(u*73+np.sin(u*19)))
+        rgb += abrasion[...,None]*np.array([.035,.030,.020])
         if kind == 'olive':
             line = ((v > .065) & (v < .08)) | ((v > .18) & (v < .192))
             repeat = (u * 13) % 1
@@ -55,6 +60,28 @@ def material(name, colour, kind=None, roughness=.8):
         tex = mat.node_tree.nodes.new('ShaderNodeTexImage')
         tex.image = img
         mat.node_tree.links.new(tex.outputs['Color'], bsdf.inputs['Base Color'])
+        if kind in ('linen','olive','leather'):
+            # Tangent normals and roughness export as actual glTF material maps.
+            # Restrained weave avoids the gritty, noisy finish rejected in world art.
+            rgba=np.ones((size,size,4),dtype=np.float32)
+            amplitude=.022 if kind!='leather' else .008
+            rgba[:,:,0]=.5+amplitude*np.sin(u*math.tau*83)*np.cos(v*math.tau*79)
+            rgba[:,:,1]=.5+amplitude*np.cos(u*math.tau*83)*np.sin(v*math.tau*79)
+            rgba[:,:,2]=.999
+            normal=bpy.data.images.new(name+' fibre normals',width=size,height=size)
+            normal.colorspace_settings.name='Non-Color'
+            normal.pixels.foreach_set(rgba.ravel());normal.pack()
+            texn=mat.node_tree.nodes.new('ShaderNodeTexImage');texn.image=normal
+            nm=mat.node_tree.nodes.new('ShaderNodeNormalMap');nm.inputs['Strength'].default_value=.4
+            mat.node_tree.links.new(texn.outputs['Color'],nm.inputs['Color'])
+            mat.node_tree.links.new(nm.outputs['Normal'],bsdf.inputs['Normal'])
+            rough=np.clip(roughness+.035*np.sin(u*12+v*9)-.08*abrasion,.4,.98)
+            rgba[:,:,:3]=rough[...,None]
+            roughmap=bpy.data.images.new(name+' worn roughness',width=size,height=size)
+            roughmap.colorspace_settings.name='Non-Color'
+            roughmap.pixels.foreach_set(rgba.ravel());roughmap.pack()
+            texr=mat.node_tree.nodes.new('ShaderNodeTexImage');texr.image=roughmap
+            mat.node_tree.links.new(texr.outputs['Color'],bsdf.inputs['Roughness'])
     return mat
 
 
@@ -186,43 +213,20 @@ def binding(name, z0, z1, centre, radius, turns, width, mat='wrap', reverse=Fals
     return mesh(name,verts,faces,mat,uv,solid=.0015)
 
 
-# Torso and draped tunic: full sleeves are separate, hems overlap instead of a cone.
-loft('Linen torso with gathered waist', [
-    (.98,.142,.087,0,0),(1.015,.15,.094,0,0),(1.06,.177,.112,0,0),
-    (1.15,.183,.11,0,0),(1.27,.191,.105,0,0),(1.345,.178,.086,0,0),
-    (1.385,.11,.068,0,0),(1.39,.063,.056,0,0)], 'linen', folds=.01)
+# Tailored rest-shape garments remain separate for future skinning and cloth.
+import sys
+sys.path.insert(0, str(Path(__file__).parent))
+from ruin_runner_garments import build_garments
+build_garments(mesh, cord)
 loft('Neck',[(1.36,.047,.043,0,.018),(1.44,.039,.039,0,.018),
     (1.495,.039,.034,0,.020),(1.53,.043,.040,0,.018)],'skin')
 
-# A skirt-like tunic is made from two asymmetric open panels with an overlapping
-# side seam, rippled hanging folds, an actual edge, and a separate under layer.
-for back in (False, True):
-    verts, uv, faces = [], [], []
-    for j in range(9):
-        t=j/8
-        for i in range(25):
-            a=math.pi+i/24*math.pi if not back else i/24*math.pi
-            x=(.176+.059*t)*math.cos(a)
-            y=(.115+.037*t)*math.sin(a)
-            z=1.015-t*(.235+.068*math.cos(a+.4))+.002*t**6*math.sin(i*2.8)
-            y += .012*t*math.sin(i*1.6+t*2)
-            verts.append((x,y,z));uv.append((i/24,1-t))
-    for j in range(8):
-        for i in range(24):
-            k=j*25+i;faces.append((k,k+25,k+26,k+1))
-    mesh('Overlapping tunic '+('back' if back else 'front'),verts,faces,'linen',uv,sub=1,solid=.003)
-
 # Connected facial sculpt and volumetric hair replace the rejected primitive face.
-import sys
-sys.path.insert(0, str(Path(__file__).parent))
 from ruin_runner_head import build_head
 build_head(mesh, loft, orb, cord, M, material)
 
 # Relaxed A-pose allows the sleeve openings, underarms, hands and satchel to read.
 for s,label in [(-1,'L'),(1,'R')]:
-    loft('Short folded sleeve '+label,[(1.19,.064,.065,s*.231,0),
-        (1.21,.071,.072,s*.227,0),(1.26,.075,.079,s*.211,0),
-        (1.33,.063,.07,s*.18,0),(1.35,.042,.054,s*.17,0)],'linen',folds=.007)
     loft('Arm anatomy '+label,[(.924,.032,.026,s*.329,-.012),(.975,.037,.032,s*.32,-.003),
         (1.05,.046,.04,s*.294,0),(1.1,.044,.041,s*.276,0),
         (1.16,.049,.043,s*.254,0),(1.23,.056,.049,s*.235,0)],'skin')
@@ -259,42 +263,6 @@ for s,label in [(-1,'L'),(1,'R')]:
         cord('Crossed boot lace '+label,[(x-.042,-.048,z+.014),(x,-.058,z),
             (x+.042,-.048,z+.014)],.0035,'rope')
 
-# Asymmetric triangular shoulder mantle drapes from collar across one shoulder
-# and falls down the back. Dense enough to preserve folds and later weight rows.
-verts, uv, faces = [], [], []
-for j in range(17):
-    t=j/16
-    for i in range(33):
-        a=i/32*math.tau
-        radius=.067+.17*min(t*3,1)
-        # Back extends farther; front remains a short scarf, clear of belt/strap.
-        drop=.12+.27*(.5+.5*math.sin(a))+.08*math.cos(a)
-        z=1.422-.03*min(t*4,1)-t*drop
-        x=radius*math.cos(a)
-        y=(.06+.067*min(t*4,1))*math.sin(a)
-        y+=.012*t*math.sin(a*9+t*2)
-        z+=.014*t*math.sin(a*7)+.003*t**8*math.sin(a*47)
-        verts.append((x,y,z));uv.append((i/32,1-t))
-for j in range(16):
-    for i in range(32):
-        k=j*33+i;faces.append((k,k+33,k+34,k+1))
-cape=mesh('Separate olive mantle panel',verts,faces,'olive',uv,sub=1,solid=.003)
-cape['secondary_motion'] = 'Pending: pin shoulder rows; weight cape chain after silhouette review'
-verts=[];uv=[];faces=[]
-for j in range(13):
-    t=j/12
-    for i in range(65):
-        a=i/64*math.tau
-        fold=.004*math.sin(a*4+t*math.pi*3)*math.sin(t*math.pi)
-        x=(.064+.074*t+fold)*math.cos(a)
-        y=(.052+.051*t+fold)*math.sin(a)
-        z=1.45-.078*t+.014*math.cos(a+.8)+.018*math.sin(a)*t+.009*math.cos(a*3+.6)*math.sin(t*math.pi)
-        verts.append((x,y,z));uv.append((i/64,.45+t*.55))
-for j in range(12):
-    for i in range(64):
-        k=j*65+i;faces.append((k,k+65,k+66,k+1))
-mesh('Draped folded shoulder cowl',verts,faces,'olive',uv,sub=1,solid=.002)
-
 # Rope coils, knot and hanging ends. Braiding silhouettes kept restrained.
 for j in range(3):
     cord('Rope waist coil',[(.155*math.cos(a),.102*math.sin(a),1.013+j*.013+.006*math.sin(a*2))
@@ -309,10 +277,39 @@ cord('Token spiral',[(.01+.016*t*math.cos(t*math.tau*1.5),-.122,1.018+.016*t*mat
     for t in np.linspace(.1,1,28)],.0015,'rope')
 
 # Strap follows the front/back torso, terminates at a side bag instead of backpack.
-ribbon('Diagonal chest strap',[(-.14,-.103,1.375),(-.08,-.142,1.27),
-    (.04,-.13,1.12),(.15,-.106,.997),(.21,-.054,.94)], [.017]*5,'leather',.002)
-ribbon('Diagonal back strap',[(-.14,.106,1.375),(-.08,.144,1.26),
-    (.04,.14,1.12),(.15,.108,.997),(.21,.055,.94)], [.017]*5,'leather',-.002)
+def fitted_strap(name, anchors, side):
+    # Project the strap onto the authored garment envelope. Fixed Y coordinates
+    # from the old torso left a conspicuous floating arc in the side view.
+    points=[]
+    for first,second in zip(anchors,anchors[1:]):
+        for t in np.linspace(0,1,9,endpoint=False):
+            points.append(tuple((1-t)*a+t*b for a,b in zip(first,second)))
+    points.append(anchors[-1])
+    surfaces=[o for o in parts if o.name.startswith(('Linen shirt','Cut linen',
+        'Folded asymmetric','Separate triangular'))]
+    depsgraph=bpy.context.evaluated_depsgraph_get()
+    evaluated=[o.evaluated_get(depsgraph) for o in surfaces]
+    strap=ribbon(name,points,[.017]*len(points),'leather',.002*side)
+    for vertex in strap.data.vertices:
+        x,y,z=vertex.co
+        hits=[]
+        for obj in evaluated:
+            hit,location,_,_=obj.ray_cast(Vector((x,side,z)),Vector((0,-side,0)))
+            if hit:
+                hits.append(location.y)
+        if hits:
+            fitted=(min(hits) if side<0 else max(hits))+side*.0035
+            # Release toward the satchel below the waist. At the narrow body
+            # edge only one side of a strap can hit; snapping it creates spikes.
+            blend=max(0,min(1,(z-1.01)/.08))
+            blend=blend*blend*(3-2*blend)
+            vertex.co.y=y+(fitted-y)*blend
+    return strap
+
+fitted_strap('Diagonal chest strap',[(-.14,-.103,1.375),(-.08,-.142,1.27),
+    (.04,-.13,1.12),(.15,-.106,.997),(.21,-.054,.94)],-1)
+fitted_strap('Diagonal back strap',[(-.14,.106,1.375),(-.08,.144,1.26),
+    (.04,.14,1.12),(.15,.108,.997),(.21,.055,.94)],1)
 loft('Side satchel body',[(.796,.059,.04,.213,-.007),(.81,.071,.048,.213,-.007),
     (.93,.075,.051,.213,-.007),(.977,.067,.04,.213,-.007)],'leather',n=24)
 ribbon('Side satchel flap',[(.213,.03,.979),(.213,-.045,.975),(.213,-.066,.938),

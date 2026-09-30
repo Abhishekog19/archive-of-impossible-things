@@ -288,9 +288,24 @@ def build_head(mesh, loft, orb, cord, materials, material):
         faces += [tuple(range(sides-1,-1,-1)),tuple(segments*(sides+1)+i for i in range(sides))]
         mesh(name,verts,faces,'hairlight' if seed%7==0 else 'hair',uv)
 
-    loft('Fitted hair mass',[(1.594,.073,.064,0,.023),(1.63,.088,.079,0,.02),
-        (1.672,.078,.07,0,.019),(1.705,.045,.044,-.006,.018),
-        (1.720,.004,.006,-.009,.018)],'hair',n=36,sub=1)
+    # Fit the cap to the skull itself. The old independent loft passed inside
+    # the occiput and exposed a bald crescent in the rear three-quarter view.
+    verts=[];faces=[];uv=[]
+    for j in range(25):
+        t=j/24
+        for i in range(73):
+            a=i/72*math.tau
+            front=max(0,-math.sin(a));back=max(0,math.sin(a))
+            hairline=1.605+.048*front-.040*back
+            z=hairline+(1.715-hairline)*t
+            rx=float(profile_value(z,1))+.004
+            ry=float(profile_value(z,2))+.004
+            cy=float(profile_value(z,3))
+            verts.append((rx*math.cos(a),cy+ry*math.sin(a),z));uv.append((i/72,t))
+    for j in range(24):
+        for i in range(72):
+            k=j*73+i;faces.append((k,k+1,k+74,k+73))
+    mesh('Skull fitted hair foundation',verts,faces,'hair',uv)
     # Art-directed primary groups. The reference has a raised offset part and
     # broad swept masses with broken ends, not one evenly spaced comb fringe.
     rng=np.random.default_rng(17)

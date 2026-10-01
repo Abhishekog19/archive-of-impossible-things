@@ -15,6 +15,10 @@ gameplay explorer: camera/animation polish, ground-contact foot placement and
 reactive clothing/accessories. PD08 character art is still parked and unapproved;
 retargeting and visual acceptance on its eventual replacement rig remain required.
 The parked PD08 study was not changed or promoted.
+PD11 is IN PROGRESS: default connected-world entry, clean player UI and boot/error
+handling are implemented. The six-reference review is recorded in
+[PD11 acceptance](PD11_ACCEPTANCE.md); environment-art gaps and parked PD08 prevent
+final delivery approval. Reuse valid PD09/10 checks; weekly technical work stays October 3.
 Explicit local-preview permission was received September 28 and six reference
 views plus cavern player-height were reviewed. Connected transition review and
 the recorded art-quality corrections remain open. PD08 redesign and PD11

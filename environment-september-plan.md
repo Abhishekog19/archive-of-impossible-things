@@ -1,6 +1,6 @@
 # Connected environment production plan
 
-Revised September 30, 2026 (Asia/Calcutta): numbered production days; target two to
+Revised October 1, 2026 (Asia/Calcutta): numbered production days; target two to
 three production packages per working day. Filename retained for existing links.
 This replaces the September 30 hub-only scope and future phase dates. Completed
 production evidence remains in `plans/CURRENT_PLAN.md`.
@@ -60,11 +60,12 @@ Sessions begin on the user's request; no unattended work or automation is implie
 | PD07 — implemented and initially reviewed | Shared outdoor stone detail, articulated landmark/perimeter ruins and smoother cavern shell; seven streamed visual packages, resident collision/backdrop, mesh cells and optimized GLBs/textures. Build/lint and five focused tests pass. Six-area screenshots reviewed; three immediate visual corrections made. Recorded art gaps, connected transition checks and technical budgets remain open. |
 | PD08 — parked Sep 30, unapproved | Replace rejected prototype with approved Image 3 Ruin Runner design: face/hair, natural proportions, layered tunic, asymmetric shoulder cloth, side satchel, rope ties and wraps. Compare front/side/back before detailed skinning and animation. Existing passing export tests do not establish design acceptance. |
 | PD09 — implemented and checked Sep 30 | Hold-to-run and buffered jump input, acceleration/braking/turn response, shape grounding, gentler falls, capsule CCD, area recovery and shared pause state. Focused controls, uneven road/ramps/stairs, six-area/four-location connected walk, cavern return and recovery pass. Build/lint and five focused tests pass. Final animation, art and user feel approval remain. |
-| PD10 | Reactive cape/scarf, hems, hair/rope and satchel with inertia, settling and body collision constraints; foot planting, animation/camera smoothing, occlusion and near-wall visibility. Review run/stop/turn/jump/land and pause/respawn. No phone-control redesign or gameplay. |
+| PD10 — partial Oct 1 | Camera sphere sweep, damped recovery, near-wall character fade, gait phase/cadence smoothing and pause/recovery animation are implemented and checked. Remaining: foot planting and final stride/turn tuning; reactive cape/scarf, hems, hair/rope and satchel with inertia, settling and body constraints on the approved rig. Clothing depends on parked PD08. No phone-control redesign or gameplay. |
 | PD11 | Final six-reference review, complete desktop roam, character/physics/camera acceptance, scalable graphics/mobile layout and release. Reuse weekly evidence if unchanged; recheck affected failures. Only game insertion and phone controls remain. |
 
 Current direction (September 30): PD08 is parked; PD09 is implemented and checked
-using the existing gameplay explorer. Next is PD10 camera/animation polish.
+using the existing gameplay explorer. PD10 camera/animation polish is checked;
+ground-contact foot planting, final rig tuning and secondary motion remain.
 Final replacement rig and clothing depend on resuming PD08 model/design proof;
 PD11 remains the final acceptance gate.
 Combine the remaining batches only if preceding gates pass. Keep checkpoints visible rather

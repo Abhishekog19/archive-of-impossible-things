@@ -1,6 +1,6 @@
 # Current plan — Archive of Impossible Things
 
-Status (revised September 30, latest user scope): environment REF4/5/6/7/8/10
+Status (revised October 1, latest user scope): environment REF4/5/6/7/8/10
 PLUS finished character art/animation, third-person movement, Rapier/ecctrl physics
 and camera polish. Only game insertion and phone controls remain after handoff.
 Use numbered production packages PD01–PD11 in ../environment-september-plan.md;
@@ -10,6 +10,9 @@ unapproved. Image 3 (Ruin Runner) remains the selected replacement reference.
 PD09 desktop movement/physics is implemented and its focused checks pass using
 the existing gameplay explorer. Follow CHARACTER_REDESIGN.md when model and
 reactive-clothing work resumes; this movement pass does not approve character art.
+PD10 camera/animation polish is implemented and checked October 1. The package
+remains PARTIAL: ground-contact foot planting and the final rig/secondary clothing
+motion are not complete. The parked PD08 study was not changed or promoted.
 Explicit local-preview permission was received September 28 and six reference
 views plus cavern player-height were reviewed. Connected transition review and
 the recorded art-quality corrections remain open. PD08 redesign and PD10–PD11
@@ -90,6 +93,34 @@ per-session test requirements and historical next-step dates below.
 - PD08 initial character rejected September 29; redesign parked September 30. Later: reference-matched redesign
   under CHARACTER_REDESIGN.md, alongside targeted locomotion correction. No gameplay
   or phone-control redesign.
+
+## PD10 — camera/animation pass October 1; package remains partial
+
+- Swept near-plane sphere replaces the centre-only camera ray; a separate short
+  sweep keeps the lagging pivot out of walls. Immediate pull-in and damped outward
+  recovery preserve the existing 4 m follow distance, FOV and shallow framing.
+- Close-camera dither fade on independently cloned character materials prevents
+  the body filling the lens at a wall. Ordinary views remain opaque. No extra
+  geometry, asset exports, postprocessing passes or character-design changes.
+- Walk/run handoffs retain cycle phase and cadence is smoothed with speed. Braking
+  no longer enforces a minimum walking cadence. Minor ground misses and initial
+  spawning avoid unnecessary landing crouches; recovery resets the pose and timers.
+- Animator and camera pause together. Fixed the development remount failure found
+  during review by creating fresh mixer bindings during effect setup; a dedicated
+  cleanup/remount regression test covers it.
+- Ten focused tests and changed-JS lint pass; production build passes. Browser
+  checks pass for open framing, Walk → Run → Idle, pause, near-wall fade, outward
+  camera recovery and respawn pose. Near-wall distance was 0.18 m with character
+  coverage 0; return restored 4 m with a largest outward step of 0.15 m in that run.
+- Evidence: `.artifacts/pd10/presentation-results.txt`, `presentation-check.png`,
+  `hub-player.png`. Player-view comparison with REF4 preserves shallow framing and
+  path readability. The existing simplified character and environment-art gaps
+  remain; this pass does not claim reference-level character quality.
+- Remaining PD10: ground-contact foot planting, final stride/turn tuning on the
+  approved rig, and reactive cape/scarf/hems/hair/rope/satchel with body constraints.
+  Final rig and clothing depend on resuming parked PD08. Keep PD10 partial and PD11
+  pending. October 3 remains the next weekly technical batch; no FPS/mobile matrix
+  or game/phone-control work was added here.
 
 ## PD09 — desktop movement implemented and checked September 30
 

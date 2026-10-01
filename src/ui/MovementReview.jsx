@@ -15,7 +15,11 @@ export default function MovementReview() {
 
   async function run(kind) {
     const probe = window.__M1
-    if (!probe?.body()) return
+    if (!probe?.body()) {
+      setResults([{ name: 'Scene readiness', pass: false,
+        detail: probe ? 'Controller body is not ready; reload the scene.' : 'Development scene probe is unavailable.' }])
+      return
+    }
     setBusy(true)
     const rows = []
     const record = (name, pass, detail) => {
@@ -39,7 +43,50 @@ export default function MovementReview() {
     try {
       probe.manual(true)
       await yieldUI()
-      if (kind === 'controls') {
+      if (kind === 'presentation') {
+        const avatar = probe.scene.getObjectByName('PlayerPresentation')
+        if (!avatar?.userData.readMotion) throw new Error('Player presentation is unavailable')
+        const opacity = () => {
+          let value = 1
+          avatar.traverse(n => { if (n.isMesh) value = Math.min(value, n.material.opacity) })
+          return value
+        }
+        await place([0, 2, 4])
+        record('Open camera', probe.state().cameraDistance > 3.9 && opacity() > .99,
+          `${round(probe.state().cameraDistance)} m; visibility ${round(opacity())}`)
+        key('KeyW', true); await steps(45)
+        const walk = avatar.userData.readMotion()
+        key('ShiftLeft', true); await steps(45)
+        const run = avatar.userData.readMotion()
+        release(); await steps(40)
+        record('Gait and stop', walk.name === 'Walk' && run.name === 'Run' && avatar.userData.readMotion().name === 'Idle',
+          `${walk.name} → ${run.name} → ${avatar.userData.readMotion().name}`)
+        useGameStore.getState().setSettingsOpen(true); await yieldUI()
+        const pausedTime = avatar.userData.readMotion().time
+        const pausedCamera = probe.camera.position.clone()
+        await steps(30)
+        record('Presentation pause', avatar.userData.readMotion().time === pausedTime &&
+          probe.camera.position.distanceTo(pausedCamera) < .001, 'animation and camera stay fixed')
+        useGameStore.getState().setSettingsOpen(false); await yieldUI()
+        await place([5, 2, 13.25])
+        record('Near-wall visibility', probe.state().cameraDistance < .5 && opacity() < .2,
+          `camera ${round(probe.state().cameraDistance)} m; visibility ${round(opacity())}`)
+        key('KeyW', true)
+        let previous = probe.state().cameraDistance, largestOut = 0
+        for (let i = 0; i < 120; i++) {
+          await steps(1)
+          // Position-derived distance is unthrottled, unlike the text HUD.
+          const body = pos()
+          const distance = Math.hypot(probe.camera.position.x - body.x, probe.camera.position.z - body.z)
+          largestOut = Math.max(largestOut, distance - previous)
+          previous = distance
+        }
+        release(); await steps(30)
+        record('Camera clears wall', probe.state().cameraDistance > 3.9 && opacity() > .99 && largestOut < .5,
+          `restored ${round(probe.state().cameraDistance)} m; largest outward step ${round(largestOut)} m`)
+        useGameStore.getState().recordRecovery(); await steps(2)
+        record('Recovery pose', avatar.userData.readMotion().name === 'Idle', avatar.userData.readMotion().name)
+      } else if (kind === 'controls') {
         await place([0, 2, 4])
         key('KeyW', true); await steps(60)
         const walking = speed(), stopZ = pos().z
@@ -158,6 +205,7 @@ export default function MovementReview() {
     zIndex: 40, padding: 12, background: '#17231fed', color: '#f5f2df', font: '13px monospace', maxWidth: 440 }}>
     <strong>PD09 movement review</strong>
     <div>{greyroom ? <>
+      <button disabled={busy} onClick={() => run('presentation')}>Check PD10 camera and animation</button>
       <button disabled={busy} onClick={() => run('controls')}>Check controls</button>
       <button disabled={busy} onClick={() => run('terrain')}>Check slopes and steps</button>
     </> : <>

@@ -98,7 +98,7 @@ export default function DevHud({ hub = false, label }) {
   const tooClose = cameraDistance < CAMERA.minDistance
 
   let distanceNote = ''
-  if (tooClose) distanceNote = ' ← too close, character clipping'
+  if (tooClose) distanceNote = ' ← close-camera fade'
   else if (pulledIn) distanceNote = ' ← pulled in'
 
   return (

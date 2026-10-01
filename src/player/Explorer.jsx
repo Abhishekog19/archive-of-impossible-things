@@ -1,67 +1,74 @@
 import { useEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useGLTF } from '@react-three/drei'
-import { AnimationMixer, LoopOnce, LoopRepeat } from 'three'
+import { Vector3 } from 'three'
 import { clone } from 'three/addons/utils/SkeletonUtils.js'
 import { CHARACTER } from '../config/look'
 import { WORLD_AND_POOL_LAYERS } from '../config/cavern-water'
 import { useGameStore } from '../store'
-import { EXPLORER_CLIPS, advanceAnimation, animationRate, initialAnimation } from './explorerAnimation'
+import { createExplorerAnimator } from './explorerAnimator'
+import { avatarOpacity, dampFactor } from './cameraMotion'
 
-/** The skinned art follows ecctrl's body rotation (+Z forward); no root motion. */
+/** Temporary gameplay explorer; PD08 art remains parked and unapproved. */
 export default function Explorer({ controllerRef }) {
   const asset = useGLTF('/models/explorer.glb')
   const rig = useMemo(() => {
     const scene = clone(asset.scene)
+    scene.name = 'PlayerPresentation'
+    const materials = new Map()
     scene.traverse(node => {
       node.layers.mask = WORLD_AND_POOL_LAYERS
-      // The animated figure can extend beyond its bind-pose bounds near a wall.
       if (node.isSkinnedMesh) node.frustumCulled = false
+      if (node.isMesh) {
+        const ownMaterial = source => {
+          if (!materials.has(source)) {
+            const material = source.clone()
+            // Dithered coverage avoids transparent mesh sorting and extra passes.
+            material.alphaHash = true
+            materials.set(source, material)
+          }
+          return materials.get(source)
+        }
+        node.material = Array.isArray(node.material) ? node.material.map(ownMaterial) : ownMaterial(node.material)
+      }
     })
-    const mixer = new AnimationMixer(scene)
-    const actions = Object.fromEntries(asset.animations.map(clip => {
-      const action = mixer.clipAction(clip)
-      const once = clip.name === 'Jump' || clip.name === 'Land'
-      action.setLoop(once ? LoopOnce : LoopRepeat, once ? 1 : Infinity)
-      action.clampWhenFinished = once
-      return [clip.name, action]
-    }))
-    return { scene, mixer, actions }
+    return { scene, materials: [...materials.values()] }
   }, [asset])
-  const motion = useRef(initialAnimation())
-  const current = useRef(null)
-  // Local art review only; production always follows the live controller.
+  const animator = useRef(null)
+  const recovery = useRef(-1)
+  const visibility = useRef(1)
+  const cameraLocal = useRef(new Vector3())
   const preview = import.meta.env.DEV ? new URLSearchParams(window.location.search).get('motionPreview') : null
 
   useEffect(() => {
-    motion.current = initialAnimation()
-    current.current = null
+    const instance = createExplorerAnimator(rig.scene, asset.animations, import.meta.env.DEV)
+    animator.current = instance
+    recovery.current = -1
     return () => {
-      rig.mixer.stopAllAction()
-      rig.mixer.uncacheRoot(rig.scene)
-      // Skeleton clones own bone textures; geometry/materials belong to useGLTF.
+      instance.dispose()
+      animator.current = null
+      rig.materials.forEach(material => material.dispose())
       rig.scene.traverse(node => { if (node.isSkinnedMesh) node.skeleton.dispose() })
     }
-  }, [rig])
+  }, [rig, asset.animations])
 
-  useFrame((_, delta) => {
+  useFrame(({ camera }, delta) => {
     const state = useGameStore.getState()
-    const controller = controllerRef.current
-    if (!controller || state.worldLoading || state.settingsOpen || document.hidden) return
-    const speed = controller.moveSpeed || 0
-    motion.current = advanceAnimation(motion.current, {
-      grounded: controller.isOnGround, speed, verticalSpeed: controller.verticalSpeed || 0,
-    }, delta)
-    const name = EXPLORER_CLIPS.includes(preview) ? preview : motion.current.name
-    const next = rig.actions[name]
-    if (!next) return
-    if (current.current !== next) {
-      current.current?.fadeOut(.14)
-      next.reset().setEffectiveWeight(1).fadeIn(.14).play()
-      current.current = next
+    const c = controllerRef.current
+    if (!c || !animator.current || state.worldLoading || state.settingsOpen || (document.hidden && !state.physicsForced)) return
+    if (recovery.current !== state.recoveryCount) {
+      animator.current.reset()
+      recovery.current = state.recoveryCount
     }
-    next.setEffectiveTimeScale(preview ? 1 : animationRate(name, speed))
-    rig.mixer.update(Math.min(delta, .05))
+    animator.current.update({ grounded: c.isOnGround, speed: c.moveSpeed || 0,
+      verticalSpeed: c.verticalSpeed || 0 }, delta, preview)
+    rig.scene.updateWorldMatrix(true, false)
+    rig.scene.worldToLocal(cameraLocal.current.copy(camera.position))
+    cameraLocal.current.y -= 1.4
+    const target = avatarOpacity(cameraLocal.current.length())
+    visibility.current = target < visibility.current ? target
+      : visibility.current + (target - visibility.current) * dampFactor(12, delta)
+    for (const material of rig.materials) material.setValues({ opacity: visibility.current })
   })
   const feet = -(CHARACTER.capsuleHalfHeight + CHARACTER.capsuleRadius + CHARACTER.floatHeight)
   return <primitive object={rig.scene} position={[0, feet, 0]} dispose={null} />

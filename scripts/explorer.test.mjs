@@ -5,10 +5,51 @@ import { AnimationMixer, Box3, Vector3 } from 'three'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import { clone } from 'three/addons/utils/SkeletonUtils.js'
 import { EXPLORER_CLIPS, advanceAnimation, animationRate, initialAnimation } from '../src/player/explorerAnimation.js'
+import { createExplorerAnimator } from '../src/player/explorerAnimator.js'
 
 const bytes = await fs.readFile(new URL('../public/models/explorer.glb', import.meta.url))
 const asset = await new GLTFLoader().parseAsync(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength), '')
 const sample = (grounded, speed = 0, verticalSpeed = 0) => ({ grounded, speed, verticalSpeed })
+
+test('spawn/drop does not play a landing crouch before the first ground contact', () => {
+  let state = advanceAnimation(initialAnimation(), sample(false, 0, -5), .1)
+  state = advanceAnimation(state, sample(false, 0, -5), .1)
+  assert.equal(advanceAnimation(state, sample(true), .016).name, 'Idle')
+})
+
+test('actual gait clips preserve cycle phase, slow on braking, and reset on recovery', () => {
+  const scene = clone(asset.scene)
+  const animator = createExplorerAnimator(scene, asset.animations)
+  animator.update(sample(true, 3), .1)
+  for (let i = 0; i < 5; i++) animator.update(sample(true, 3), .1)
+  const walk = animator.snapshot()
+  animator.update(sample(true, 5), 0)
+  const run = animator.snapshot()
+  const duration = name => asset.animations.find(c => c.name === name).duration
+  assert.equal(run.name, 'Run')
+  assert(Math.abs(walk.time / duration('Walk') % 1 - run.time / duration('Run') % 1) < 1e-6)
+  for (let i = 0; i < 10; i++) animator.update(sample(true, .15), .1)
+  assert(animator.snapshot().cadenceSpeed < .16)
+  animator.update(sample(false, 3, -5), .1)
+  animator.reset()
+  assert.equal(animator.snapshot().name, 'Idle')
+  assert.equal(animator.snapshot().time, 0)
+  assert.equal(animator.snapshot().cadenceSpeed, 0)
+  animator.dispose()
+  scene.traverse(n => { if (n.isSkinnedMesh) n.skeleton.dispose() })
+})
+
+test('effect cleanup and remount create fresh mixer bindings on the same scene', () => {
+  const scene = clone(asset.scene)
+  for (let mount = 0; mount < 3; mount++) {
+    const animator = createExplorerAnimator(scene, asset.animations, true)
+    animator.update(sample(true, 5), .1)
+    assert.equal(scene.userData.readMotion().name, 'Run')
+    animator.dispose()
+    assert.equal(scene.userData.readMotion, undefined)
+  }
+  scene.traverse(n => { if (n.isSkinnedMesh) n.skeleton.dispose() })
+})
 
 test('locomotion handles short ground misses, a jump/fall/land, then returns to idle', () => {
   let state = initialAnimation()
@@ -18,7 +59,7 @@ test('locomotion handles short ground misses, a jump/fall/land, then returns to 
   assert.equal(state.name, 'Idle')
   state = advanceAnimation(state, sample(false, 2, 3), .08)
   assert.equal(state.name, 'Jump')
-  state = advanceAnimation(state, sample(false, 2, -1), .08)
+  state = advanceAnimation(state, sample(false, 2, -3), .08)
   assert.equal(state.name, 'Fall')
   state = advanceAnimation(state, sample(true), .016)
   assert.equal(state.name, 'Land')

@@ -51,6 +51,13 @@ because the tree spacing, fog distance and canopy height are all *derived* from 
 | Damping | Yes, ~0.12 lag | Camera should arrive slightly late. Instant cameras feel like drones. |
 | Collision | Pull in, never clip | See the clearance rule below |
 
+PD10 camera refinement (October 1): retain this framing, but sweep a sphere that
+encloses the camera near plane, with 3 cm padding and 5 cm additional stop margin.
+Pull inward immediately; recover outward with exponential damping (rate 7/s).
+Fade the character's coverage between 0.45 and 1.15 m from its chest when the
+camera is crowded against a wall. This changes collision behavior, not the
+reference camera, FOV, ordinary follow distance or pitch.
+
 **Derived rule — canopy clearance ≥ 4.0 m above the camera.** With the camera at
 2.2 m, the canopy underside sits at **6.5 m**. Foliage hanging lower than that puts
 transparent cards directly across the lens, which is both the ugliest and the most

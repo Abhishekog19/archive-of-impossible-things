@@ -1,219 +1,100 @@
 import { useEffect, useRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { useRapier } from '@react-three/rapier'
-import * as THREE from 'three'
+import { Vector3 } from 'three'
 import { CAMERA, PIVOT_ABOVE_BODY } from '../config/look'
 import { useGameStore } from '../store'
+import { cameraClearance, cameraLensRadius, recoverCameraDistance } from './cameraMotion'
 
-/**
- * The look-target.md §2 camera.
- *
- * ecctrl 2.x deliberately ships no follow camera — the 1.x camera props are
- * gone, and the README says to "build your own camera follow logic". That turns
- * out to be the right outcome here: §2 specifies exact numbers that no library
- * preset would have matched, so there is nothing to fight.
- *
- * Three decisions worth knowing, because none of them are obvious:
- *
- * 1. PITCH IS NOT SET, IT IS DERIVED. We place the camera 4.0 m back and 0.8 m
- *    up from the pivot and point it at the pivot. That geometry *is* −11.31°.
- *    Setting a pitch value separately would let the two drift apart.
- *
- * 2. PITCH IS ALSO NOT PLAYER-CONTROLLABLE. §2 wants the angle shallow, and
- *    M1's exit criterion is that the camera never shows sky above where a
- *    canopy line would be — which a free-pitch camera fails by definition. Yaw
- *    only. This is the most likely thing in M1 to need revisiting, so it's
- *    flagged rather than hidden.
- *
- * 3. DAMPING IS FRAME-RATE INDEPENDENT. §2's 0.12 reads as a per-frame lerp,
- *    but a raw per-frame lerp makes the camera tighter at 144 fps than at 30 —
- *    so the same build would feel different on a desktop and a phone, which is
- *    exactly the kind of bug that gets blamed on "phone feel". We treat 0.12 as
- *    the factor at 60 fps and correct for the real delta.
- */
-
-/** Per-frame lerp factor `f` (defined at 60 fps) corrected for the real delta. */
-function damp(f, delta) {
-  return 1 - Math.pow(1 - f, delta * 60)
-}
-
+/** Fixed-height, yaw-only follow camera; the reference composition is unchanged. */
 export default function FollowCamera({ bodyRef }) {
-  const camera = useThree((s) => s.camera)
-  const domElement = useThree((s) => s.gl.domElement)
+  const camera = useThree(s => s.camera)
+  const domElement = useThree(s => s.gl.domElement)
   const { world, rapier } = useRapier()
-
-  const setCameraDebug = useGameStore((s) => s.setCameraDebug)
-
-  // Yaw is the only orbit axis. Kept in a ref rather than state: it changes
-  // every pointer move and must never trigger a React render.
+  const setCameraDebug = useGameStore(s => s.setCameraDebug)
   const yaw = useRef(0)
   const dragging = useRef(null)
   const lastX = useRef(0)
-
-  // Scratch objects, allocated once on the first frame. Allocating inside
-  // useFrame is the classic R3F garbage-collection stutter — a new Vector3 60
-  // times a second per axis is thousands of short-lived objects a minute. The
-  // Rapier Ray counts too: its origin and dir are mutable, so one instance is
-  // reused forever.
-  //
-  // A ref rather than useMemo, and filled in on the first frame rather than
-  // during render. These objects are mutated every frame, and mutating a value
-  // produced during render is exactly what react-hooks' immutability rule
-  // exists to catch — a ref is the sanctioned home for per-frame mutable state.
   const scratchRef = useRef(null)
-  const initialised = useRef(false)
-  const lastRecovery = useRef(0)
 
-  // --- Yaw input -------------------------------------------------------------
-  // Pointer events rather than mouse events, so a touch drag already works.
-  // M2 replaces this with a proper look control alongside the joystick, but the
-  // drag path is genuinely shared, so it is worth having correct now.
   useEffect(() => {
-    const SENSITIVITY = 0.0045 // radians per pixel
-
-    const onPointerDown = (e) => {
-      if (e.button !== undefined && e.button !== 0) return
-      if (dragging.current !== null || useGameStore.getState().settingsOpen) return
-      dragging.current = e.pointerId
-      lastX.current = e.clientX
-      domElement.setPointerCapture?.(e.pointerId)
-    }
-    const onPointerMove = (e) => {
-      if (dragging.current !== e.pointerId) return
-      yaw.current -= (e.clientX - lastX.current) * SENSITIVITY
-      lastX.current = e.clientX
-    }
-    const onPointerUp = (e) => {
-      if (dragging.current !== e.pointerId) return
-      dragging.current = null
-      if (domElement.hasPointerCapture(e.pointerId)) domElement.releasePointerCapture(e.pointerId)
-    }
     const reset = () => {
       const id = dragging.current
       dragging.current = null
       if (id !== null && domElement.hasPointerCapture(id)) domElement.releasePointerCapture(id)
     }
-
-    domElement.addEventListener('pointerdown', onPointerDown)
-    domElement.addEventListener('pointermove', onPointerMove)
-    domElement.addEventListener('pointerup', onPointerUp)
-    domElement.addEventListener('pointercancel', onPointerUp)
-    domElement.addEventListener('lostpointercapture', onPointerUp)
+    const onDown = e => {
+      const state = useGameStore.getState()
+      if (e.button !== undefined && e.button !== 0) return
+      if (dragging.current !== null || state.settingsOpen || state.worldLoading) return
+      dragging.current = e.pointerId
+      lastX.current = e.clientX
+      domElement.setPointerCapture?.(e.pointerId)
+    }
+    const onMove = e => {
+      if (dragging.current !== e.pointerId) return
+      yaw.current -= (e.clientX - lastX.current) * 0.0045
+      lastX.current = e.clientX
+    }
+    const onUp = e => { if (dragging.current === e.pointerId) reset() }
+    domElement.addEventListener('pointerdown', onDown)
+    domElement.addEventListener('pointermove', onMove)
+    domElement.addEventListener('pointerup', onUp)
+    domElement.addEventListener('pointercancel', onUp)
+    domElement.addEventListener('lostpointercapture', onUp)
     window.addEventListener('blur', reset)
     document.addEventListener('visibilitychange', reset)
-    window.addEventListener('resize', reset)
-    const unsubscribe = useGameStore.subscribe((state, previous) => {
-      if (state.settingsOpen !== previous.settingsOpen) reset()
+    const unsubscribe = useGameStore.subscribe((s, previous) => {
+      if (s.settingsOpen !== previous.settingsOpen || s.worldLoading !== previous.worldLoading) reset()
     })
     return () => {
-      domElement.removeEventListener('pointerdown', onPointerDown)
-      domElement.removeEventListener('pointermove', onPointerMove)
-      domElement.removeEventListener('pointerup', onPointerUp)
-      domElement.removeEventListener('pointercancel', onPointerUp)
-      domElement.removeEventListener('lostpointercapture', onPointerUp)
+      reset()
+      domElement.removeEventListener('pointerdown', onDown)
+      domElement.removeEventListener('pointermove', onMove)
+      domElement.removeEventListener('pointerup', onUp)
+      domElement.removeEventListener('pointercancel', onUp)
+      domElement.removeEventListener('lostpointercapture', onUp)
       window.removeEventListener('blur', reset)
       document.removeEventListener('visibilitychange', reset)
-      window.removeEventListener('resize', reset)
       unsubscribe()
     }
   }, [domElement])
 
-  // --- Follow ----------------------------------------------------------------
   useFrame((_, delta) => {
     const body = bodyRef.current?.body
-    if (!body) return
-
-    if (!scratchRef.current) {
-      scratchRef.current = {
-        pivot: new THREE.Vector3(),
-        smoothedPivot: new THREE.Vector3(),
-        desired: new THREE.Vector3(),
-        offset: new THREE.Vector3(),
-        dir: new THREE.Vector3(),
-        ray: new rapier.Ray({ x: 0, y: 0, z: 0 }, { x: 0, y: 0, z: 1 }),
-      }
+    const state = useGameStore.getState()
+    if (!body || state.settingsOpen || (document.hidden && !state.physicsForced)) return
+    if (!scratchRef.current) scratchRef.current = {
+      pivot: new Vector3(), smooth: new Vector3(), dir: new Vector3(), offset: new Vector3(),
+      shape: new rapier.Ball(0.2), initialised: false, recovery: -1, distance: 0,
     }
-    const scratch = scratchRef.current
+    const s = scratchRef.current
+    const p = body.translation()
+    s.pivot.set(p.x, p.y + PIVOT_ABOVE_BODY, p.z)
+    const snap = !s.initialised || s.recovery !== state.recoveryCount || s.smooth.distanceToSquared(s.pivot) > 64
+    if (snap) s.smooth.copy(s.pivot)
+    else if (!state.worldLoading) s.smooth.lerp(s.pivot, 1 - Math.pow(1 - CAMERA.damping, Math.min(delta, 0.1) * 60))
+    s.initialised = true
+    s.recovery = state.recoveryCount
+    s.shape.radius = cameraLensRadius(camera.near, camera.fov, camera.aspect)
 
-    const t = body.translation()
-    // The pivot is chest height above the *feet*, not above the body centre.
-    scratch.pivot.set(t.x, t.y + PIVOT_ABOVE_BODY, t.z)
-
-    // Snap on the first frame. Without this the camera flies in from wherever
-    // the initial camera prop put it, which looks like a bug on every reload.
-    const recovery = useGameStore.getState().recoveryCount
-    if (!initialised.current || recovery !== lastRecovery.current ||
-        scratch.smoothedPivot.distanceToSquared(scratch.pivot) > 64) {
-      scratch.smoothedPivot.copy(scratch.pivot)
-      initialised.current = true
-      lastRecovery.current = recovery
-    } else {
-      scratch.smoothedPivot.lerp(scratch.pivot, damp(CAMERA.damping, delta))
+    // A lagging pivot must not drift through a wall on a sharp turn.
+    s.dir.subVectors(s.smooth, s.pivot)
+    const lag = s.dir.length()
+    if (lag > 0.001) {
+      s.dir.divideScalar(lag)
+      const safeLag = cameraClearance(world, rapier, s.shape, s.pivot, s.dir, lag, body)
+      if (safeLag < lag) s.smooth.copy(s.pivot).addScaledVector(s.dir, safeLag)
     }
-
-    // Where §2 says the camera goes: distance behind along yaw, height above.
-    scratch.offset.set(
-      Math.sin(yaw.current) * CAMERA.distance,
-      CAMERA.heightAbovePivot,
-      Math.cos(yaw.current) * CAMERA.distance,
-    )
-    scratch.desired.copy(scratch.smoothedPivot).add(scratch.offset)
-
-    // --- Collision: pull in, never clip ---
-    // Cast from the pivot outward. If anything is in the way, the camera stops
-    // short of it. Casting *from the pivot* rather than from the camera matters:
-    // it means the ray starts inside the space the player occupies, so a wall
-    // between player and camera is always found, even when the camera has
-    // already ended up behind it.
-    let distance = CAMERA.distance
-    scratch.dir.copy(scratch.offset).normalize()
-
-    const { ray } = scratch
-    ray.origin.x = scratch.smoothedPivot.x
-    ray.origin.y = scratch.smoothedPivot.y
-    ray.origin.z = scratch.smoothedPivot.z
-    ray.dir.x = scratch.dir.x
-    ray.dir.y = scratch.dir.y
-    ray.dir.z = scratch.dir.z
-
-    const hit = world.castRay(
-      ray,
-      scratch.offset.length(),
-      true,
-      undefined,
-      undefined,
-      undefined,
-      body, // never collide with the player's own capsule
-    )
-    if (hit) {
-      // Never place the camera past what the ray hit. `minDistance` is a
-      // *preference*, not a floor that outranks the wall: written as
-      // `max(minDistance, toi - margin)` it silently pushes the camera through
-      // any surface closer than 0.9 m, which the audit caught as a camera
-      // embedded in the dead-end's back wall (clearance 0.00 m). M1's criterion
-      // is "pulls in and never clips", so the wall wins.
-      //
-      // The cost is real and accepted: inside 0.9 m the near plane starts
-      // cutting the capsule, so you see through your own character. That is the
-      // lesser artefact — a see-through character reads as a camera that got
-      // too close, while a camera inside a wall reads as the world falling
-      // apart. The proper fix is to raise the camera or fade the character when
-      // it can't get far enough back, and that belongs with the real camera
-      // work at M5, not here.
-      const pulled = Math.max(0, hit.timeOfImpact - CAMERA.collisionMargin)
-      scratch.desired
-        .copy(scratch.smoothedPivot)
-        .addScaledVector(scratch.dir, pulled)
-      distance = pulled
-    }
-
-    camera.position.copy(scratch.desired)
-    camera.lookAt(scratch.smoothedPivot)
-
-    // Reported so the HUD can prove the derived pitch still matches §2 rather
-    // than us asserting it in a comment.
-    setCameraDebug(camera.position.y, distance, yaw.current)
+    s.offset.set(Math.sin(yaw.current) * CAMERA.distance, CAMERA.heightAbovePivot,
+      Math.cos(yaw.current) * CAMERA.distance)
+    const fullLength = s.offset.length()
+    s.dir.copy(s.offset).divideScalar(fullLength)
+    const allowed = cameraClearance(world, rapier, s.shape, s.smooth, s.dir, fullLength, body)
+    s.distance = recoverCameraDistance(s.distance, allowed, delta, snap)
+    camera.position.copy(s.smooth).addScaledVector(s.dir, s.distance)
+    camera.lookAt(s.smooth)
+    setCameraDebug(camera.position.y, s.distance * CAMERA.distance / fullLength, yaw.current)
   })
-
   return null
 }

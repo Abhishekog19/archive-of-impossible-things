@@ -10,12 +10,14 @@ unapproved. Image 3 (Ruin Runner) remains the selected replacement reference.
 PD09 desktop movement/physics is implemented and its focused checks pass using
 the existing gameplay explorer. Follow CHARACTER_REDESIGN.md when model and
 reactive-clothing work resumes; this movement pass does not approve character art.
-PD10 camera/animation polish is implemented and checked October 1. The package
-remains PARTIAL: ground-contact foot planting and the final rig/secondary clothing
-motion are not complete. The parked PD08 study was not changed or promoted.
+PD10 functional production is complete and checked October 1 on the temporary
+gameplay explorer: camera/animation polish, ground-contact foot placement and
+reactive clothing/accessories. PD08 character art is still parked and unapproved;
+retargeting and visual acceptance on its eventual replacement rig remain required.
+The parked PD08 study was not changed or promoted.
 Explicit local-preview permission was received September 28 and six reference
 views plus cavern player-height were reviewed. Connected transition review and
-the recorded art-quality corrections remain open. PD08 redesign and PD10–PD11
+the recorded art-quality corrections remain open. PD08 redesign and PD11
 remain; the prior 1–2 active-day estimate is withdrawn pending the new character
 and secondary-motion proof. PD04's final shoreline comparison was closed using the
 user-supplied screenshot; PD07/08 browser evidence is recorded below.
@@ -94,7 +96,39 @@ per-session test requirements and historical next-step dates below.
   under CHARACTER_REDESIGN.md, alongside targeted locomotion correction. No gameplay
   or phone-control redesign.
 
-## PD10 — camera/animation pass October 1; package remains partial
+## PD10 — functional production complete October 1; final character art unapproved
+
+- Extended the existing gameplay explorer in Blender with cape/scarf, split hems,
+  hair, rope and satchel bones. Export remains one skin/material: 25 bones,
+  4,644 triangles and 564,128 bytes. This is a temporary motion rig, not a replacement
+  for the parked Ruin Runner study or approval of its character design.
+- Added ground-sampled two-bone leg placement, planted stance targets, swing
+  clearance, slope-aligned boots, pelvis flexion, synchronized gait phases and
+  bounded turn lean. Airborne feet release; landing, stops and recovery settle.
+- Eight constrained spring bones respond to acceleration, speed, turns and a
+  subtle idle breeze. Substeps and angular bounds limit instability; coarse front,
+  back and side separation constraints protect the body silhouette. This is
+  lightweight secondary motion, not full cloth self-collision or an AAA cloth solver.
+- Fourteen focused tests, changed-JS lint and production build pass. Browser
+  checks pass for idle contact, walking/running/turns, accessory settling, jump and
+  landing, a 25% ramp, and recovery. This run recorded 4.07 cm maximum ankle-target
+  reach error, 81/91 grounded samples with at least one stance foot (running permits
+  flight), and effectively zero idle/slope target error. Do not interpret these as
+  mesh-wide clipping guarantees or hardware-performance measurements.
+- Evidence: `.artifacts/pd10/dynamics-results.txt`, `dynamics-check.png`,
+  `hub-secondary.png`. Compared the hub player view with the Image 3 turnaround:
+  the cape and side bag read at gameplay distance, but the head/hair silhouette,
+  coarse body/outfit shapes and missing fabric detail remain large visual gaps.
+  Those belong to parked PD08 and final PD11 acceptance; no resemblance score claimed.
+- A stale cached GLB during development initially lacked the new bones; a versioned
+  asset URL now loads the extended rig. Jump review starts from the flat plaza
+  rather than the previous turn's endpoint. Recovery springs start at hanging bias
+  instead of imparting an artificial respawn kick.
+- Next: PD11 acceptance/release review, with PD08 art and replacement-rig fitting
+  explicitly outstanding. October 3 remains the weekly technical batch. No routine
+  FPS audit, full-world replay, game insertion or phone-control work was added.
+
+### Earlier PD10 camera pass (same production package)
 
 - Swept near-plane sphere replaces the centre-only camera ray; a separate short
   sweep keeps the lagging pivot out of walls. Immediate pull-in and damped outward
@@ -116,11 +150,8 @@ per-session test requirements and historical next-step dates below.
   `hub-player.png`. Player-view comparison with REF4 preserves shallow framing and
   path readability. The existing simplified character and environment-art gaps
   remain; this pass does not claim reference-level character quality.
-- Remaining PD10: ground-contact foot planting, final stride/turn tuning on the
-  approved rig, and reactive cape/scarf/hems/hair/rope/satchel with body constraints.
-  Final rig and clothing depend on resuming parked PD08. Keep PD10 partial and PD11
-  pending. October 3 remains the next weekly technical batch; no FPS/mobile matrix
-  or game/phone-control work was added here.
+- The earlier foot-planting/secondary-motion implementation gap is closed above.
+  Final fitting to the replacement character remains tied to PD08/PD11 acceptance.
 
 ## PD09 — desktop movement implemented and checked September 30
 

@@ -197,6 +197,8 @@ button:focus-visible, select:focus-visible { outline: 2px solid #c8a05a; outline
 .settings-panel p { color: #cfd3c4; font-size: .875rem; line-height: 1.55; }
 .settings-panel button { width: 100%; margin-top: 8px; }
 .settings-panel .settings-done { background: #c8a05a; color: #12150f; }
+.scene-loading { padding: 16px 24px; border-radius: 12px; background: #1c2018ed; color: #e8e6df; white-space: nowrap; }
+.scene-retry { margin-top: 24px; min-height: 44px; padding: 10px 20px; border: 1px solid #8f8877; border-radius: 8px; background: #c8a05a; color: #12150f; font: inherit; cursor: pointer; }
 .touch-controls { position: fixed; inset: 0; pointer-events: none; user-select: none; }
 .movement-control {
   position: absolute;

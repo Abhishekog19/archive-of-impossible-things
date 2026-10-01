@@ -1,8 +1,10 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
+import { Html } from '@react-three/drei'
 import { Physics } from '@react-three/rapier'
 import { CAMERA, FOG, PALETTE, TIERS } from './config/look'
 import { effectiveDpr } from './config/tiers'
+import { usesAssembledWorld } from './config/entry'
 import FollowCamera from './player/FollowCamera'
 import Player from './player/Player'
 import GreyRoom from './scenes/GreyRoom'
@@ -99,7 +101,7 @@ export default function App() {
   const zones = params.get('scene') === 'zones'
   const waterStudy = params.get('scene') === 'water'
   const cavernStudy = params.get('scene') === 'cavern'
-  const patch = params.get('patch') === '1' && !greyroom && !kit && !zones && !waterStudy && !cavernStudy && params.get('scene') !== 'hub'
+  const patch = usesAssembledWorld(params)
   const cornerView = !greyroom && params.get('view') === 'corner'
   const view = params.get('view')
   const reference = !greyroom && (cavernStudy ? Object.hasOwn(CAVERN_STUDY.views, view) : zones ? ['zones', 'zone-forest'].includes(view) : kit ? view === 'kit' : Object.hasOwn(worldViews, view) || cornerView || (patch && view === 'patch'))
@@ -125,8 +127,8 @@ export default function App() {
       <div className="fallback">
         <h1>Archive of Impossible Things</h1>
         <p>
-          This browser can&apos;t run WebGL2, so the interactive version
-          won&apos;t load. The written portfolio will live here.
+          This browser can&apos;t display the 3D environment. Try a browser with
+          WebGL2 and hardware acceleration enabled.
         </p>
       </div>
     )
@@ -154,7 +156,7 @@ export default function App() {
             the cheapest possible stand-in for warm light against cool shade. */}
         {!patch && <hemisphereLight layers-mask={WORLD_AND_POOL_LAYERS} args={[PALETTE.sky, PALETTE.ground, greyroom ? 2.2 : 1.6]} />}
 
-        <Suspense fallback={null}>
+        <Suspense fallback={<Html center><div className="scene-loading" role="status">Preparing the Archive…</div></Html>}>
           <Physics paused={!movementActive}>
             {cavernStudy ? <CavernStudy reference={reference} view={view} /> : zones ? <ZoneLoading playerRef={playerRef} reference={reference} view={view} /> : kit ? <AssetKit reference={reference} /> : greyroom ? <GreyRoom playerRef={playerRef} /> : <HubBlockout reference={reference} cornerView={cornerView} view={view} legacy={params.get('scene') === 'hub'} waterStudy={waterStudy} patch={patch} />}
             {!reference && <Player ref={playerRef} active={movementActive} recoverFalls={!greyroom} recoverToStart={cavernStudy} cornerStart={!kit && !zones && !waterStudy && !cavernStudy && cornerStart} start={cavernStudy ? 'cavern' : greyroom || kit || zones ? undefined : params.get('start') || (waterStudy ? 'cavern' : undefined)} />}
@@ -170,7 +172,7 @@ export default function App() {
         <TierGovernor farOverride={greyroom ? undefined : 180} />
       </Canvas>
 
-      {!reference && <DevHud hub={!greyroom} label={cavernStudy ? 'Phase B · cavern light study' : waterStudy ? 'Phase B · water-only study' : zones ? 'Phase B · zone loading' : kit ? 'Phase B · asset preview' : undefined} />}
+      {!reference && <DevHud hub={!greyroom} label={patch ? 'Archive · connected environment' : cavernStudy ? 'Phase B · cavern light study' : waterStudy ? 'Phase B · water-only study' : zones ? 'Phase B · zone loading' : kit ? 'Phase B · asset preview' : undefined} />}
       {!reference && <MobileControls />}
       {!reference && <Settings />}
       {import.meta.env.DEV && params.get('movement-review') === '1' &&

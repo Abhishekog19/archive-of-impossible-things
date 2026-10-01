@@ -74,13 +74,8 @@ export default function DevHud({ hub = false, label }) {
   }, [toggleHud, toggleFog, cycleTierOverride])
 
   if (!hudVisible) {
-    // Clickable as well as keyable: a phone has no H key, and M2 tests on a
-    // real device rather than an emulator.
-    return (
-      <button type="button" className="hud hud-collapsed" onClick={toggleHud}>
-        H — hud
-      </button>
-    )
+    // Settings and H remain available; the public view starts without debug UI.
+    return null
   }
 
   // The camera should sit at 2.2 m above the player's feet whenever it has not

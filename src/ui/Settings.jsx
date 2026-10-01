@@ -35,7 +35,7 @@ export default function Settings() {
           <option value="low">Low</option>
         </select>
         <p>Currently {tier}. Your choice is saved on this device. Resolution may reduce to keep movement smooth.</p>
-        <p>Move with the joystick or WASD. Drag the scene to turn. Hold Run or Shift; Jump or Space; Use or E near an object.</p>
+        <p>Move with the joystick or WASD. Drag the scene to turn. Hold Run or Shift to run; Jump or Space to jump.</p>
         <button onClick={toggleHud}>{hudVisible ? 'Hide' : 'Show'} performance HUD</button>
         <button className="settings-done" onClick={() => setOpen(false)}>Return to game</button>
       </dialog>

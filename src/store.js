@@ -66,7 +66,7 @@ export const useGameStore = create((set, get) => ({
   fogEnabled: true,
   toggleFog: () => set((s) => ({ fogEnabled: !s.fogEnabled })),
 
-  hudVisible: !window.matchMedia('(any-pointer: coarse)').matches,
+  hudVisible: new URLSearchParams(window.location.search).get('hud') === '1',
   toggleHud: () => set((s) => ({ hudVisible: !s.hudVisible })),
   settingsOpen: false,
   setSettingsOpen: (settingsOpen) => set({ settingsOpen }),

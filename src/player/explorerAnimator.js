@@ -50,6 +50,7 @@ export function createExplorerAnimator(scene, clips, diagnostics = false) {
       mixer.update(dt)
     },
     snapshot: () => ({ name: current?.getClip().name, time: current?.time ?? 0,
+      phase: current ? (current.time / current.getClip().duration) % 1 : 0,
       rate: current?.getEffectiveTimeScale() ?? 0, cadenceSpeed }),
     dispose() {
       mixer.stopAllAction(); mixer.uncacheRoot(scene)

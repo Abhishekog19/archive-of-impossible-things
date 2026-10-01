@@ -23,7 +23,7 @@ export function advanceAnimation(previous, { grounded, speed, verticalSpeed }, d
 
 export function animationRate(name, speed) {
   return name === 'Walk' ? Math.max(0, Math.min(2.25, speed / 1.4))
-    : name === 'Run' ? Math.max(.75, Math.min(1.7, speed / 3.6)) : 1
+    : name === 'Run' ? Math.max(.75, Math.min(2.25, speed / (1.8 / .7))) : 1
 }
 
 /** Preserve the planted/swing leg when crossing between gait clips. */

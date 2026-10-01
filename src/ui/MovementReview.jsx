@@ -43,7 +43,44 @@ export default function MovementReview() {
     try {
       probe.manual(true)
       await yieldUI()
-      if (kind === 'presentation') {
+      if (kind === 'dynamics') {
+        const avatar = probe.scene.getObjectByName('PlayerPresentation')
+        if (!avatar?.userData.readDynamics) throw new Error('Secondary rig is unavailable')
+        const read = () => avatar.userData.readDynamics()
+        await place([0, 2, 4]); await steps(40)
+        record('Idle foot contact', read().contacts === 2 && read().footError < .025,
+          `${read().contacts} feet; error ${round(read().footError * 100)} cm`)
+        let maxError = 0, peakEnergy = 0, groundedSamples = 0, plantedSamples = 0
+        key('KeyW', true)
+        for (let i = 0; i < 100; i++) {
+          if (i === 40) key('ShiftLeft', true)
+          if (i === 70) { key('KeyW', false); key('KeyD', true) }
+          await steps(1)
+          const d = read()
+          if (probe.controller().isOnGround) {
+            maxError = Math.max(maxError, d.footError); groundedSamples++
+            if (d.contacts > 0) plantedSamples++
+          }
+          peakEnergy = Math.max(peakEnergy, d.springEnergy)
+        }
+        release(); await steps(100)
+        record('Stride and turn contact', maxError < .06 && plantedSamples > groundedSamples * .5,
+          `reach error ${round(maxError * 100)} cm; ${plantedSamples}/${groundedSamples} samples planted`)
+        record('Accessories react and settle', read().joints === 8 && peakEnergy > .01 && read().springEnergy < .01,
+          `8 joints; peak energy ${round(peakEnergy)} → ${round(read().springEnergy)}`)
+        await place([0, 2, 4])
+        key('Space', true); await steps(4); key('Space', false)
+        const released = read().contacts === 0
+        await steps(110)
+        record('Jump releases / landing plants', released && read().contacts === 2 && read().footError < .025,
+          `air released ${released}; ${read().contacts} feet landed; grounded ${probe.controller().isOnGround}; y ${round(pos().y)}`)
+        await place([14, 2, 9.5]); key('KeyW', true); await steps(65); release(); await steps(80)
+        record('Slope contact', read().contacts === 2 && read().footError < .035,
+          `25% ramp; error ${round(read().footError * 100)} cm`)
+        useGameStore.getState().recordRecovery(); await steps(1)
+        record('Secondary recovery reset', read().springEnergy < .1 && Number.isFinite(read().footError),
+          `energy ${round(read().springEnergy)}`)
+      } else if (kind === 'presentation') {
         const avatar = probe.scene.getObjectByName('PlayerPresentation')
         if (!avatar?.userData.readMotion) throw new Error('Player presentation is unavailable')
         const opacity = () => {
@@ -203,9 +240,10 @@ export default function MovementReview() {
 
   return <aside style={{ position: 'fixed', right: 12, top: 12, maxHeight: '85vh', overflow: 'auto',
     zIndex: 40, padding: 12, background: '#17231fed', color: '#f5f2df', font: '13px monospace', maxWidth: 440 }}>
-    <strong>PD09 movement review</strong>
+    <strong>Movement / presentation review</strong>
     <div>{greyroom ? <>
       <button disabled={busy} onClick={() => run('presentation')}>Check PD10 camera and animation</button>
+      <button disabled={busy} onClick={() => run('dynamics')}>Check PD10 feet and clothing</button>
       <button disabled={busy} onClick={() => run('controls')}>Check controls</button>
       <button disabled={busy} onClick={() => run('terrain')}>Check slopes and steps</button>
     </> : <>

@@ -80,7 +80,33 @@ def loft(name, rings, colour, bone):
     return finish(obj,name,colour,bone)
 
 loft('Travelling coat',[(.86,.20,.135),(1.02,.165,.12),(1.24,.21,.14),(1.36,.205,.115)],'coat','Spine')
-loft('Split coat hem',[(.76,.22,.15),(.88,.20,.14),(.99,.17,.12)],'coat','Hips')
+# Open panels deform independently rather than a rigid skirt intersecting both legs.
+def panel(name, rows, colour, joints):
+    vertices=[]
+    for x,y,z,width in rows:
+        vertices.extend([(x-width/2,y,z),(x,y+.009,z),(x+width/2,y,z)])
+    faces=[]
+    for row in range(len(rows)-1):
+        for col in range(2):
+            a=row*3+col;faces.append((a,a+1,a+4,a+3))
+    data=bpy.data.meshes.new(name);data.from_pydata(vertices,[],faces);data.update()
+    obj=bpy.data.objects.new(name,data);bpy.context.collection.objects.link(obj)
+    bpy.context.view_layer.objects.active=obj;obj.select_set(True)
+    finish(obj,name,colour,joints[0])
+    obj.vertex_groups.clear()
+    for row in range(len(rows)):
+        joint=joints[min(row,len(joints)-1)]
+        group=obj.vertex_groups.get(joint) or obj.vertex_groups.new(name=joint)
+        group.add(list(range(row*3,row*3+3)),1,'REPLACE')
+    solid=obj.modifiers.new('Fabric thickness','SOLIDIFY');solid.thickness=.004
+    bpy.ops.object.modifier_apply(modifier=solid.name)
+    return obj
+
+for side,label in [(-1,'L'),(1,'R')]:
+    panel('Split hem '+label,[(side*.09,-.13,.99,.16),(side*.10,-.15,.88,.18),
+        (side*.12,-.17,.76,.18)],'coat',['Hips','Hem_'+label,'Hem_'+label])
+panel('Travel cape',[(0,.14,1.37,.35),(0,.28,1.18,.39),(0,.31,.99,.40),
+    (0,.28,.82,.35)],'coat',['Spine','Cape','CapeTip','CapeTip'])
 loft('Leather waist belt',[(.98,.175,.128),(1.02,.176,.129)],'leather','Hips')
 box('Belt buckle',(0,-.133,1.0),(.06,.012,.04),'brass','Hips',.005)
 box('Linen shirt opening',(0,-.123,1.30),(.082,.02,.15),'linen','Spine',.005)
@@ -92,7 +118,7 @@ link('Neck',(0,0,1.34),(0,0,1.45),.061,'skin','Neck')
 ellipsoid('Face',(0,-.006,1.525),(.113,.097,.139),'skin','Head',16,10)
 ellipsoid('Hair cap',(0,.012,1.62),(.122,.101,.08),'hair','Head',14,8)
 for x in (-.078,-.028,.033,.083):
-    ellipsoid('Swept fringe',(x,-.072,1.634-abs(x)*.16),(.047,.039,.043),'hair','Head',8,6)
+    ellipsoid('Swept fringe',(x,-.072,1.634-abs(x)*.16),(.047,.039,.043),'hair','Hair',8,6)
 for side in (-1,1):
     ellipsoid('Ear',(side*.11,0,1.515),(.02,.023,.033),'skin','Head',8,6)
     ellipsoid('Eye',(side*.044,-.097,1.546),(.009,.005,.012),'eye','Head',8,4)
@@ -100,12 +126,14 @@ for side in (-1,1):
 ellipsoid('Nose',(0,-.107,1.513),(.016,.022,.025),'skin','Head',8,6)
 link('Mouth',(-.025,-.099,1.478),(.025,-.099,1.478),.003,'leather','Head')
 loft('Woven scarf collar',[(1.34,.115,.105),(1.39,.12,.105),(1.42,.087,.075)],'scarf','Neck')
-box('Scarf tail',(.075,-.152,1.235),(.075,.025,.25),'scarf','Spine',.008)
+panel('Scarf tail',[(.075,-.15,1.36,.075),(.075,-.17,1.23,.08),
+    (.075,-.18,1.10,.07)],'scarf',['Neck','Scarf','Scarf'])
+link('Belt rope',(.14,-.15,.99),(.16,-.17,.71),.013,'linen','Rope')
 
 # A small rear satchel and shoulder strap give the third-person silhouette a purpose.
-box('Satchel',(0,.176,1.18),(.235,.13,.25),'leather','Spine',.027)
-box('Satchel flap',(0,.25,1.235),(.24,.017,.10),'scarf','Spine',.013)
-box('Satchel clasp',(0,.264,1.215),(.025,.012,.04),'brass','Spine',.004)
+box('Satchel',(.245,.01,1.01),(.12,.18,.22),'leather','Satchel',.027)
+box('Satchel flap',(.31,.01,1.065),(.017,.18,.09),'scarf','Satchel',.013)
+box('Satchel clasp',(.321,.01,1.045),(.012,.025,.035),'brass','Satchel',.004)
 for x in (-.104,.104):link('Satchel straps',(x,-.132,1.11),(x,-.118,1.37),.018,'leather','Spine')
 
 for side,label in [(-1,'L'),(1,'R')]:
@@ -152,6 +180,17 @@ for side,label in [(-1,'L'),(1,'R')]:
     bone('Thigh_'+label,(side*.098,0,.86),(side*.105,0,.475),'Hips')
     bone('Shin_'+label,(side*.105,0,.475),(side*.105,0,.155),'Thigh_'+label)
     bone('Foot_'+label,(side*.105,0,.155),(side*.105,-.16,.055),'Shin_'+label)
+secondary={
+    'Cape':((0,.14,1.37),(0,.28,1.18),'Spine'),
+    'CapeTip':((0,.28,1.18),(0,.28,.82),'Cape'),
+    'Scarf':((.075,-.15,1.36),(.075,-.18,1.10),'Neck'),
+    'Hem_L':((-.09,-.13,.99),(-.12,-.17,.76),'Hips'),
+    'Hem_R':((.09,-.13,.99),(.12,-.17,.76),'Hips'),
+    'Hair':((0,-.015,1.65),(0,-.10,1.60),'Head'),
+    'Rope':((.14,-.15,.99),(.16,-.17,.71),'Hips'),
+    'Satchel':((.245,.01,1.15),(.245,.01,.90),'Spine'),
+}
+for name,(head,tail,parent) in secondary.items():bone(name,head,tail,parent)
 bpy.ops.object.mode_set(mode='OBJECT')
 mesh.parent=rig
 modifier=mesh.modifiers.new('Explorer skin','ARMATURE');modifier.object=rig
@@ -195,7 +234,7 @@ for name,duration in clips.items():
                 rotate('UpperArm_'+label,-.2*k);rotate('Forearm_'+label,-.25*k)
             rotate('Spine',.12*k)
         for p in rig.pose.bones:
-            p.keyframe_insert(data_path='rotation_euler',frame=f+1,group=p.name)
+            if p.name not in secondary:p.keyframe_insert(data_path='rotation_euler',frame=f+1,group=p.name)
             if p.name=='Hips':p.keyframe_insert(data_path='location',frame=f+1,group=p.name)
     track=rig.animation_data.nla_tracks.new();track.name=name
     track.strips.new(name,1,action);track.mute=True

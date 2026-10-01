@@ -3,7 +3,7 @@
   "heightMetres": 1.7,
   "forward": "+Z in glTF",
   "triangles": 4644,
-  "bones": 17,
+  "bones": 25,
   "clips": [
     "Idle",
     "Walk",
@@ -12,6 +12,6 @@
     "Fall",
     "Land"
   ],
-  "bytes": 537556,
+  "bytes": 564128,
   "provenance": "Original procedural modelling, rigging and animation authored for this repository. No external asset inputs."
 }

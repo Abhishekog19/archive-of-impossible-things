@@ -84,7 +84,7 @@ test('export supplies six named clips, one material/skin, normalized weights and
   assert.equal(meshes.length,1)
   const mesh=meshes[0]
   assert(mesh.isSkinnedMesh)
-  assert.equal(mesh.skeleton.bones.length,17)
+  assert.equal(mesh.skeleton.bones.length,25)
   assert(!Array.isArray(mesh.material))
   const weights=mesh.geometry.attributes.skinWeight
   for(let i=0;i<weights.count;i++) assert(Math.abs(weights.getX(i)+weights.getY(i)+weights.getZ(i)+weights.getW(i)-1)<.001)

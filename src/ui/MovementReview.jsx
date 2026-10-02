@@ -183,7 +183,10 @@ export default function MovementReview() {
       } else {
         await place(kind === 'return' ? [-12, -5.5, -174] : [0, 2, 6])
         // Connected authored route plus side trips to all four reserved locations.
-        const route = kind === 'return' ? [
+        const route = kind === 'hub' ? [
+          ['Hub centre', 0, -5], ['Hub forest exit', -12, -20],
+          ['Hub return', 0, -5], ['Arrival return', 0, 6],
+        ] : kind === 'return' ? [
           ['Cavern ascent', -12, -159], ['Archive return', -12, -138],
           ['Jump on ascent', -12, -149],
         ] : [
@@ -219,7 +222,7 @@ export default function MovementReview() {
           await steps(15)
           record('Uphill jump', !probe.controller().isOnGround && pos().y - floorY > 0.4,
             `rise ${round(pos().y - floorY)} m; airborne ${!probe.controller().isOnGround}`)
-        } else if (rows.every(row => row.pass)) {
+        } else if (kind === 'world' && rows.every(row => row.pass)) {
           const count = useGameStore.getState().recoveryCount
           probe.body().setTranslation({ x: -12, y: -15, z: -195 }, true)
           await steps(90)
@@ -247,6 +250,7 @@ export default function MovementReview() {
       <button disabled={busy} onClick={() => run('controls')}>Check controls</button>
       <button disabled={busy} onClick={() => run('terrain')}>Check slopes and steps</button>
     </> : <>
+      <button disabled={busy} onClick={() => run('hub')}>Check hub connection</button>
       <button disabled={busy} onClick={() => run('world')}>Walk connected world</button>
       <button disabled={busy} onClick={() => run('return')}>Check cavern return</button>
     </>}</div>

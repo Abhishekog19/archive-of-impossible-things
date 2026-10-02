@@ -108,19 +108,27 @@ for band in range(3):
         a=i*math.tau/24+rng.uniform(-.09,.09)
         if abs(a-math.pi/2)<.28:continue
         h=(-4,3,10)[band]+rng.uniform(-1.4,1.4)
-        radius=(24.2,23.1,18.2)[band]+rng.uniform(-.5,.5)
-        zshift=(0,-1.4,-5)[band]
-        width=rng.uniform(1.2,3.1);height=rng.uniform(2.2,5.5)
+        width=rng.uniform(1.2,3.2);height=rng.uniform(5,10)
         # Local U runs around the wall, V rises and D projects into the chamber.
         shape=[(-width,-height*.5,0),(width*.7,-height*.5,.35),
                (width,height*.2,.8),(width*.35,height*.55,.3),
                (-width*.8,height*.42,.1)]
         front=[]
         for u,v,d in shape:
-            r=radius-d
-            front.append((cx+r*math.cos(a)-u*math.sin(a),h+v,cz+zshift+r*math.sin(a)+u*math.cos(a)))
+            y=max(-8.8,min(17,h+v))
+            level=next(k for k in range(len(levels)-1) if levels[k][0]<=y<=levels[k+1][0])
+            t=(y-levels[level][0])/(levels[level+1][0]-levels[level][0])
+            # Bury each outline in the shell. The previous constant-radius
+            # panels detached from the narrowing upper walls like pasted tiles.
+            r=levels[level][1]*(1-t)+levels[level+1][1]*t+.6
+            zshift=-10*((level+t)/5)**2
+            front.append((cx+r*math.cos(a)-u*math.sin(a),y,cz+zshift+r*math.sin(a)+u*math.cos(a)))
         back=[(x+math.cos(a)*1.1,y,z+math.sin(a)*1.1) for x,y,z in front]
-        mesh('Overlapping rock fracture plate',front+back,[(0,1,2,3,4)]+
+        centre=tuple(sum(p[k] for p in front)/5 for k in range(3))
+        centre=(centre[0]-math.cos(a)*2.2,centre[1]+.4,centre[2]-math.sin(a)*2.2)
+        # Broken non-coplanar facets replace the conspicuous flat pasted-on plates.
+        mesh('Overlapping rock fracture plate',front+back+[centre],
+             [(j,(j+1)%5,10) for j in range(5)]+
              [(j,j+5,(j+1)%5+5,(j+1)%5) for j in range(5)],True)
 
 # Roof splinters reinforce the asymmetric opening, staying out of the sky hole.
@@ -133,6 +141,19 @@ for i in range(18):
          [(0,2,1),(0,1,3),(1,2,3),(2,0,3)],True)
 
 def shore_radius(a):return 15.5+1.2*math.sin(3*a)+.7*math.cos(5*a)
+
+# Discontinuous ledges overhang the pool and break the repeated bank arc; existing
+# continuous walkable ground and its collision remain behind this visual edge.
+for j in range(19):
+    a=j*math.tau/19+.08*math.sin(j*2.7)
+    if abs(a-math.pi/2)<.32:continue
+    radius=shore_radius(a);r=radius-rng.uniform(.45,1.2)
+    pts=[]
+    for offset,rr in [(-.055,radius+1.1),(-.048,r),(.012,r-.25),(.07,r+.3),(.075,radius+1.1)]:
+        pts.append((cx+rr*math.cos(a+offset),-7.45+rng.uniform(0,.025),cz+rr*math.sin(a+offset)))
+    lower=[(x,-7.95,z) for x,y,z in pts]
+    mesh('Irregular pool edge ledge',pts+lower,[(0,1,2,3,4)]+
+         [(k,(k+1)%5,(k+1)%5+5,k+5) for k in range(5)],shore=True)
 
 # The inner contour follows the existing pool, with broad horizontal bedrock
 # plates. A continuous base under the fissures retains the resident walking level.

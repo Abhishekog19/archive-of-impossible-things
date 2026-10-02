@@ -29,3 +29,33 @@ export function addStoneDetail(material, texture) {
   }
   material.customProgramCacheKey = () => 'world-stone-detail-v1'
 }
+
+// A narrow, metre-scaled directional layer keeps large baked trunk atlases
+// readable near the player. Long grain stays quieter than stone grain.
+export function addBarkDetail(material, texture) {
+  material.onBeforeCompile = shader => {
+    shader.uniforms.barkGrain = { value: texture }
+    shader.vertexShader = shader.vertexShader.replace('#include <common>', `
+      #include <common>
+      varying vec3 barkPoint, barkNormal;
+    `).replace('#include <begin_vertex>', `
+      #include <begin_vertex>
+      barkPoint = (modelMatrix * vec4(position, 1.0)).xyz;
+      barkNormal = normalize(mat3(modelMatrix) * normal);
+    `)
+    shader.fragmentShader = shader.fragmentShader.replace('#include <common>', `
+      #include <common>
+      uniform sampler2D barkGrain;
+      varying vec3 barkPoint, barkNormal;
+    `).replace('#include <color_fragment>', `
+      #include <color_fragment>
+      vec3 n = abs(normalize(barkNormal));
+      float grainX = texture2D(barkGrain, barkPoint.zy * vec2(3.4, .16)).r;
+      float grainZ = texture2D(barkGrain, barkPoint.xy * vec2(3.4, .16)).r;
+      float grain = (grainX * n.x + grainZ * n.z) / max(n.x+n.z, .001);
+      float fade = (1.0-smoothstep(12.0, 28.0, distance(cameraPosition,barkPoint))) * (1.0-n.y);
+      diffuseColor.rgb *= 1.0 + (grain-.78) * .55 * fade;
+    `)
+  }
+  material.customProgramCacheKey = () => 'world-bark-detail-v1'
+}

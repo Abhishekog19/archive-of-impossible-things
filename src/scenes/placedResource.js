@@ -2,7 +2,7 @@ import { DoubleSide, InstancedMesh, MeshBasicMaterial } from 'three'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js'
 import { disposeZone } from './zoneResource.js'
-import { addStoneDetail } from './stoneDetail.js'
+import { addBarkDetail, addStoneDetail } from './stoneDetail.js'
 
 export async function loadPlaced(url, signal, anisotropy, detail, cavern = false) {
   const response = await fetch(url, { signal })
@@ -23,11 +23,13 @@ export async function loadPlaced(url, signal, anisotropy, detail, cavern = false
     if (cavern || /Collision/.test(node.name)) return
     const original = node.material
     const stone = /Paving|Stone|Ruins|Courtyard|Arcades|Floor|Walls|Limestone|Tower|Perimeter/.test(node.name)
-    const key = original.uuid + (stone ? '-stone' : '')
+    const bark = /Trees|Wood/.test(node.name)
+    const key = original.uuid + (stone ? '-stone' : bark ? '-bark' : '')
     if (!converted.has(key)) {
       const material = new MeshBasicMaterial({ map: original.map, color: original.color,
         vertexColors: !original.map && !!node.geometry.attributes.color, side: original.map ? original.side : DoubleSide })
       if (stone && detail) addStoneDetail(material, detail)
+      else if (bark && detail) addBarkDetail(material, detail)
       converted.set(key, { original, material })
     }
     node.material = converted.get(key).material

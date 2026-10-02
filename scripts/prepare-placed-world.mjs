@@ -16,6 +16,18 @@ const io = new NodeIO().registerExtensions(ALL_EXTENSIONS).registerDependencies(
   'meshopt.encoder': MeshoptEncoder, 'meshopt.decoder': MeshoptDecoder,
 })
 const sources = new Map()
+async function replaceExport(target, bytes) {
+  const temporary = target + '.next'
+  await fs.writeFile(temporary, bytes)
+  try {
+    await fs.rename(temporary, target)
+  } catch (error) {
+    // Cloud-backed Windows files may require CopyFile rather than rename.
+    if (process.platform !== 'win32' || error.code !== 'EPERM') throw error
+    await fs.copyFile(temporary, target)
+    await fs.unlink(temporary)
+  }
+}
 async function source(name) {
   if (!sources.has(name)) sources.set(name, await io.read(path.join(root, 'public/models', `${name}.glb`)))
   return sources.get(name)
@@ -91,7 +103,7 @@ async function write(doc, id, simplify = true) {
   doc.createExtension(EXTMeshoptCompression).setRequired(true)
     .setEncoderOptions({ method: EXTMeshoptCompression.EncoderMethod.QUANTIZE })
   const bytes = await io.writeBinary(doc)
-  await fs.writeFile(path.join(output, `${id}.glb`), bytes)
+  await replaceExport(path.join(output, `${id}.glb`), bytes)
   const entry = { url: `/models/placed/${id}.glb`, bytes: bytes.length,
     trianglesBefore: before, triangles: triangles(doc) }
   console.log(id, JSON.stringify(entry))
@@ -144,5 +156,5 @@ for (const zone of definitions) {
   }
   manifest.zones.push({ ...zone, ...await write(doc, zone.id) })
 }
-await fs.writeFile(path.join(root, 'src/config/placed-world.json'), JSON.stringify(manifest, null, 2) + '\n')
+await replaceExport(path.join(root, 'src/config/placed-world.json'), JSON.stringify(manifest, null, 2) + '\n')
 console.log('Total derived bytes:', manifest.resident.bytes + manifest.zones.reduce((sum, z) => sum + z.bytes, 0))

@@ -1,7 +1,7 @@
 // REF10's cool enclosed palette. Outdoor palette remains in look.js.
 export const CAVERN_LOOK = {
-  fog: '#53616c', fogNear: 9, fogFar: 68,
-  ambientSky: '#8297a6', ambientGround: '#202c36', ambientIntensity: .62,
+  fog: '#465561', fogNear: 12, fogFar: 85,
+  ambientSky: '#8297a6', ambientGround: '#202c36', ambientIntensity: .46,
   opening: '#d5e0e3', openingPosition: [-12, 20.3, -205],
   keyPosition: [-12, 17, -205], keyTarget: [-10, -7.4, -211],
   keyColour: '#c3d7e3', keyIntensity: 1500, keyAngle: .52,

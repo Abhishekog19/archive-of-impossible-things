@@ -1,0 +1,19 @@
+{
+  "stage": "runtime replacement; visual review pending",
+  "heightMetres": 1.742,
+  "triangles": 70949,
+  "materials": 19,
+  "bones": 25,
+  "clips": [
+    "Idle",
+    "Walk",
+    "Run",
+    "Jump",
+    "Fall",
+    "Land"
+  ],
+  "bytes": 8128960,
+  "source": "art/source/ruin-runner-study.blend",
+  "secondaryMotion": "Constrained spring bones; not a cloth simulation",
+  "provenance": "Original authored meshes, textures, semantic skin weights and repository locomotion clips"
+}

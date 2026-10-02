@@ -11,9 +11,9 @@ import { createExplorerAnimator } from './explorerAnimator'
 import { avatarOpacity, dampFactor } from './cameraMotion'
 import { createExplorerDynamics } from './explorerDynamics'
 
-/** Temporary gameplay explorer; PD08 art remains parked and unapproved. */
+/** Authored Ruin Runner, with fitted skin and constrained secondary motion. */
 export default function Explorer({ controllerRef }) {
-  const asset = useGLTF('/models/explorer.glb?v=pd10-secondary-1')
+  const asset = useGLTF('/models/ruin-runner.glb?v=pd11-runner-1')
   const { world, rapier } = useRapier()
   const rig = useMemo(() => {
     const scene = clone(asset.scene)

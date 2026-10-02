@@ -12,7 +12,7 @@ from mathutils import Vector
 def build_head(mesh, loft, orb, cord, materials, material):
     M = materials
     # Directional fibre colour/normal detail travels with each curved hair lock.
-    for key,colour in [('hair',(.22,.145,.095)),('hairlight',(.265,.18,.12))]:
+    for key,colour in [('hair',(.14,.073,.038)),('hairlight',(.20,.115,.060))]:
         size=512
         v,u=np.mgrid[0:size,0:size]/(size-1)
         phase=u*math.tau*23+.35*np.sin(v*8)
@@ -63,14 +63,14 @@ def build_head(mesh, loft, orb, cord, materials, material):
         x=rx*np.cos(a)
         y=cy+ry*np.sin(a)
         front=np.maximum(0,-np.sin(a))**6
-        relief=(.015*gaussian(x,z,0,1.586,.014,.036)
-            + .019*gaussian(x,z,0,1.558,.017,.018)
+        relief=(.022*gaussian(x,z,0,1.586,.012,.036)
+            + .029*gaussian(x,z,0,1.558,.015,.017)
             + .009*gaussian(x,z,0,1.525,.035,.018)
             + .004*gaussian(x,z,0,1.490,.038,.022))
         for s in (-1,1):
-            relief += .007*gaussian(x,z,s*.051,1.572,.029,.027)
+            relief += .010*gaussian(x,z,s*.051,1.572,.029,.022)
             relief += .006*gaussian(x,z,s*.033,1.622,.028,.014)
-            relief -= .0055*gaussian(x,z,s*.035,1.600,.024,.016)
+            relief -= .008*gaussian(x,z,s*.035,1.600,.024,.019)
             relief -= .0015*gaussian(x,z,s*.059,1.533,.021,.022)
             relief += .004*gaussian(x,z,s*.012,1.550,.007,.007)
             # The superior lid crease belongs to the continuous skin surface.
@@ -151,7 +151,7 @@ def build_head(mesh, loft, orb, cord, materials, material):
         # makes both the aperture and the lid look like an applied plastic ring.
         fullness=max(0,1-u*u)**.70
         corner=.0016*side*u
-        return corner+(.0100 if upper else -.0066)*fullness
+        return corner+(.0080 if upper else -.0066)*fullness
 
     def eye_surface(name,cx,cz,rx,rz,mat,offset):
         verts=[(cx,front_y(cx,cz)-offset,cz)];faces=[]
@@ -167,7 +167,7 @@ def build_head(mesh, loft, orb, cord, materials, material):
                     u=(x-cx)/eye_width
                     z=max(1.601+eye_edge(u,side,False)+.00015,
                         min(1.601+eye_edge(u,side,True)-.00015,z))
-                verts.append((x,front_y(x,z)-offset-.001*(1-r*r),z))
+                verts.append((x,front_y(x,z)-offset-.002*(1-r*r),z))
         for i in range(48):faces.append((0,1+i,2+i))
         for j in range(5):
             for i in range(48):
@@ -179,7 +179,7 @@ def build_head(mesh, loft, orb, cord, materials, material):
         # Fit the visible corneal patch to the sculpted socket. A whole sphere
         # intersects this neutral sculpt; deformation topology is a later gate.
         eye_surface('Fitted almond eye',cx,cz,eye_width,.010,'white',.0009)
-        eye_surface('Hazel iris',cx,cz+.001,.0081,.0081,'iris',.0020)
+        eye_surface('Hazel iris',cx,cz+.001,.010,.010,'iris',.0020)
         eye_surface('Pupil',cx,cz+.001,.0035,.0035,'pupil',.0027)
         # Small directional fibre strokes give the iris depth without a giant
         # anime highlight or painted black outline around the entire eye.
@@ -202,7 +202,7 @@ def build_head(mesh, loft, orb, cord, materials, material):
                     zz=cz+edge+(1 if upper else -1)*.005*t*max(0,1-u*u)**.5
                     radius=float(profile_value(zz,1))
                     # Flush outside edge and restrained waterline thickness.
-                    yy=front_y(xx,zz)-.0008*(1-t)**2
+                    yy=front_y(xx,zz)-(.0024 if upper else .0013)*(1-t)**2
                     verts.append((xx,yy,zz))
                     uv.append(((-math.acos(max(-1,min(1,xx/radius))))%math.tau/math.tau,
                         (zz-profile[0,0])/(profile[-1,0]-profile[0,0])))
@@ -218,7 +218,7 @@ def build_head(mesh, loft, orb, cord, materials, material):
         verts=[];faces=[]
         for i in range(33):
             t=i/32;xx=s*(.013+t*.049)
-            zz=1.624+.004*math.sin(t*math.pi)-.004*t
+            zz=1.620+.005*math.sin(t*math.pi)-.005*t
             width=.0002+.0035*math.sin(math.pi*(.025+.975*t))**.5
             for dz in (-width,width):
                 verts.append((xx,front_y(xx,zz+dz)-.0006,zz+dz))
@@ -227,7 +227,7 @@ def build_head(mesh, loft, orb, cord, materials, material):
         mesh('Tapered feathered brow',verts,faces,'hair')
         for k in range(26):
             t=k/25;xx=s*(.013+t*.048)
-            zz=1.624+.004*math.sin(t*math.pi)-.004*t
+            zz=1.620+.005*math.sin(t*math.pi)-.005*t
             endz=zz+.0025*(1-t)
             cord('Individual brow hair',[(xx,front_y(xx,zz)-.0009,zz),
                 (xx+s*.002,front_y(xx+s*.002,endz)-.0009,endz)],.00022,'hairlight',1)
@@ -247,7 +247,7 @@ def build_head(mesh, loft, orb, cord, materials, material):
             for i in range(41):
                 x=(i/40-.5)*.059
                 f=max(0,1-(x/.0295)**2)
-                seam=1.526+.004*(abs(x)/.0295)**2+.0008*x/.0295
+                seam=1.526+.0015*(abs(x)/.0295)**2+.0008*x/.0295
                 height=(.002+.0015*math.exp(-((abs(x)-.008)/.004)**2)) if upper else -.004
                 z=seam+height*t*f
                 y=front_y(x,z)-.0006-.002*math.sin(t*math.pi)*f
@@ -256,8 +256,8 @@ def build_head(mesh, loft, orb, cord, materials, material):
             for i in range(40):
                 k=j*41+i;faces.append((k,k+1,k+42,k+41))
         mesh('Upper lip cupid bow' if upper else 'Lower lip volume',verts,faces,'lips',sub=1)
-    cord('Mouth separation',[(x,front_y(x,1.526+.004*(x/.0295)**2+.0008*x/.0295)-.001,
-        1.526+.004*(x/.0295)**2+.0008*x/.0295)
+    cord('Mouth separation',[(x,front_y(x,1.526+.0015*(x/.0295)**2+.0008*x/.0295)-.001,
+        1.526+.0015*(x/.0295)**2+.0008*x/.0295)
         for x in np.linspace(-.029,.029,30)],.0003,'crease')
 
     # Closed, tapered locks follow cubic curves in a transported local frame.

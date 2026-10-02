@@ -34,10 +34,10 @@ def build_garments(mesh, cord):
         f=0
         for centre,amp,width in [(.12,.011,.018),(.28,.007,.023),(.49,.010,.020),
                                   (.60,.008,.024),(.71,.012,.018),(.87,.010,.022)]:
-            f+=fold(u,centre+.035*t,width+.025*t,amp)*(1-.6*t)
+            f+=fold(u,centre+.035*t,width+.025*t,amp*1.55)*(1-.5*t)
         # Chest strap pulls a few oblique creases through the front linen.
         front=max(0,-math.sin(a))
-        diagonal=.010*math.sin(t*24+u*16)*math.exp(-((t-.42)/.28)**2)*front
+        diagonal=.016*math.sin(t*24+u*16)*math.exp(-((t-.42)/.28)**2)*front
         return ((rx+f)*math.cos(a),(ry+f+diagonal)*math.sin(a),z)
 
     patch('Linen shirt with belt tension folds',34,96,torso,'linen',descending=False)

@@ -58,6 +58,8 @@ const JOINTS = [
  */
 export function createExplorerDynamics(scene, groundAt, diagnostics = false) {
   scene.updateWorldMatrix(true, true)
+  let runner = false
+  scene.traverse(n => { if (n.userData.secondaryProfile === 'ruin-runner') runner = true })
   const rootRotation = scene.getWorldQuaternion(new Quaternion())
   const hips = scene.getObjectByName('Hips'), spine = scene.getObjectByName('Spine')
   const legs = ['L', 'R'].map((label, index) => {
@@ -74,7 +76,8 @@ export function createExplorerDynamics(scene, groundAt, diagnostics = false) {
   const joints = JOINTS.map(([name, length, stiffness, limit, bias]) => {
     const bone = scene.getObjectByName(name)
     if (!bone) throw new Error(`Explorer secondary rig is missing ${name}`)
-    return { name, bone, length, stiffness, limit, bias, rest: bone.quaternion.clone(),
+    const fittedLength = bone.userData.secondaryLength
+    return { name, bone, length: fittedLength ?? length, stiffness, limit, bias, rest: bone.quaternion.clone(),
       x: { angle: 0, velocity: 0 }, z: { angle: 0, velocity: 0 } }
   })
   let phase = 0, blend = 0, lastPosition = null, lastVelocity = new Vector3()
@@ -153,6 +156,22 @@ export function createExplorerDynamics(scene, groundAt, diagnostics = false) {
         const animatedAnkle = leg.foot.getWorldPosition(new Vector3())
         ankle.lerpVectors(animatedAnkle, ankle, groundBlend)
         const hip = leg.thigh.getWorldPosition(new Vector3())
+        // A quick direction change can leave a planted foot outside the new
+        // leg arc. Shorten that step along the ground before the IK solve;
+        // never pull the boot vertically off the floor to reach the old lock.
+        const reach = leg.upper + leg.lower - .012
+        const vertical = ankle.y - hip.y
+        const planarReach = Math.sqrt(Math.max(0, reach * reach - vertical * vertical))
+        const dx = ankle.x - hip.x, dz = ankle.z - hip.z
+        const planarDistance = Math.hypot(dx, dz)
+        if (planarDistance > planarReach && planarDistance > .001 && groundBlend > .95) {
+          const ratio = planarReach / planarDistance
+          ankle.x = hip.x + dx * ratio; ankle.z = hip.z + dz * ratio
+          if (stance && leg.lock) {
+            leg.lock.x = ankle.x - normal.x * .155
+            leg.lock.z = ankle.z - normal.z * .155
+          }
+        }
         const solved = solveLeg(hip, ankle, forward, leg.upper, leg.lower)
         aim(leg.thigh, leg.shin, solved.knee)
         aim(leg.shin, leg.foot, solved.ankle)
@@ -178,9 +197,9 @@ export function createExplorerDynamics(scene, groundAt, diagnostics = false) {
         // front of the torso/thighs; cape stays behind; satchel stays outside the hip.
         const tip = j.bone.localToWorld(new Vector3(0, j.length, 0))
         const local = scene.worldToLocal(tip.clone()), constrained = local.clone()
-        if (j.name.startsWith('Cape')) constrained.z = Math.min(local.z, -.22)
-        else if (j.name === 'Satchel') constrained.x = Math.max(local.x, .22)
-        else if (j.name !== 'Hair') constrained.z = Math.max(local.z, .17)
+        if (j.name.startsWith('Cape')) constrained.z = Math.min(local.z, runner ? -.15 : -.22)
+        else if (j.name === 'Satchel') constrained.x = Math.max(local.x, runner ? .19 : .22)
+        else if (j.name !== 'Hair') constrained.z = Math.max(local.z, runner ? .14 : .17)
         if (constrained.distanceToSquared(local) > 1e-8) {
           const origin = j.bone.getWorldPosition(new Vector3())
           const correction = new Quaternion().setFromUnitVectors(tip.sub(origin).normalize(),

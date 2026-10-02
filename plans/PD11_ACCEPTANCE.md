@@ -1,7 +1,61 @@
-# PD11 acceptance — October 1, 2026
+# PD11 acceptance — October 2, 2026
 
-Status: **in progress; not approved for final delivery**. The functional PD09/10
-work is usable on the temporary explorer. PD08 remains parked by the user.
+Status: **in progress; not approved for final delivery**. The latest completion
+request resumed character work. The fitted Ruin Runner now replaces the old
+explorer, and its focused movement/presentation checks pass. Remaining visual gaps
+and the scheduled technical gate are explicit below; no invented match score.
+
+## October 2 production and integration
+
+- Denser clustered planting and embedded stones around the hub, woodland,
+  archive exterior and hall; a second iteration rounds and darkens the new leaves.
+  Additional middle canopy layers frame the approach. Decorative foliage keeps
+  existing paths and collision proxies separate.
+- Exterior roots have asymmetrical ridges; shared close-range directional bark
+  detail supplements the baked atlases without another texture allocation.
+- Cavern ridges now follow the narrowing shell, with non-coplanar faces buried
+  into the wall instead of detached rectangular plates. Added discontinuous pool
+  ledges and reduced ambient/fog washout. Regenerated collision is included in
+  the resident package; source-versus-resident identity check passes.
+- Separate editable pd11-*.blend files preserve original area sources. Export
+  replacement handles Windows cloud-file rename failures. Seven streamed visual
+  packages plus resident data total 26,913,064 bytes; this is transfer size, not
+  GPU memory or a hardware performance claim.
+- Character: refined facial relief/lids/irises/brows/mouth, darker hair and deeper
+  tunic folds; separate runtime mesh reduced from 189,480 to 70,949 triangles,
+  19 materials, 25 bones and six clips. Semantic weights pin garment attachments.
+  Fitted secondary-bone lengths and body limits support cape, scarf, hems, hair,
+  rope and satchel. This uses spring bones, not AAA cloth simulation.
+- A browser failure at sharp turns exposed excessive leg reach. Steps now shorten
+  along the ground when the previous planted target is outside the leg arc.
+  Retest: idle/slope grounding, stride/turn contact (88/100 samples planted),
+  jump/landing, accessory settling and recovery pass. Camera visibility, pause,
+  walk/run/idle transitions and wall clearance pass on the replacement.
+- 28 focused tests pass, covering actual replacement weights/deformation, existing
+  motion/input/camera logic, entry routing and streamed resource/collision checks.
+  Changed-JavaScript lint and production build pass. No incidental FPS audit.
+- Six final reference views are saved locally as `.artifacts/pd11/REF*-final.png`;
+  motion/camera results are `runner-motion.txt` and `runner-camera.txt` there.
+- Final changed-route check passes cavern ascent, archive return, repositioning on
+  the ascent and an uphill jump (1.16 m rise) with the replacement character and
+  regenerated resident collision. Evidence: `runner-cavern-return.txt` there.
+
+## Remaining acceptance work
+
+The production pass is usable but does not close the requested visual-quality gap.
+The neutral character comparison still shows simplified facial anatomy and garment
+folds/wear compared with Image 3. The world still has flat canopy masses, simplified
+terrain/background silhouettes and repetitive high-contrast masonry. These are
+artwork corrections, not merely a request for user sign-off. The cavern wall change
+removes the detached-tile appearance, but broad rock forms and light still differ
+from REF10. Preserve these gaps until corrected; do not mark PD11 fully complete.
+
+Weekly hardware/resource/deployment/mobile-layout review remains October 3.
+Real-phone controls/thermals remain user-led at the end. There is no next numbered
+PD after PD11 in the approved plan; games and phone controls are deferred.
+
+The October 1 review below is historical and its parked-character/unchanged-
+collision statements are superseded by this update.
 
 ## Release entry pass
 

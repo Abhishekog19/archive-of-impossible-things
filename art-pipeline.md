@@ -152,3 +152,21 @@ colour-map transfer without reducing texture resolution. Native position precisi
 is retained. `npm run verify:placed-world` checks collision identity, package content,
 selection and resource ownership when this pipeline changes. Compare browser
 reference/player views after export; data checks do not prove visual quality.
+
+## PD11 finishing and character fitting
+
+After rebuilding the original hub/forest/archive sources, run
+`node scripts/blender/run.cjs release-finish`, then `npm run prepare:world`.
+The finishing generator opens those original sources, adds deterministic planting,
+embedded stones and root variation, and saves separate `art/source/pd11-*.blend`
+files. It replaces the corresponding production GLBs. Repeating it does not
+accumulate duplicate dressing. It never opens or saves hub-blockout.blend.
+
+For the player, run `npm run blender:ruin-runner` to regenerate the neutral source,
+then `node scripts/blender/run.cjs ruin-runner-runtime`. The latter fits the existing
+six locomotion clips to semantic skin weights, reduces only the derived mesh,
+and writes ruin-runner-runtime.blend and public/models/ruin-runner.glb. Fitted
+secondary-bone lengths travel in glTF extras. Keep the neutral study editable.
+`node --test scripts/ruin-runner.test.mjs` checks the actual exported skin and clips;
+browser comparison remains necessary for appearance and garment deformation.
+The reactive garments use bounded spring bones, not a full cloth solver.

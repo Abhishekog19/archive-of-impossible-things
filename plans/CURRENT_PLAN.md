@@ -1,29 +1,29 @@
 # Current plan — Archive of Impossible Things
 
-Status (revised October 1, latest user scope): environment REF4/5/6/7/8/10
+Status (revised October 2, latest user scope): environment REF4/5/6/7/8/10
 PLUS finished character art/animation, third-person movement, Rapier/ecctrl physics
 and camera polish. Only game insertion and phone controls remain after handoff.
 Use numbered production packages PD01–PD11 in ../environment-september-plan.md;
 target 2–3 packages per active working day where quality permits. PD07 production
-is implemented. PD08 is PARKED by user direction on September 30; its art remains
-unapproved. Image 3 (Ruin Runner) remains the selected replacement reference.
-PD09 desktop movement/physics is implemented and its focused checks pass using
-the existing gameplay explorer. Follow CHARACTER_REDESIGN.md when model and
-reactive-clothing work resumes; this movement pass does not approve character art.
-PD10 functional production is complete and checked October 1 on the temporary
-gameplay explorer: camera/animation polish, ground-contact foot placement and
-reactive clothing/accessories. PD08 character art is still parked and unapproved;
-retargeting and visual acceptance on its eventual replacement rig remain required.
-The parked PD08 study was not changed or promoted.
-PD11 is IN PROGRESS: default connected-world entry, clean player UI and boot/error
-handling are implemented. The six-reference review is recorded in
-[PD11 acceptance](PD11_ACCEPTANCE.md); environment-art gaps and parked PD08 prevent
-final delivery approval. Reuse valid PD09/10 checks; weekly technical work stays October 3.
+is implemented. The request to complete PD11 fully resumed the PD08 character work.
+Image 3 (Ruin Runner) remains the selected reference; visual acceptance is open.
+The refined study now has a derived 70,949-triangle runtime skin, 25 bones, six
+locomotion clips and fitted spring-driven garments/accessories. It replaces the
+temporary explorer in the game. Neutral editable source is retained separately.
+PD09/10 movement and presentation have been checked on this replacement. Sharp
+turns now shorten unreachable planted steps rather than pulling boots off the floor.
+PD11 is IN PROGRESS: environment finishing, replacement integration, default entry,
+clean UI and boot/error handling are implemented. See
+[PD11 acceptance](PD11_ACCEPTANCE.md) for completed checks and remaining art gaps.
+Do not mark the package fully accepted from technical results alone. Weekly
+hardware/resource/deployment/mobile review stays October 3. There is no PD12 in
+this plan; do not invent another package or start deferred games/phone controls.
 Explicit local-preview permission was received September 28 and six reference
-views plus cavern player-height were reviewed. Connected transition review and
-the recorded art-quality corrections remain open. PD08 redesign and PD11
-remain; the prior 1–2 active-day estimate is withdrawn pending the new character
-and secondary-motion proof. PD04's final shoreline comparison was closed using the
+views plus cavern player-height were reviewed. The October 2 replacement-character
+motion, camera and cavern-to-archive return checks pass. Recorded art-quality
+corrections and the weekly technical review remain open. PD08 visual acceptance
+and PD11 remain; the prior 1–2 active-day estimate is withdrawn until the remaining
+art corrections are assessed. PD04's final shoreline comparison was closed using the
 user-supplied screenshot; PD07/08 browser evidence is recorded below.
 Older calendar forecasts and character/physics deferrals below are historical.
 No automatic sessions, fixed calendar promise or invented days-saved claim.

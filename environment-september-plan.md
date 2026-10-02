@@ -1,6 +1,6 @@
 # Connected environment production plan
 
-Revised October 1, 2026 (Asia/Calcutta): numbered production days; target two to
+Revised October 2, 2026 (Asia/Calcutta): numbered production days; target two to
 three production packages per working day. Filename retained for existing links.
 This replaces the September 30 hub-only scope and future phase dates. Completed
 production evidence remains in `plans/CURRENT_PLAN.md`.
@@ -40,11 +40,11 @@ in order. The prior 3-hour weekday / 9-hour weekend assumptions and October 4
 calendar promise are superseded. Do not multiply the old schedule by three again
 or claim a package complete simply because its time allowance has elapsed.
 
-There are 11 packages including the former-September-27 package. PD08 was reopened
-after the user rejected its character, then parked September 30 to finish PD09.
-PD09 and PD10 functional movement/presentation are implemented and checked on the
-temporary gameplay explorer. PD08 redesign and PD11 acceptance remain,
-together with recorded environment corrections. The previous
+There are 11 packages including the former-September-27 package. PD08 was reopened,
+then parked September 30; the request to complete PD11 fully resumed its work.
+The refined Ruin Runner now replaces the temporary explorer and has been checked
+with PD09/10 movement, camera and fitted secondary motion. PD08 visual acceptance
+and PD11 acceptance remain, together with recorded environment corrections. The previous
 1–2 active-day forecast is withdrawn; re-estimate after the model and one-panel
 secondary-motion proof in plans/CHARACTER_REDESIGN.md. Throughput is a goal, not
 permission to skip visual acceptance.
@@ -59,16 +59,14 @@ Sessions begin on the user's request; no unattended work or automation is implie
 | PD05 — built, initial review recorded | Metre-scaled 1024px stone colour/normal/roughness, wet shoreline layering and connected reflective water. Build/lint and unchanged collision check pass. PD07's authorized reference/player review confirms rendering; excessive stone grain corrected. Final material acceptance remains open. |
 | PD06 — built, initial review recorded | Authored oculus, bounded overhead lighting, soft shaft, connected descent fog/ambient transition and aligned opening reflection. Build/lint and pure transition check pass. PD07 reviews reference/player appearance; physical descent/return comparison remains open. |
 | PD07 — implemented and initially reviewed | Shared outdoor stone detail, articulated landmark/perimeter ruins and smoother cavern shell; seven streamed visual packages, resident collision/backdrop, mesh cells and optimized GLBs/textures. Build/lint and five focused tests pass. Six-area screenshots reviewed; three immediate visual corrections made. Recorded art gaps, connected transition checks and technical budgets remain open. |
-| PD08 — parked Sep 30, unapproved | Replace rejected prototype with approved Image 3 Ruin Runner design: face/hair, natural proportions, layered tunic, asymmetric shoulder cloth, side satchel, rope ties and wraps. Compare front/side/back before detailed skinning and animation. Existing passing export tests do not establish design acceptance. |
+| PD08 — resumed, integrated Oct 2; visual acceptance open | Refined neutral study and derived 70,949-triangle, 25-bone Ruin Runner replace the old player. Six locomotion clips, textured garments, semantic skinning and fitted secondary joints are present. Browser motion checks pass; the face and garment finish still fall short of Image 3. Technical success does not establish design acceptance. |
 | PD09 — implemented and checked Sep 30 | Hold-to-run and buffered jump input, acceleration/braking/turn response, shape grounding, gentler falls, capsule CCD, area recovery and shared pause state. Focused controls, uneven road/ramps/stairs, six-area/four-location connected walk, cavern return and recovery pass. Build/lint and five focused tests pass. Final animation, art and user feel approval remain. |
 | PD10 — functional production complete Oct 1 | Camera clearance/fade, gait transitions, ground-sampled leg placement, slope-aligned boots, turn/landing polish and eight spring-driven cape/scarf/hem/hair/rope/satchel bones are implemented and checked on the temporary explorer. One skin/material, 25 bones. Final art and fitting to the replacement rig remain PD08/PD11 acceptance work. No phone-control redesign or gameplay. |
-| PD11 — in progress Oct 1 | Default assembled-world entry, hidden-by-default HUD, initial loading/error handling and fresh six-reference review completed. See plans/PD11_ACCEPTANCE.md. Environment-art corrections, parked character acceptance and remaining weekly technical evidence prevent final release approval. Reuse PD09/10 evidence; phone controls and games remain deferred. |
+| PD11 — in progress Oct 2 | Environment dressing/root/cavern corrections, bark detail, replacement-character integration and corrected turn foot reach built. Build/lint and 28 focused tests pass. Six-area reference review and replacement motion results are in plans/PD11_ACCEPTANCE.md. Art quality/acceptance and the scheduled weekly technical gate remain open. Phone controls and games remain deferred. |
 
-Current direction (October 1): PD08 is parked; PD09 and PD10 functional production
-are implemented and checked using the existing gameplay explorer, now extended
-with secondary-motion bones. PD10 completion does not approve this temporary art.
-Final replacement rig fitting and clothing appearance require the PD08 design proof;
-PD11 remains the final acceptance gate and cannot approve a placeholder character.
+Current direction (October 2): replacement rig fitting and functional motion checks
+are implemented. PD08 appearance is unapproved; PD11 remains the final acceptance
+gate. There is no PD12 or authorized game/phone-control package in this schedule.
 Combine the remaining batches only if preceding gates pass. Keep checkpoints visible rather
 than forcing an unfinished package into the next package's completion claim.
 

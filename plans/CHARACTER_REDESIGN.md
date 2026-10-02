@@ -10,6 +10,18 @@ September 30 user direction: park this redesign and move to PD09. Desktop moveme
 was implemented and checked with the existing explorer. Model approval, skinning,
 final animation and reactive clothing remain open; resume these only when requested.
 
+October 2 update: the subsequent request to complete PD11 fully resumed this work.
+Face relief, eyelids, iris size, brows, mouth and hair colour were refined; shirt
+folds deepened. A separate reduced runtime mesh now has semantic skin weights,
+the six repository locomotion clips and fitted cape/scarf/hem/hair/rope/satchel
+springs. It is integrated as public/models/ruin-runner.glb. Focused browser camera,
+gait, grounding, turn, landing, slope and settling checks pass; two exported-asset
+tests check normalized weights and deformation. This is a functional replacement,
+not proof of likeness: the neutral browser comparison still shows simplified facial
+anatomy, garment silhouette and surface wear relative to Image 3. Do not label it
+photorealistic, reference-matched or user-approved. Earlier parked/static-only
+status entries below describe previous checkpoints.
+
 ## Required appearance
 
 - Match the turnaround's youthful stylized face, swept layered dark hair, expressive

@@ -1,5 +1,15 @@
 # Current plan — Archive of Impossible Things
 
+October 3 next-phase continuation: Phase 3's first connector batch replaces eight
+wall blockouts, fits low roots to sloping ground, removes the covered road skin,
+and adds smaller folded foliage and planted ruin bases. REF5 and side/reverse
+comparisons are saved; the three connector movement checkpoints, six world tests
+and production build pass. Resident collision triangles are unchanged despite
+visual-package changes. Bank silhouettes, root/paving seams, crown variation and
+background depth remain open; this is not whole-phase visual acceptance. Assets
+and evidence documentation are separate pushes to the approved origin/main.
+See [phase tracker](WORLD_AUDIT_FIX_PHASES.md) for evidence and remaining work.
+
 October 3 continuation: at the user's request, Phase 2's representative material
 study is implemented in the forest connector, without closing Phase 1's remaining
 structural issues. Stone/bark/ground share one 2K atlas with distinct surface groups,

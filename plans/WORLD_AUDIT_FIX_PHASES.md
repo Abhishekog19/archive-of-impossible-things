@@ -102,10 +102,40 @@ Local evidence: `.artifacts/material-study-oct03/01-connector-before.png`,
 Next: resolve the recorded structural joins and root attachments before material
 propagation, then continue terrain/vegetation and lighting acceptance.
 
-## Phase 3 — terrain, roots and vegetation — pending
+## Phase 3 — terrain, roots and vegetation — connector batch implemented
 
-Finish planted banks and ruin bases, dimensional foliage, crown variation and
-background depth. Revisit the area-specific P2 observations in the audit.
+October 3, at the user's request to continue to the next phase:
+
+- Replaced eight connector wall blockouts with baked stone courses on their
+  original footprints, with embedded rubble and low plants at their bases.
+- Fitted the four patch trees' low root vertices to the sloping terrain. Removed
+  the covered khaki road skin beneath the existing earth/paving replacement.
+- Folded fern, broadleaf and shrub faces, reduced oversized ground plants and
+  added shoulder/base clusters: 128 ground-cover instances in the patch.
+- Added repeatable `connector-side` and `connector-reverse` comparison cameras.
+
+Compared the matching 1280 × 720 before/after and side/reverse captures with REF5.
+The local wall blockouts and exposed road border are replaced, with denser low
+planting. **Phase 3 acceptance remains open:** the outer banks still have broad
+bare facets, crowns repeat and flatten, background depth is weak, and root/paving
+joins retain dark seams. Column ivy remains flat. This batch does not finish
+bank reshaping, canopy production or facade root attachments elsewhere.
+
+Validation: actual ecctrl/Rapier connector middle, far end and return pass with
+0.02, 0.20 and 0.17 m destination errors. Six placed-world tests and the production
+build pass. Resident visuals changed, but its 21,189 collision triangles match
+the pre-audit baseline after world transforms (canonical coordinates rounded to
+five decimals; SHA-256 `f999ff671c6c896c8768b12f0a50222a6032d5b7f24b9eceff6c6c64d9c1e123`).
+The existing source-boundary collision test also passes. Patch runtime geometry
+is 77,276 triangles and 1,970,876 bytes, still using the shared 2K atlas. These are
+asset counts, not FPS results; broad performance checks stay in the weekly batch.
+
+Local evidence: `.artifacts/phase3-connector-oct03/01-before.png`, `02-after.png`,
+`03-side.png`, `04-reverse.png`, `connector-route.txt`, and `collision.json`.
+Generator/package/test/build logs: `.artifacts/blender/phase3-*.log`.
+
+Next Phase 3 batch: connector bank silhouettes and ends, root/paving seams, then
+crown variation and depth before treating lighting as the remaining difference.
 
 ## Phase 4 — lighting and water — pending
 
@@ -126,7 +156,10 @@ regression remain in the weekly batch, not per-art-change checks.
    pushed separately.
 4. `c8dfe44` — close-view pore distribution and subpixel filtering correction;
    separate push after visual comparison and rebuilt production bundle.
-5. Audit register, phase tracker and current-plan update form the final docs group.
+5. `e4108ae` — audit register, phase tracker and current-plan update; pushed separately.
+6. `5a30495` — Phase 3 connector generator, editable source, exports and comparison
+   cameras; pushed separately.
+7. Phase 3 evidence and remaining-work documentation; separate push after assets.
 
 The pre-existing modified `art/source/hub-blockout.blend` is excluded from these
 commits. Private source material remains ignored/untracked and was not read.

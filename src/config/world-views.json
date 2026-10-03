@@ -64,6 +64,16 @@
     ],
     "ref": "REF8"
   },
+  "material-stone": {
+    "position": [-12, 2.4, -26],
+    "target": [-12, 1.0, -29],
+    "ref": "REF5"
+  },
+  "material-bark": {
+    "position": [-13.9, 2.3, -24.8],
+    "target": [-16.8, 2.0, -27],
+    "ref": "REF5"
+  },
   "cavern": {
     "position": [
       -26,

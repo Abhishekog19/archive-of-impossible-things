@@ -181,11 +181,14 @@ export default function MovementReview() {
             `${round(distance)} m; rise ${round(maxY - start.y)} m; grounded ${Math.round(grounded / samples * 100)}%`)
         }
       } else {
-        await place(kind === 'return' ? [-12, -5.5, -174] : [0, 2, 6])
+        await place(kind === 'return' ? [-12, -5.5, -174] : kind === 'patch' ? [-12, 2, -20] : [0, 2, 6])
         // Connected authored route plus side trips to all four reserved locations.
         const route = kind === 'hub' ? [
           ['Hub centre', 0, -5], ['Hub forest exit', -12, -20],
           ['Hub return', 0, -5], ['Arrival return', 0, 6],
+        ] : kind === 'patch' ? [
+          ['Connector middle', -12, -30], ['Connector far end', -12, -39],
+          ['Connector return', -12, -20],
         ] : kind === 'return' ? [
           ['Cavern ascent', -12, -159], ['Archive return', -12, -138],
           ['Jump on ascent', -12, -149],
@@ -251,6 +254,7 @@ export default function MovementReview() {
       <button disabled={busy} onClick={() => run('terrain')}>Check slopes and steps</button>
     </> : <>
       <button disabled={busy} onClick={() => run('hub')}>Check hub connection</button>
+      <button disabled={busy} onClick={() => run('patch')}>Check forest connector</button>
       <button disabled={busy} onClick={() => run('world')}>Walk connected world</button>
       <button disabled={busy} onClick={() => run('return')}>Check cavern return</button>
     </>}</div>

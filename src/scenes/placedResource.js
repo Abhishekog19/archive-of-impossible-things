@@ -22,14 +22,15 @@ export async function loadPlaced(url, signal, anisotropy, detail, cavern = false
     }
     if (cavern || /Collision/.test(node.name)) return
     const original = node.material
-    const stone = /Paving|Stone|Ruins|Courtyard|Arcades|Floor|Walls|Limestone|Tower|Perimeter/.test(node.name)
+    const stone = /Paving|Stone|Ruins|Courtyard|Arcades|Floor|Walls|Limestone|Tower|Perimeter|ForestPatch_Ground/.test(node.name)
     const bark = /Trees|Wood/.test(node.name)
-    const key = original.uuid + (stone ? '-stone' : bark ? '-bark' : '')
+    const study = node.name.startsWith('ForestPatch_')
+    const key = original.uuid + (stone ? '-stone' : bark ? '-bark' : '') + (study ? '-study' : '')
     if (!converted.has(key)) {
       const material = new MeshBasicMaterial({ map: original.map, color: original.color,
         vertexColors: !original.map && !!node.geometry.attributes.color, side: original.map ? original.side : DoubleSide })
-      if (stone && detail) addStoneDetail(material, detail)
-      else if (bark && detail) addBarkDetail(material, detail)
+      if (stone && detail) addStoneDetail(material, detail, study)
+      else if (bark && detail) addBarkDetail(material, detail, study)
       converted.set(key, { original, material })
     }
     node.material = converted.get(key).material

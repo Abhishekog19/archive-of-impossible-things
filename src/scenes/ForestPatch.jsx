@@ -16,9 +16,9 @@ export default function ForestPatch() {
   }, [gl, materials])
   useEffect(() => () => map.dispose(), [map])
   return <>
-    <mesh name="ForestPatch_Baked" geometry={nodes.ForestPatch_Baked.geometry}>
+    {['Stone', 'Wood', 'Ground'].map(kind => <mesh key={kind} name={`ForestPatch_${kind}`} geometry={nodes[`ForestPatch_${kind}`].geometry}>
       <meshBasicMaterial map={map} />
-    </mesh>
+    </mesh>)}
     <mesh geometry={nodes.ForestPatch_Foliage.geometry}>
       <meshBasicMaterial vertexColors side={DoubleSide} />
     </mesh>

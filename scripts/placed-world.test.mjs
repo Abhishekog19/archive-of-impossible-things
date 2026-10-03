@@ -84,6 +84,20 @@ test('all compressed packages decode, match manifest and retain required nodes',
     if (area.id === 'cavern') {
       for (const name of ['CavernStructure_Rock', 'Cavern_Oculus']) assert(doc.getRoot().listNodes().some(n => n.getName() === name))
     }
+    if (area.id === 'patch') {
+      const maps = new Set()
+      for (const family of ['Stone', 'Wood', 'Ground']) {
+        const nodes = doc.getRoot().listNodes().filter(n => n.getName().startsWith(`ForestPatch_${family}`))
+        assert(nodes.length > 0, `forest patch lost ${family} surface`)
+        for (const node of nodes) for (const primitive of node.getMesh().listPrimitives()) {
+          assert(primitive.getAttribute('TEXCOORD_0'), `${family} lost its baked UVs`)
+          const map = primitive.getMaterial().getBaseColorTexture()
+          assert(map, `${family} lost its diffuse atlas`)
+          maps.add(map)
+        }
+      }
+      assert.equal(maps.size, 1, 'study surfaces must share the existing atlas')
+    }
     const sourceName = { hub: 'hub-art', approach: 'forest-approach', canopy: 'forest-canopy' }[area.id]
     if (sourceName) {
       const source = await read(sourceName)

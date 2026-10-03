@@ -7,12 +7,16 @@ import bpy
 import math
 import json
 import time
+import sys
+import bmesh
 from pathlib import Path
 from mathutils import Vector
 from mathutils.bvhtree import BVHTree
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / '.artifacts/blender'
+sys.path.insert(0, str(Path(__file__).parent))
+from surface_study import study_material
 started = time.monotonic()
 bpy.ops.object.select_all(action='SELECT')
 bpy.ops.object.delete(use_global=False)
@@ -167,6 +171,12 @@ for i in range(72):
           Vector(position(x, height_at(x, z) + .02, z)), (scale,) * 3, (0, 0, i * 2.399))
 
 # Retain originals for the second-half bake and future editing.
+study = {kind: study_material(kind) for kind in ('Stone','Wood','Ground')}
+for obj in visuals:
+    kind = 'Ground' if obj == ground else 'Wood' if obj in trees else 'Stone'
+    obj.data.materials.clear()
+    obj.data.materials.append(study[kind])
+    for poly in obj.data.polygons: poly.material_index=0
 author = bpy.data.collections.new('Authoring patch')
 scene.collection.children.link(author)
 for obj in visuals + foliage:
@@ -215,6 +225,20 @@ material.use_nodes = True
 tex = material.node_tree.nodes.new('ShaderNodeTexImage')
 tex.image = atlas
 material.node_tree.links.new(tex.outputs['Color'], material.node_tree.nodes['Principled BSDF'].inputs['Base Color'])
+# Keep families distinct after baking. The former single Baked mesh could not
+# receive separate metre-scaled stone and directional bark detail at runtime.
+families = [next(k for k in study if original.name.startswith('Study '+k))
+            for original in target.data.materials]
+surface_parts=[]
+for kind in study:
+    obj=target.copy();obj.data=target.data.copy();scene.collection.objects.link(obj)
+    obj.name='ForestPatch_'+kind
+    bm=bmesh.new();bm.from_mesh(obj.data)
+    bmesh.ops.delete(bm,geom=[f for f in bm.faces if families[f.material_index]!=kind],context='FACES')
+    bm.to_mesh(obj.data);bm.free()
+    obj.data.materials.clear();obj.data.materials.append(material)
+    for polygon in obj.data.polygons: polygon.material_index=0
+    surface_parts.append(obj)
 target.data.materials.clear()
 target.data.materials.append(material)
 for polygon in target.data.polygons: polygon.material_index = 0
@@ -252,13 +276,15 @@ leaf_mesh.data.materials.clear()
 leaf_mesh.data.materials.append(leaf_material)
 for polygon in leaf_mesh.data.polygons: polygon.material_index = 0
 collision.select_set(True)
-target.select_set(True)
+target.hide_render=True
+target.hide_set(True)
+for obj in surface_parts:obj.select_set(True)
 source = ROOT / 'art/source/forest-patch.blend'
 export = ROOT / 'public/models/forest-patch.glb'
 bpy.ops.wm.save_as_mainfile(filepath=str(source), compress=True)
 bpy.ops.export_scene.gltf(filepath=str(export), export_format='GLB', use_selection=True,
     export_image_format='JPEG', export_image_quality=94)
-report = {'stage': 'assembled sun/shade patch',
+report = {'stage': 'Phase 2 representative stone, bark and ground study',
           'source': str(source.relative_to(ROOT)), 'bytes': export.stat().st_size,
           'atlas': 2048, 'samples': 32, 'slabs': 72, 'trees': len(trees), 'groundCover': 72,
           'seconds': round(time.monotonic() - started, 1)}

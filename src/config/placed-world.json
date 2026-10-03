@@ -32,9 +32,9 @@
       "keep": 68,
       "draw": 32,
       "url": "/models/placed/patch.glb",
-      "bytes": 1904604,
+      "bytes": 1722608,
       "trianglesBefore": 81506,
-      "triangles": 81506
+      "triangles": 69612
     },
     {
       "id": "approach",

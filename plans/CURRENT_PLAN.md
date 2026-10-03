@@ -1,5 +1,30 @@
 # Current plan — Archive of Impossible Things
 
+October 3 continuation: at the user's request, Phase 2's representative material
+study is implemented in the forest connector, without closing Phase 1's remaining
+structural issues. Stone/bark/ground share one 2K atlas with distinct surface groups,
+metre-scaled authored materials and patch-only close detail. REF5/close comparisons,
+the connector return route, six world tests, changed-file lint and build pass.
+Material acceptance/propagation remain open. Portal loading, hall/descent assets,
+the study and documentation are separate push groups to user-approved origin/main.
+See [phase tracker](WORLD_AUDIT_FIX_PHASES.md) for evidence, gaps and commit groups.
+
+October 3 audit corrections have started: [phase tracker](WORLD_AUDIT_FIX_PHASES.md).
+Phase 1's first archive/hall batch closes the inspected main-arch daylight gaps,
+adds recessed seam backing and requires hall/descent assets for courtyard portal
+sightlines. Descent shape is a partial study; I05/V01 remain visibly unfinished.
+REF8/entrance/reverse-view comparisons and the cavern return/jump check are saved;
+six world tests, changed-JavaScript lint and build pass. Resident collision is
+byte-for-byte unchanged. Continue Phase 1 hub/forest/roots and remaining joins
+before material propagation. Whole-world visual acceptance is open.
+
+October 3 whole-world audit: [visual and roaming issue register](WORLD_AUDIT_2026-10-03.md).
+Connected route, full cavern shoreline and reverse journey passed their controller
+checkpoints; 34 visual observations remain recorded by location. This audit does
+not close overall art acceptance. Prioritize exposed blockouts, joins and portal
+continuity, then shared materials and natural forms. No environment changes were
+made during this audit.
+
 Status (revised October 3, latest user scope): environment REF4/5/6/7/8/10
 PLUS finished character art/animation, third-person movement, Rapier/ecctrl physics
 and camera polish. Only game insertion and phone controls remain after handoff.

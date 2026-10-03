@@ -1,0 +1,132 @@
+# World audit correction phases
+
+Tracks production against [the October 3 audit](WORLD_AUDIT_2026-10-03.md).
+An implemented correction is not whole-world visual acceptance.
+
+## Phase 1 — visible structure and connections — in progress
+
+### First batch: archive hall and portal continuity, October 3
+
+- **I02, main arch separation: corrected in the inspected REF8 view.** Closed
+  radial joints, added recessed continuous arch cores, and extended nave/portal
+  piers to meet their springlines. Rebuilt and baked the editable hall source and
+  exported the runtime GLB/package.
+- **I01, light seams: partial.** Added recessed sidewall and lower rear-wall
+  masonry cores plus buried entrance footings. The inspected entrance footing
+  no longer shows the bright ground slit. Small upper masonry seams, the opposite
+  entrance return, and additional oblique views still need acceptance checks.
+- **E06, missing portal destination: loading correction implemented.** Courtyard
+  and hall sightlines now require the hall and cavern packages before the loading
+  gate releases. The exterior player view shows the hall/descent consistently.
+  Overall portal appearance remains tied to I05.
+- **I05/V01, descent: partial structural study only.** Lifted the visible upper
+  vault and added four connected rock seams. The unchanged ramp remains walkable,
+  but the REF8 view still reads as a grey portal surface with a bright far opening;
+  the reverse view retains straight floor/wall joins. Do not close these issues.
+
+Verification:
+
+- Compared REF8 with matching 1280 × 720 before/after reference captures, plus
+  courtyard player, entrance-side and reverse passage views.
+- Actual ecctrl/Rapier cavern return check: three destinations passed (0.10–0.21 m
+  final errors); uphill jump passed with 0.99 m rise and airborne state.
+- Resident package is byte-for-byte identical before/after (SHA-256
+  `2ce0c8af2e12d495bc230b52eeaf2fa34951b1abbd4f380fc6192c5d3965273a`).
+- Six placed-world tests pass, including a new cold-entry portal dependency test;
+  changed JavaScript lint and production build pass. Retrieved reverse-view
+  console sample contains no error entries.
+- Temporary inspection cameras were restored byte-for-byte. Existing modified
+  `hub-blockout.blend` was preserved. Private file checked by Git metadata only:
+  ignored and untracked. This batch was subsequently committed and pushed in
+  the separate groups recorded below.
+
+Local evidence in `.artifacts/world-audit-oct03/`:
+`hall-phase1-before.png`, `hall-phase1-after.png`, `exterior-phase1-after.png`,
+`entrance-seam-phase1-after.png`, `descent-phase1-after.png`, and
+`phase1-cavern-return.txt`. Generator, package, test and build logs are in
+`.artifacts/blender/audit-*.log`. Ignored evidence is local to this checkout.
+
+Largest remaining differences in the inspected hall: padded/repetitive stone
+profiles, shallow portal depth cues, pale blank window surroundings, and flat
+plant silhouettes. Keep material and foliage acceptance open.
+
+### Next structural batches
+
+1. H01/H02/F01: hub perimeter blockouts, reverse arrival composition, connector
+   bank ends. Compare REF4/REF5 plus player-height reverse/side views.
+2. C01/E01/E02: tree/ruin intersection, connected facade roots, forest/courtyard
+   ground transition. Compare REF6/REF7 plus affected route checks.
+3. Finish I01/I05/V01 and E06 appearance: seal remaining joins, author a legible
+   descent threshold and natural rock-to-floor transitions. Keep existing routes.
+
+## Phase 2 — representative materials — study implemented, acceptance open
+
+The user requested advancing to this phase and pushing systematically on October
+3. Phase 1's remaining items above stay open; moving ahead does not close them.
+
+The forest connector now provides the representative stone/bark/ground study for
+F03/F04/X02 and static root/plant contact under X01:
+
+- Metre-scaled limestone variation and two-scale irregular moss, directional bark,
+  soil/moss variation, and short-distance contact/relief are baked in Blender.
+- Stone, wood and ground export as distinct meshes sharing the original 2048px
+  atlas. This fixes the prior merged `ForestPatch_Baked` mesh's inability to receive
+  family-specific runtime detail. The legacy patch component also uses the new
+  mesh contract.
+- Only this patch receives the new close-range mineral pores and broken bark
+  fissures. Detail fades with distance and uses derivatives for antialiasing;
+  no additional texture or render pass was introduced. Roughness/relief here are
+  baked appearance, not a new realtime PBR material or character-contact fix.
+- Added repeatable `view=material-stone` and `view=material-bark` cameras, plus
+  the development-only “Check forest connector” route button.
+
+Comparison: the 1280 × 720 connector before/after and close views were compared
+with REF5. Stone is cooler, bark direction clearer, and root contact/soil more
+distinct. Close surfaces still have soft broad colour, roots retain local dark
+seams, and paving has thin/open edge joins. Adjacent blockouts, background depth
+and polygonal plants remain. Do not propagate or declare full visual acceptance
+until the remaining geometry and material response are reviewed together.
+
+Validation: six placed-world checks pass (including the shared-atlas/new-node
+contract); changed JavaScript lint and final production build pass. The actual
+connector route passes at its middle, far end and return (0.10, 0.08, 0.30 m
+destination errors). Retrieved browser error samples are empty. Resident collision
+retains the SHA-256 above. Source geometry remains 81,506 triangles; the existing
+wood simplifier now recognizes its separate family and derives 69,612 runtime
+triangles. Package size is 1,722,608 bytes. These are asset counts, not FPS results.
+
+Local evidence: `.artifacts/material-study-oct03/01-connector-before.png`,
+`02-connector-after.png`, `03-bark-close.png`, `04-stone-close.png`, and
+`connector-route.txt`. Logs: `.artifacts/blender/phase2-*.log`.
+
+Next: resolve the recorded structural joins and root attachments before material
+propagation, then continue terrain/vegetation and lighting acceptance.
+
+## Phase 3 — terrain, roots and vegetation — pending
+
+Finish planted banks and ruin bases, dimensional foliage, crown variation and
+background depth. Revisit the area-specific P2 observations in the audit.
+
+## Phase 4 — lighting and water — pending
+
+Reference-specific contrast, canopy light, contact, cavern depth, shore wetness
+and reflection clarity. Geometry and material coherence precede this pass.
+
+## Phase 5 — focused comparison and acceptance — pending
+
+Compare the largest 3–5 remaining mismatches per iteration. Keep character
+acceptance separate. Hardware, sustained performance, deployment and mobile
+regression remain in the weekly batch, not per-art-change checks.
+
+## Push groups — approved GitHub origin/main
+
+1. `498b965` — portal destination loading and regression check; pushed separately.
+2. `35dfc22` — hall/descent generators, editable sources and exports; pushed separately.
+3. `051202a` — representative connector material study, assets and review controls;
+   pushed separately.
+4. `c8dfe44` — close-view pore distribution and subpixel filtering correction;
+   separate push after visual comparison and rebuilt production bundle.
+5. Audit register, phase tracker and current-plan update form the final docs group.
+
+The pre-existing modified `art/source/hub-blockout.blend` is excluded from these
+commits. Private source material remains ignored/untracked and was not read.

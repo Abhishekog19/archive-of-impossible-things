@@ -31,6 +31,17 @@ test('entry loads only its area; hysteresis retains then evicts old areas', () =
   }
 })
 
+test('archive portal sightlines require hall and descent on cold entry', () => {
+  for (const z of [-87, -98, -114, -135, -144]) {
+    const ids = requiredAreas(z, manifest.zones).map(area => area.id)
+    assert(ids.includes('hall'), `hall missing from portal view at ${z}`)
+    assert(ids.includes('cavern'), `descent missing from portal view at ${z}`)
+    assert.equal(new Set(ids).size, ids.length)
+  }
+  assert(!requiredAreas(-67, manifest.zones).some(area => area.id === 'cavern'))
+  assert(!requiredAreas(6, manifest.zones).some(area => area.id === 'hall'))
+})
+
 function collisionTriangles(doc, offset = [0, 0, 0]) {
   const triangles = [], point = new Vector3(), matrix = new Matrix4(), xyz = []
   for (const node of doc.getRoot().listNodes().filter(n => /Collision/.test(n.getName()))) {

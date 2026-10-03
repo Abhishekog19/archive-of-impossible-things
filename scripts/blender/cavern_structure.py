@@ -206,7 +206,29 @@ for i in range(17):
     for j in range(6):
         a=i*7+j;b=a+7
         faces.extend([(a,b,a+1),(a+1,b,b+1)])
-mesh('Descent fractured passage',pts,faces,True)
+passage=mesh('Descent fractured passage collision source',pts,faces,True)
+visuals.remove(passage)
+# Retain the tested collision shell. The visible rock vault opens above it at
+# the hall end, so the descending roof no longer reads as a flat portal infill.
+# Rounded, offset ring shoulders add depth without narrowing the five-metre lane.
+vault=[]
+for index,(x,y,z) in enumerate(pts):
+    ring,j=divmod(index,7)
+    t=ring/17
+    lift=3.2*math.sin(min(1,t*3.5)*math.pi/2)*(1-t)**1.3
+    weight=(0,.2,.85,1,.85,.2,0)[j]
+    vault.append((x+(0 if j in (0,6) else .18*math.sin(ring*.9+j)),y+lift*weight,z))
+mesh('Descent fractured passage',vault,faces)
+# Connected, uneven rock ribs articulate the slope in silhouette. Their edges
+# overlap the vault and feet are outside the walking lane, avoiding floating fins.
+for ring in (2,5,9,13):
+    rib=[]
+    for dz in (-.22,.22):
+        for j in range(7):
+            x,y,z=vault[ring*7+j]
+            inset=(0,.12,.20,.24,.20,.12,0)[j]
+            rib.append((x+(inset if x<-12 else -inset),y-inset,z+dz))
+    mesh('Descent connected rock seam',rib,[(j,j+7,j+8,j+1) for j in range(6)])
 for i in range(22):
     za=-141-i*1.5;zb=max(-174,za-1.48)
     ya=1.65+ (za+141)*9.15/33+.02;yb=1.65+(zb+141)*9.15/33+.02

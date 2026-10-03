@@ -92,9 +92,9 @@
       "keep": 58,
       "draw": 35,
       "url": "/models/placed/hall.glb",
-      "bytes": 5351468,
-      "trianglesBefore": 113764,
-      "triangles": 113764
+      "bytes": 5083180,
+      "trianglesBefore": 102895,
+      "triangles": 102895
     },
     {
       "id": "cavern",
@@ -107,9 +107,9 @@
       "keep": 58,
       "draw": 35,
       "url": "/models/placed/cavern.glb",
-      "bytes": 900000,
-      "trianglesBefore": 5956,
-      "triangles": 5956
+      "bytes": 901404,
+      "trianglesBefore": 6004,
+      "triangles": 6004
     }
   ]
 }

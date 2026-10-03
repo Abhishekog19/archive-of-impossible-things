@@ -54,7 +54,9 @@ def arch(name, centre, radius, spring, depth=.85, axis='x', thickness=.66):
     cx, cz = centre
     pieces = 13 if radius > 3 else 11
     for i in range(pieces):
-        a, b = i*math.pi/pieces+.008, (i+1)*math.pi/pieces-.008
+        # Closed radial joints: bevel only the exposed arris, with a recessed
+        # continuous core below. Daylight must not separate load-bearing stones.
+        a, b = i*math.pi/pieces, (i+1)*math.pi/pieces
         pts = []
         for d in (-depth/2, depth/2):
             for r, t in ((radius,a),(radius,b),(radius+thickness,b),(radius+thickness,a)):
@@ -67,11 +69,31 @@ def arch(name, centre, radius, spring, depth=.85, axis='x', thickness=.66):
         obj=bpy.data.objects.new(name,data)
         bpy.context.collection.objects.link(obj)
         finish(obj,name,architecture)
+    pts=[]
+    for d in (-depth*.34, depth*.34):
+        for i in range(pieces+1):
+            t=i*math.pi/pieces
+            for r in (radius+.035,radius+thickness-.035):
+                u,h=r*math.cos(t),spring+r*math.sin(t)
+                x,z=(cx+u,cz+d) if axis=='x' else (cx+d,cz+u)
+                pts.append((x,-z,h))
+    stride=(pieces+1)*2
+    faces=[]
+    for i in range(pieces):
+        a=i*2;b=a+2
+        faces.extend([(a,b,b+1,a+1),(a+stride,a+1+stride,b+1+stride,b+stride),
+                      (a,a+stride,b+stride,b),(a+1,b+1,b+1+stride,a+1+stride)])
+    faces.extend([(0,1,stride+1,stride),(stride-2,2*stride-2,2*stride-1,stride-1)])
+    data=bpy.data.meshes.new(name+' joint core');data.from_pydata(pts,[],faces);data.update()
+    obj=bpy.data.objects.new(name+' joint core',data);bpy.context.collection.objects.link(obj)
+    finish(obj,obj.name,architecture,mats[1],wear=0)
 
 
 # Broad outer walls retain the solid side boundaries. Individual staggered courses
 # and missing upper stones break their silhouettes without blocking the arcades.
 for x in (-27, 3):
+    # Recessed rubble core closes the light leaks between dressed courses.
+    block('Side wall masonry core',(x,6.6,-127.5),(.85,10.1,27),walls,mats[1])
     for row in range(15):
         h=2.05+row*.82
         for col in range(15):
@@ -105,7 +127,7 @@ for x in (-19,-5):
 # The surviving transverse frame joins the rear bays; front frames are absent.
 arch('Rear nave arch',(-12,-135),6,6.65,thickness=.9)
 for x in (-18.45,-5.55):
-    for row in range(7): block('Rear arch pier',(x,2.0+row*.66,-135),(.88,.63,.82))
+    for row in range(8): block('Rear arch pier',(x,1.98+row*.63,-135),(.88,.65,.82))
 
 # Broken roof islands over the side aisles cast contextual shadows. Their inside
 # edge is staggered, with open gaps, instead of a continuous flat ceiling strip.
@@ -144,7 +166,14 @@ for cx in (-22,-2):
     block('Window sill',(cx,3.95,-141),(4.4,.3,1.8))
 arch('Descent portal',(-12,-141),2.5,7.15,1.5,thickness=.9)
 for x in (-14.95,-9.05):
-    for row in range(8):block('Portal jamb',(x,2.0+row*.66,-141),(.88,.63,1.5))
+    for row in range(9):block('Portal jamb',(x,1.98+row*.63,-141),(.88,.65,1.5))
+# Low backing stays below the real window openings and outside the six-metre
+# portal. It seals base/course gaps without filling any intentional opening.
+for lo,hi in ((-31,-15),(-9,7)):
+    block('Rear wall lower core',((lo+hi)/2,2.7,-141),(hi-lo,2.3,.92),walls,mats[1])
+# Entrance returns meet the facade footings below the existing walking plane.
+for x in (-16.1,-7.9):
+    block('Entrance buried footing',(x,1.51,-114.8),(2.2,.3,3.0),walls,mats[1])
 # A pierced circular crown brings the rear silhouette closer to the reference.
 for i in range(16):
     a=i*math.tau/16

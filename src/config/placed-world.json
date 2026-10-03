@@ -1,9 +1,9 @@
 {
   "resident": {
     "url": "/models/placed/resident.glb",
-    "bytes": 2080484,
-    "trianglesBefore": 180040,
-    "triangles": 89700
+    "bytes": 2078576,
+    "trianglesBefore": 179908,
+    "triangles": 89568
   },
   "zones": [
     {
@@ -32,9 +32,9 @@
       "keep": 68,
       "draw": 32,
       "url": "/models/placed/patch.glb",
-      "bytes": 1722608,
-      "trianglesBefore": 81506,
-      "triangles": 69612
+      "bytes": 1970876,
+      "trianglesBefore": 89210,
+      "triangles": 77276
     },
     {
       "id": "approach",

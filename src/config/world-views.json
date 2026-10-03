@@ -74,6 +74,16 @@
     "target": [-16.8, 2.0, -27],
     "ref": "REF5"
   },
+  "connector-side": {
+    "position": [-12, 3, -24],
+    "target": [-17, 2, -23],
+    "ref": "REF5"
+  },
+  "connector-reverse": {
+    "position": [-12, 3.4, -35],
+    "target": [-12, 2.5, -21],
+    "ref": "REF5"
+  },
   "cavern": {
     "position": [
       -26,

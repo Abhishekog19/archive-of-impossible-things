@@ -17,6 +17,7 @@ ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / '.artifacts/blender'
 sys.path.insert(0, str(Path(__file__).parent))
 from surface_study import study_material
+from connector_nature import folded_leaves, dress_walls
 started = time.monotonic()
 bpy.ops.object.select_all(action='SELECT')
 bpy.ops.object.delete(use_global=False)
@@ -105,6 +106,15 @@ for tree in trees:
     bpy.ops.object.modifier_apply(modifier=simplify.name)
     tree.data.validate(clean_customdata=True)
     tree.data.update()
+    # Follow the actual sloping ground at root tips instead of translating the
+    # whole root system by the terrain height only at the trunk centre.
+    bpy.context.view_layer.update()
+    for v in tree.data.vertices:
+        if v.co.z >= .8:continue
+        p=tree.matrix_world@v.co
+        weight=max(0,1-max(0,v.co.z)/.8)
+        v.co.z+=(height_at(p.x,-p.y)-tree.location.z-.035)*weight/tree.scale.z
+    tree.data.update()
 
 # A thin terrain-following surface receives the canopy/contact bake. The resident
 # world floor retains collision; the patch never introduces a second floor body.
@@ -146,6 +156,7 @@ def plant(name, location, scale, rotation):
     obj.location = location
     obj.scale = scale
     obj.rotation_euler = rotation
+    if name in ('Fern','Broadleaf_Clump','Low_Shrub'):folded_leaves(obj)
     # Darker inner/lower leaves, lighter exposed upper layers; no alpha cards.
     colors = obj.data.color_attributes.active_color
     if colors:
@@ -166,9 +177,20 @@ for i in range(72):
     side = -1 if cluster % 2 else 1
     z = -24 - (cluster // 2) * 2.7 + .85 * math.sin(within * 2.399)
     x = -12 + side * (3.35 + .55 * math.sin(cluster * 1.3)) + .45 * math.cos(within * 2.399)
-    scale = .7 + .35 * (i % 4) / 3
+    scale = .52 + .32 * (i % 4) / 3
     plant(['Fern', 'Broadleaf_Clump', 'Grass_Tuft', 'Low_Shrub'][(i + cluster) % 4],
           Vector(position(x, height_at(x, z) + .02, z)), (scale,) * 3, (0, 0, i * 2.399))
+
+wall_count=dress_walls(ROOT,height_at,visuals,plant)
+# Layer lower planting along the outer shoulders, leaving the full 5.6m path
+# width open. Unequal clusters avoid a uniform hedge and hide hard soil margins.
+for i in range(40):
+    side=-1 if i%2 else 1
+    z=-22.4-(i//2)*.9
+    x=-12+side*(5.5+.7*math.sin(i*1.7))
+    scale=.45+.23*(.5+.5*math.sin(i*2.1))
+    plant('Low_Shrub' if i%3 else 'Fern',Vector(position(x,height_at(x,z)-.03,z)),
+          (scale,scale,scale*.85),(0,0,i*2.399))
 
 # Retain originals for the second-half bake and future editing.
 study = {kind: study_material(kind) for kind in ('Stone','Wood','Ground')}
@@ -284,9 +306,10 @@ export = ROOT / 'public/models/forest-patch.glb'
 bpy.ops.wm.save_as_mainfile(filepath=str(source), compress=True)
 bpy.ops.export_scene.gltf(filepath=str(export), export_format='GLB', use_selection=True,
     export_image_format='JPEG', export_image_quality=94)
-report = {'stage': 'Phase 2 representative stone, bark and ground study',
+report = {'stage': 'Phase 3 planted connector, grounded roots and dressed ruin bases',
           'source': str(source.relative_to(ROOT)), 'bytes': export.stat().st_size,
-          'atlas': 2048, 'samples': 32, 'slabs': 72, 'trees': len(trees), 'groundCover': 72,
+          'atlas': 2048, 'samples': 32, 'slabs': 72, 'trees': len(trees), 'groundCover': len(foliage)-4,
+          'replacedWallBlocks':wall_count,
           'seconds': round(time.monotonic() - started, 1)}
 (OUT / 'forest-patch-report.json').write_text(json.dumps(report, indent=2) + '\n')
 print('FOREST_PATCH ' + json.dumps(report), flush=True)

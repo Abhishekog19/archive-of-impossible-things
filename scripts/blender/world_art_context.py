@@ -49,6 +49,10 @@ def export_context(include_hub=None):
             'Forest crown','Deep canopy crown','Understory proxy','Woodland shoulder'))
         local = -21 < x < -4 and -40 < z < -17
         plant_proxy = obj.name.startswith(('Tree trunk', 'Tree limb', 'Forest crown', 'Woodland shoulder'))
+        # Phase 3 patch replaces these visual blocks on their original collision
+        # footprints. Collider meshes are separate and must remain resident.
+        connector_wall = local and obj.name.startswith('Broken wall') and \
+            (ROOT/'art/source/forest-patch.blend').exists()
         hub_region = abs(x)<27 and -16<z<16
         hub_plant = hub_region and obj.name.startswith(('Tree trunk','Tree limb','Forest crown','Understory proxy','Woodland shoulder'))
         trunk_proxy = obj.name.startswith('Collision') and obj.dimensions.z > 7 and obj.dimensions.x < 1.2 and obj.dimensions.y < 1.2
@@ -75,13 +79,22 @@ def export_context(include_hub=None):
             bmesh.ops.delete(bm,geom=covered,context='FACES')
             bm.to_mesh(obj.data)
             bm.free()
+        if obj.name.startswith('Canopy approach') and \
+                (ROOT/'art/source/forest-patch.blend').exists():
+            # The patch's terrain-following earth already supports its stones.
+            # Remove only the exposed khaki road skin beneath that replacement,
+            # keeping the separate resident road collider and uncovered ends.
+            bm=bmesh.new();bm.from_mesh(obj.data)
+            covered=[f for f in bm.faces if -40.5 < -(obj.matrix_world@f.calc_center_median()).y < -22]
+            bmesh.ops.delete(bm,geom=covered,context='FACES')
+            bm.to_mesh(obj.data);bm.free()
         courtyard_proxy = include_exterior and obj.name == 'Archive courtyard'
         hall_proxy = include_hall and (obj.name.startswith(('Archive hall floor',
             'Archive side wall','Hall column','Broken roof shoulder','Archive rear wall')) or
             (obj.name.startswith('Archive arch') and -143<z<-117))
         cavern_proxy = include_cavern and obj.name.startswith(('Cavern wall shell',
             'Cavern shore','Shore rock lip','Cavern rock buttress','Cavern game shelf','Continuous descent shell'))
-        if (local and (plant_proxy or trunk_proxy)) or hub_proxy or approach_proxy or clearing_ruin or exterior_proxy or backdrop_proxy or courtyard_proxy or hall_proxy or cavern_proxy:
+        if connector_wall or (local and (plant_proxy or trunk_proxy)) or hub_proxy or approach_proxy or clearing_ruin or exterior_proxy or backdrop_proxy or courtyard_proxy or hall_proxy or cavern_proxy:
             removed.append(obj.name)
             bpy.data.objects.remove(obj, do_unlink=True)
     # A small vertex-colour terrain pass ties distant banks into the placed moss.

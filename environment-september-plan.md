@@ -1,6 +1,6 @@
 # Connected environment production plan
 
-Revised October 2, 2026 (Asia/Calcutta): numbered production days; target two to
+Revised October 3, 2026 (Asia/Calcutta): numbered production days; target two to
 three production packages per working day. Filename retained for existing links.
 This replaces the September 30 hub-only scope and future phase dates. Completed
 production evidence remains in `plans/CURRENT_PLAN.md`.
@@ -40,13 +40,14 @@ in order. The prior 3-hour weekday / 9-hour weekend assumptions and October 4
 calendar promise are superseded. Do not multiply the old schedule by three again
 or claim a package complete simply because its time allowance has elapsed.
 
-There are 11 packages including the former-September-27 package. PD08 was reopened,
+There are 12 packages including the former-September-27 package and the user-requested
+PD12 hub correction pass added October 2. PD08 was reopened,
 then parked September 30; the request to complete PD11 fully resumed its work.
 The refined Ruin Runner now replaces the temporary explorer and has been checked
 with PD09/10 movement, camera and fitted secondary motion. PD08 visual acceptance
 and PD11 acceptance remain, together with recorded environment corrections. The previous
-1–2 active-day forecast is withdrawn; re-estimate after the model and one-panel
-secondary-motion proof in plans/CHARACTER_REDESIGN.md. Throughput is a goal, not
+1–2 active-day forecast is withdrawn; the replacement motion proof now passes,
+but remaining visual corrections still need assessment. Throughput is a goal, not
 permission to skip visual acceptance.
 Sessions begin on the user's request; no unattended work or automation is implied.
 
@@ -63,10 +64,12 @@ Sessions begin on the user's request; no unattended work or automation is implie
 | PD09 — implemented and checked Sep 30 | Hold-to-run and buffered jump input, acceleration/braking/turn response, shape grounding, gentler falls, capsule CCD, area recovery and shared pause state. Focused controls, uneven road/ramps/stairs, six-area/four-location connected walk, cavern return and recovery pass. Build/lint and five focused tests pass. Final animation, art and user feel approval remain. |
 | PD10 — functional production complete Oct 1 | Camera clearance/fade, gait transitions, ground-sampled leg placement, slope-aligned boots, turn/landing polish and eight spring-driven cape/scarf/hem/hair/rope/satchel bones are implemented and checked on the temporary explorer. One skin/material, 25 bones. Final art and fitting to the replacement rig remain PD08/PD11 acceptance work. No phone-control redesign or gameplay. |
 | PD11 — in progress Oct 2 | Environment dressing/root/cavern corrections, bark detail, replacement-character integration and corrected turn foot reach built. Build/lint and 28 focused tests pass. Six-area reference review and replacement motion results are in plans/PD11_ACCEPTANCE.md. Art quality/acceptance and the scheduled weekly technical gate remain open. Phone controls and games remain deferred. |
+| PD12 — scoped hub production complete Oct 3 | Replaced eight flat crowns with layered leafy volumes; seven column stacks have uneven courses and creepers; low planting softens the rear plaza rim. Separate editable Blender source, GLB and streaming package exported. Fixed REF4/player comparison, four-point hub/forest-exit return, five streaming/collision tests, lint and build pass. Hub is 197,602 triangles / 7,529,784 bytes; transfer is larger, no FPS claim. Remaining crown regularity, backdrop, paving/moss and platform silhouette gaps are recorded in plans/CURRENT_PLAN.md before broader rollout. Overall PD11 acceptance and the October 3 weekly review remain open. |
 
-Current direction (October 2): replacement rig fitting and functional motion checks
+Current direction (October 3): replacement rig fitting and functional motion checks
 are implemented. PD08 appearance is unapproved; PD11 remains the final acceptance
-gate. There is no PD12 or authorized game/phone-control package in this schedule.
+gate. The requested PD12 hub pass is now implemented and checked; wider art gaps
+and the weekly technical review remain. Games and phone controls stay deferred.
 Combine the remaining batches only if preceding gates pass. Keep checkpoints visible rather
 than forcing an unfinished package into the next package's completion claim.
 

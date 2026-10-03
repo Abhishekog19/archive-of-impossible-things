@@ -51,8 +51,9 @@ removes the detached-tile appearance, but broad rock forms and light still diffe
 from REF10. Preserve these gaps until corrected; do not mark PD11 fully complete.
 
 Weekly hardware/resource/deployment/mobile-layout review remains October 3.
-Real-phone controls/thermals remain user-led at the end. There is no next numbered
-PD after PD11 in the approved plan; games and phone controls are deferred.
+Real-phone controls/thermals remain user-led at the end. The subsequent October 2
+user request adds PD12 for a focused hub visual correction pass. PD11's overall
+acceptance gaps remain open; games and phone controls are deferred.
 
 The October 1 review below is historical and its parked-character/unchanged-
 collision statements are superseded by this update.

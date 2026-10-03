@@ -1,9 +1,9 @@
 # Current plan — Archive of Impossible Things
 
-Status (revised October 2, latest user scope): environment REF4/5/6/7/8/10
+Status (revised October 3, latest user scope): environment REF4/5/6/7/8/10
 PLUS finished character art/animation, third-person movement, Rapier/ecctrl physics
 and camera polish. Only game insertion and phone controls remain after handoff.
-Use numbered production packages PD01–PD11 in ../environment-september-plan.md;
+Use numbered production packages PD01–PD12 in ../environment-september-plan.md;
 target 2–3 packages per active working day where quality permits. PD07 production
 is implemented. The request to complete PD11 fully resumed the PD08 character work.
 Image 3 (Ruin Runner) remains the selected reference; visual acceptance is open.
@@ -16,8 +16,12 @@ PD11 is IN PROGRESS: environment finishing, replacement integration, default ent
 clean UI and boot/error handling are implemented. See
 [PD11 acceptance](PD11_ACCEPTANCE.md) for completed checks and remaining art gaps.
 Do not mark the package fully accepted from technical results alone. Weekly
-hardware/resource/deployment/mobile review stays October 3. There is no PD12 in
-this plan; do not invent another package or start deferred games/phone controls.
+hardware/resource/deployment/mobile review stays October 3. The October 2 user
+request adds PD12: a focused hub visual-quality pass (volumetric crown silhouettes,
+weathered column courses/creepers and planted back-rim transitions), completed as
+a scoped production pass October 3. PD11 remains the overall acceptance
+gate; PD12 does not erase its character, wider-world or technical gaps. Games and
+phone controls stay deferred. See the PD12 row in the production schedule.
 Explicit local-preview permission was received September 28 and six reference
 views plus cavern player-height were reviewed. The October 2 replacement-character
 motion, camera and cavern-to-archive return checks pass. Recorded art-quality
@@ -66,6 +70,32 @@ This milestone takes priority over the older full-game roadmap.
 | 5. R3F loading | Browser loads GLB with correct scale, materials and lighting; representative export is proven early. |
 | 6. Integration readiness | Separate collision proxies and usable stairs/slopes/clearances; existing controller aids inspection. Final movement/physics integration and acceptance are required in PD09–11. |
 | 7. Browser/mobile testing | Daily affected-area visual/movement check; build/lint when inputs change. Weekly technical batch covers Iris Xe, resources/loading and mobile layout; user-led real-phone controls/thermals remain at the end. |
+
+## PD12 hub pass — production completed October 3
+
+User-requested next package added; the scoped hub production checkpoint is complete.
+Eight replacement crowns have asymmetric opaque cores, folded leaf shells and
+darker undersides; seven column stacks have uneven courses and trailing creepers.
+Low planting softens the rear rim while preserving the two exits and arrival.
+The first rounded-core iteration was rejected in browser comparison and refined.
+Editable source: `art/source/pd12-hub-art.blend`, derived from the retained PD11
+source by `node scripts/blender/run.cjs hub-natural-finish`, then
+`node scripts/prepare-placed-world.mjs`. The user's hub-blockout.blend is untouched.
+
+REF4/player screenshots: `.artifacts/pd12/hub-final.png` and `player-final.png`.
+Four hub/forest-exit/return checkpoints pass (`hub-walk.txt`); a development-only
+button now runs just this affected connection. Five streaming/collision tests,
+changed-JavaScript lint and production build pass. Resident collision is unchanged.
+Hub package: 197,602 triangles (was 202,360), 7,529,784 bytes (was 6,342,508).
+The additional folded leaves cost transfer size despite fewer triangles; this is
+not a measured FPS improvement. Weekly review is due October 3 and remains pending;
+it is a separate overall acceptance gate, not a completed PD12 performance claim.
+
+Remaining comparison gaps: crowns are still more regular than REF4; background
+trees/terrain remain simplified, paving/moss too repetitive, and the hub still
+reads as a circular platform. This focused pass does not finish whole-world art
+or character acceptance. Continue the largest recorded visual corrections before
+calling PD11 final delivery complete. Games and phone controls remain deferred.
 
 ## Build-first cadence — effective September 23
 

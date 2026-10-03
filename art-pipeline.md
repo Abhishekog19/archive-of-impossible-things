@@ -170,3 +170,12 @@ secondary-bone lengths travel in glTF extras. Keep the neutral study editable.
 `node --test scripts/ruin-runner.test.mjs` checks the actual exported skin and clips;
 browser comparison remains necessary for appearance and garment deformation.
 The reactive garments use bounded spring bones, not a full cloth solver.
+
+## PD12 hub correction pass
+
+Run `node scripts/blender/run.cjs hub-natural-finish` after the PD11 release-finish
+pass, then `node scripts/prepare-placed-world.mjs`. This derives
+`art/source/pd12-hub-art.blend` from `pd11-hub-art.blend` and replaces the exported
+hub art. It replaces the old crowns rather than layering a second crown set;
+hidden originals remain editable. Existing collision and other areas are unchanged.
+Regenerating PD11 alone resets the hub export, so apply PD12 afterward.

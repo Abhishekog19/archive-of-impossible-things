@@ -30,11 +30,13 @@ export function addStoneDetail(material, texture, study = false) {
       vec2 poreUv = stonePoint.xz * 64.0;
       vec2 cell = floor(poreUv);
       float seed = fract(sin(dot(cell, vec2(127.1, 311.7))) * 43758.5453);
-      float radius = length(fract(poreUv) - vec2(.3 + seed * .4, .5));
+      float seedY = fract(sin(dot(cell, vec2(269.5, 183.3))) * 43758.5453);
+      float radius = length(fract(poreUv) - (.18 + vec2(seed, seedY) * .64));
       float aa = max(length(fwidth(poreUv)), .035);
       float pores = (1.0 - smoothstep(.055, .055 + aa, radius)) * step(.58, seed);
       float nearSurface = 1.0 - smoothstep(5.0, 12.0, distance(cameraPosition, stonePoint));
-      diffuseColor.rgb *= 1.0 - pores * .22 * nearSurface * weights.y;
+      float resolved = 1.0 - smoothstep(.22, .6, aa);
+      diffuseColor.rgb *= 1.0 - pores * .22 * nearSurface * resolved * weights.y;
       ` : ''}
     `)
   }

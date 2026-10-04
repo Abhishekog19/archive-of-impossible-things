@@ -11,6 +11,18 @@ overridable, but it has to be overridden **here**, not silently in a scene file.
 argued with once something is on screen. The ones most likely to move are camera
 distance and fog density.
 
+October 4, Phase 4 production overrides: the connected world uses linear fog
+at 32–145 m in the hub/courtyard/hall, blending continuously to 22–115 m and
+`#b9c3a7` under the forest canopy. Background and fog colours remain equal.
+The cavern retains its separate cool palette and 20–100 m fog in `cavern-look.js`.
+Existing baked diffuse light is graded continuously in world space: cooler forest
+shade, warm canopy openings and cooler sheltered hall sides. Two subtle authored
+canopy shafts are omitted on Low and when fog is disabled. No shadow maps or
+screen-space effects were added. A small clipped ground receiver supplies player
+contact; static prop contact is baked into existing forest/archive atlases at
+0.32 m range. The full comparison/verification record is in
+[the audit phase tracker](plans/WORLD_AUDIT_FIX_PHASES.md).
+
 **Visual direction locked 2026-08-25** against the reference set in `concept/`.
 The set was measured rather than eyeballed — dominant colours sampled per image and
 aggregated by screen area. Result: **the palette below already holds.** Every

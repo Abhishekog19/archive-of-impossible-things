@@ -1,5 +1,19 @@
 # Current plan — Archive of Impossible Things
 
+October 4 Phase 4 completion: regional lighting/fog, canopy shafts, player contact,
+static forest/archive contact bakes and cavern reflection/wet-shore lighting are
+implemented and visually checked. Eight focused tests, changed-file lint and the
+final production build pass; 19 connected route checkpoints plus fall recovery
+and six-area contact/jump checks pass. Final asset geometry/collision fingerprints
+match the baseline and derived package size is 27,402,540 bytes. Runtime, buffer
+fix, assets and evidence notes are separate pushes to approved origin/main.
+Phase 4 production is complete. Next: Phase 5 focused comparisons, prioritizing
+the unresolved structural, foliage and material mismatches from Phases 1–3;
+whole-world and character acceptance remain open. See
+[the phase tracker](WORLD_AUDIT_FIX_PHASES.md) for exact scope and local evidence.
+
+### Earlier progress (historical)
+
 October 4 continuation: Phase 4's cavern lighting/water study concentrates the
 skylight, reduces reflection blur/distortion and softens wet-shore colouring.
 REF10, shore/player views and the low-quality fallback were inspected. Cavern

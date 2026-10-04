@@ -137,7 +137,71 @@ Generator/package/test/build logs: `.artifacts/blender/phase3-*.log`.
 Next Phase 3 batch: connector bank silhouettes and ends, root/paving seams, then
 crown variation and depth before treating lighting as the remaining difference.
 
-## Phase 4 — lighting and water — cavern study implemented, acceptance open
+## Phase 4 — lighting and water — production complete
+
+### October 4 completion pass
+
+The user requested finishing the phase rather than another partial study.
+Lighting, water and contact production is complete. Runtime work is pushed in
+`50661ce`, with index-buffer reuse corrected in `54ecfb5`. Asset and documentation
+groups are recorded below. This closes the Phase 4 implementation scope; overall
+reference acceptance and earlier phases' geometry corrections remain open.
+
+- **Outdoor contrast/depth:** continuous world-space colour grading retains the
+  original baked light, cools woodland shade and sheltered hall sides, and warms
+  three canopy openings. The same field affects instanced plants and the player.
+  Hub/courtyard/hall fog now spans 32–145 m; forest fog blends to 22–115 m with a
+  greener background. Fog and background remain the same colour.
+- **Canopy light:** two bounded, soft shafts align with the ground light field.
+  They disappear on Low, with fog disabled, and beyond their short draw range.
+- **Player contact:** one 32-triangle receiver follows the collision terrain and
+  visible paving height, clips at ledges/steps and fades during jumps. It reuses
+  its index buffer. No shadow map, screen-space pass or texture is introduced.
+- **Static prop contact:** 0.32 m contact occlusion is baked into the
+  existing forest approach, canopy, archive exterior and hall atlases. The hub
+  and connector retain their existing baked contact. No atlas resolution increase.
+- **Cavern/water:** retained the earlier sharper reflections, quieter ripples,
+  wet-shore response and focused skylight; repositioned the existing fill as
+  pool bounce so the near shore is readable. Reflection resolutions remain
+  384/512, with no reflection target on Low.
+
+Runtime validation: eight focused tests and changed-file lint pass, including
+shader-hook composition, resource disposal, contact slope/ledge/jump behaviour
+and index-buffer reuse. The connected route passes all 19 checkpoints plus fall
+recovery. Six-area contact checks pass; jump opacity falls from 0.42 to 0.16 and
+returns to 0.42 on landing. Low contact rendering was inspected and the original
+Medium preference restored. Final eight tests and production build pass after
+asset preparation and the buffer fix; the final browser error sample is empty.
+
+Final asset validation: all eight runtime packages retain the baseline canonical
+world-space triangle fingerprints (coordinates rounded to four decimals),
+including collision. The selective release-finishing pass preserves existing
+forest/canopy/exterior detail after rebaking. Reproduce it after the base bakes
+with `node scripts/blender/run.cjs release-finish --assets forest-approach,forest-canopy,archive-exterior`,
+then `npm run prepare:world`. Total derived package size is 27,402,540 bytes,
+down from 27,897,820; atlas sizes and triangle counts are unchanged. These are
+asset measurements, not hardware/FPS results.
+
+Visual comparison: matching 1280 × 720 forest, canopy, exterior and hall views
+were checked against the saved pre-bake captures and REF5/6/7/8. Contact is
+slightly stronger at bases and joins without broadly crushing the lit stone.
+The runtime pass separates cool shaded areas from warm openings; REF10 cavern
+and shore/player comparisons retain clearer reflected silhouettes and a readable
+near shore. The contact rebake is a subtle grounding correction. Broad bare
+banks, flat/repeated foliage, detached facade roots, the grey descent threshold
+and regular cavern rock/shore geometry remain visible differences to resolve in
+the earlier production scopes and Phase 5 comparisons. No similarity score or
+whole-world acceptance is claimed.
+
+Local evidence: `.artifacts/phase4-completion-oct04/` contains reference/player
+captures, `contact-check.txt`, `connected-route.txt`, bake/test/build logs and
+geometry fingerprints. Final asset captures are `forest-after.png`,
+`canopy-after.png`, `exterior-after.png` and `hall-after.png`; runtime evidence
+includes `hub-after.png`, `cavern-after.png`, `cavern-shore-after.png`,
+`contact-canopy.png` and `low-contact.png`. These ignored files are local to this
+checkout. The original modified hub Blender file remains unchanged by this work.
+
+### First cavern study (historical)
 
 October 4: advanced at the user's request. Earlier phases' remaining geometry,
 material and vegetation corrections stay open.
@@ -157,8 +221,8 @@ Compared REF10 against matching 1280 × 720 medium-quality before/after captures
 plus shore and player views. Reflected silhouettes are clearer and the far shore
 is more strongly focused under the opening. Repeated wedge forms, noisy surfaces,
 the regular shoreline and near-shore darkness remain larger mismatches. V05/V06
-are improved studies, not closed acceptance items. Outdoor canopy lighting and
-cross-world character/prop contact are still pending.
+were improved studies at this point; the completion pass above subsequently
+implemented outdoor canopy lighting and cross-world character/prop contact.
 
 Validation: changed-file ESLint and final production build pass. Actual cavern
 ascent, archive return and slope approach pass (0.28, 0.24, 0.25 m errors); uphill
@@ -191,7 +255,15 @@ regression remain in the weekly batch, not per-art-change checks.
 7. `ee88193` — Phase 3 evidence and remaining-work documentation; pushed separately.
 8. `2715072` — Phase 4 cavern lighting/water runtime changes and shore review
    camera; pushed separately.
-9. Phase 4 evidence and remaining-work documentation; separate push after runtime.
+9. `72b3fc9` — first Phase 4 evidence notes; pushed separately.
+10. `50661ce` — regional light, canopy shafts, player contact and review checks;
+    pushed separately.
+11. `54ecfb5` — reuse the player contact index buffer and verify reuse;
+    pushed separately.
+12. `61360ac` — forest/archive contact bakes, editable sources, derived packages
+    and selective finishing workflow; pushed separately.
+13. Phase 4 completion evidence, look target and current-plan update;
+    separate documentation push after the verified runtime and asset groups.
 
 The pre-existing modified `art/source/hub-blockout.blend` is excluded from these
 commits. Private source material remains ignored/untracked and was not read.

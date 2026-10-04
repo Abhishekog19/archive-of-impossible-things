@@ -1,5 +1,14 @@
 # Current plan — Archive of Impossible Things
 
+October 4 continuation: Phase 4's cavern lighting/water study concentrates the
+skylight, reduces reflection blur/distortion and softens wet-shore colouring.
+REF10, shore/player views and the low-quality fallback were inspected. Cavern
+return/jump, changed-file lint and the final build pass. No asset or collision
+package changed. V05/V06 remain acceptance-open alongside the larger rock/shore
+geometry mismatches; outdoor canopy light and cross-world contact still need work.
+Runtime changes and evidence notes are separate pushes to approved origin/main.
+Earlier phases' unfinished items remain in the [phase tracker](WORLD_AUDIT_FIX_PHASES.md).
+
 October 3 next-phase continuation: Phase 3's first connector batch replaces eight
 wall blockouts, fits low roots to sloping ground, removes the covered road skin,
 and adds smaller folded foliage and planted ruin bases. REF5 and side/reverse

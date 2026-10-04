@@ -137,10 +137,39 @@ Generator/package/test/build logs: `.artifacts/blender/phase3-*.log`.
 Next Phase 3 batch: connector bank silhouettes and ends, root/paving seams, then
 crown variation and depth before treating lighting as the remaining difference.
 
-## Phase 4 — lighting and water — pending
+## Phase 4 — lighting and water — cavern study implemented, acceptance open
 
-Reference-specific contrast, canopy light, contact, cavern depth, shore wetness
-and reflection clarity. Geometry and material coherence precede this pass.
+October 4: advanced at the user's request. Earlier phases' remaining geometry,
+material and vegetation corrections stay open.
+
+- V06: reduced broad fill, concentrated the skylight and its shaft, and moved
+  the fog transition farther away. Retained enough hemisphere light for the
+  near shore after checking the first darker iteration at player height.
+- V05: reduced water distortion and removed the extra five-tap blur. The existing
+  bilinear-filtered 384/512 reflection targets and one reflection pass are retained;
+  low quality still uses the existing analytic opening fallback without a target.
+- V03/V04 contact study: narrowed and softened wet-stone darkening and adjusted
+  shallow-water colour. No shoreline geometry or collision edits. The regular
+  kerb silhouette and dark plate edges remain unresolved.
+- Added `view=cavern-shore` for repeatable player-height water inspection.
+
+Compared REF10 against matching 1280 × 720 medium-quality before/after captures,
+plus shore and player views. Reflected silhouettes are clearer and the far shore
+is more strongly focused under the opening. Repeated wedge forms, noisy surfaces,
+the regular shoreline and near-shore darkness remain larger mismatches. V05/V06
+are improved studies, not closed acceptance items. Outdoor canopy lighting and
+cross-world character/prop contact are still pending.
+
+Validation: changed-file ESLint and final production build pass. Actual cavern
+ascent, archive return and slope approach pass (0.28, 0.24, 0.25 m errors); uphill
+jump rises 1.07 m with airborne state. Low-quality fallback was visually checked,
+then the original medium preference restored. This is not a hardware/FPS audit.
+No GLB/source/collision package changed; the existing hub Blender edit was excluded.
+
+Local evidence: `.artifacts/phase4-cavern-oct04/01-before.png`, `02-after.png`,
+`03-shore.png`, `04-low-fallback.png`, `05-player.png`, `cavern-return.txt`, and
+`build.log`. Images show the final study except the explicitly labelled baseline.
+The evidence directory is ignored and local to this checkout.
 
 ## Phase 5 — focused comparison and acceptance — pending
 
@@ -159,7 +188,10 @@ regression remain in the weekly batch, not per-art-change checks.
 5. `e4108ae` — audit register, phase tracker and current-plan update; pushed separately.
 6. `5a30495` — Phase 3 connector generator, editable source, exports and comparison
    cameras; pushed separately.
-7. Phase 3 evidence and remaining-work documentation; separate push after assets.
+7. `ee88193` — Phase 3 evidence and remaining-work documentation; pushed separately.
+8. `2715072` — Phase 4 cavern lighting/water runtime changes and shore review
+   camera; pushed separately.
+9. Phase 4 evidence and remaining-work documentation; separate push after runtime.
 
 The pre-existing modified `art/source/hub-blockout.blend` is excluded from these
 commits. Private source material remains ignored/untracked and was not read.

@@ -1,5 +1,17 @@
 # Current plan — Archive of Impossible Things
 
+October 4 Phase 5 started: first focused hall/descent batch closes the threshold
+light slit, exports passage depth shading correctly, adds embedded floor/rock
+joins and retains water through distant portal sightlines without widening the
+reflection-render range. Matching hall/entrance/reverse captures are saved.
+Eleven focused tests, changed-file lint, the production build and actual cavern
+return/uphill jump pass; resident
+collision and unrelated zones retain their geometry fingerprints. Phase 5 and
+whole-world visual acceptance remain open: next are hub boundaries/reverse arrival
+and linked forest bank ends. The long planar descent and distant bright shore
+also remain on the acceptance list. See the
+[phase tracker](WORLD_AUDIT_FIX_PHASES.md) for comparisons and verification.
+
 October 4 Phase 4 completion: regional lighting/fog, canopy shafts, player contact,
 static forest/archive contact bakes and cavern reflection/wet-shore lighting are
 implemented and visually checked. Eight focused tests, changed-file lint and the

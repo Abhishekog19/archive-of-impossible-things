@@ -235,7 +235,66 @@ Local evidence: `.artifacts/phase4-cavern-oct04/01-before.png`, `02-after.png`,
 `build.log`. Images show the final study except the explicitly labelled baseline.
 The evidence directory is ignored and local to this checkout.
 
-## Phase 5 — focused comparison and acceptance — pending
+## Phase 5 — focused comparison and acceptance — in progress
+
+### First focused batch: hall/descent continuity, October 4
+
+Reused the unchanged areas' Phase 3/4 reference evidence and captured fresh
+1280 × 720 hall, entrance and reverse-passage comparisons. The leading remaining
+mismatches are:
+
+1. H01/H02/H03: unfinished hub boundaries, reverse arrival and plaza/ground join.
+2. F01/F05/C02: abrupt forest banks and insufficient side-view woodland depth.
+3. E01/E02/E04: detached facade roots, courtyard transition and obstructing leaves.
+4. I05/V01/E06: passage reads as a grey infill, with exposed threshold/background.
+5. V02/V03: repeated cavern rock wedges and regular pool-edge geometry.
+
+This batch addresses item 4's three immediate continuity defects:
+
+- Closed the light slit beneath the hall threshold with a continuous buried
+  stone bed. Staggered floor joints replace the straight centre seam; embedded
+  wall toes cover exposed side strips and stay outside the five-metre lane.
+- Exported the passage's daylight-to-depth occlusion in `COLOR_0`. Inspection
+  found the earlier authored rock colours in `COLOR_1`, while the renderer used
+  a white primary channel. Explicit primary-channel export fixes passage depth
+  shading and preserves the established chamber colours. Removed unused colour
+  channels from this export; the editable source retains the authored layers.
+- Kept the pool surface visible from archive/hall portal sightlines. Previously
+  a camera-position gate hid it until entering the descent, exposing background
+  through the pool. Distant views use the existing analytic fallback; reflection
+  renders retain the previous near-cavern range. Low still allocates no target.
+- Added `view=descent-entry` and `view=descent-reverse` for repeatable comparison.
+
+Compared the new captures with their baselines and REF8/REF10. The entrance now
+reads more clearly as a shaded passage and the near threshold no longer leaks
+daylight. The distant pool is visible from the entrance. **I05/V01/E06 visual
+acceptance remains open:** the main hall view still sees a small bright distant
+shore, long planar tunnel walls remain, and the hall/rock material join is abrupt.
+The reverse view still exposes the sparse exterior background. These require
+larger rock/portal composition work; technical results do not close them.
+
+Validation: 11 focused tests, changed-file lint and production build pass. Actual
+ecctrl/Rapier ascent, archive return and slope approach pass (0.17, 0.12 and 0.23 m
+destination errors); uphill jump rises 1.10 m with airborne state. The retrieved
+browser error sample is empty.
+Regression checks cover portal water visibility without reflection passes,
+primary-channel passage shading, unchanged chamber colours, package loading and
+collision preservation. Canonical world-space geometry fingerprints (four decimal
+places) match the baseline for the resident package and all six other unrelated
+zones. Only cavern visual geometry changes: 6,004 → 6,126 triangles, 901,404 →
+881,504 bytes. Total derived packages: 27,382,640 bytes. These are asset counts,
+not FPS measurements; broad performance/mobile/deployment checks remain weekly.
+
+Local evidence: `.artifacts/phase5-oct04/` contains `hall-before.png`,
+`hall-after.png`, `entry-before.png`, `entry-after.png`, `reverse-before.png`,
+`reverse-after.png`, `cavern-return.txt`, `cavern-retained.png`, source/prepare/build/test
+logs and geometry fingerprints. The cavern comparison retains the Phase 4 look.
+The first intermediate hall capture is labelled `hall-after-first.png`.
+Evidence is ignored and local to this checkout.
+
+Next focused batch: H01/H02 hub perimeter and reverse arrival, then the linked
+forest bank ends, judged from both reference and player-side views. Keep the
+remaining portal composition item above on the acceptance list.
 
 Compare the largest 3–5 remaining mismatches per iteration. Keep character
 acceptance separate. Hardware, sustained performance, deployment and mobile
@@ -262,7 +321,13 @@ regression remain in the weekly batch, not per-art-change checks.
     pushed separately.
 12. `61360ac` — forest/archive contact bakes, editable sources, derived packages
     and selective finishing workflow; pushed separately.
-13. Phase 4 completion evidence, look target and current-plan update;
+13. `3e22219` — Phase 4 completion evidence, look target and current-plan update;
+    pushed separately after the verified runtime and asset groups.
+14. `0dec1f3` — retain distant portal water with bounded reflection rendering;
+    pushed separately.
+15. `450b64d` — descent threshold/floor, primary colour export, editable source,
+    runtime package, regression coverage and review cameras; pushed separately.
+16. Phase 5 first-batch evidence and remaining acceptance priorities;
     separate documentation push after the verified runtime and asset groups.
 
 The pre-existing modified `art/source/hub-blockout.blend` is excluded from these

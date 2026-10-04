@@ -3,6 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import { Ecctrl } from 'ecctrl'
 import { CHARACTER } from '../config/look'
 import Explorer from './Explorer'
+import ContactShadow from './ContactShadow'
 import { useGameStore } from '../store'
 import useMovementInput from './useMovementInput'
 import { MOVEMENT, SPAWN, CORNER_SPAWN, WORLD_SPAWNS, reachedCheckpoint } from './movement'
@@ -58,6 +59,7 @@ const Player = forwardRef(function Player({ active = true, recoverFalls = false,
         {...MOVEMENT}>
         <Explorer controllerRef={controllerRef} />
       </Ecctrl>
+      <ContactShadow controllerRef={controllerRef} />
       <StateProbe controllerRef={controllerRef} active={active} recoverFalls={recoverFalls}
         checkpoints={recoverFalls && !recoverToStart} respawn={spawn} />
     </>

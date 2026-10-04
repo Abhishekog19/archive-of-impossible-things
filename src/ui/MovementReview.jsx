@@ -43,7 +43,24 @@ export default function MovementReview() {
     try {
       probe.manual(true)
       await yieldUI()
-      if (kind === 'dynamics') {
+      if (kind === 'contact') {
+        for (const [name, at] of [['Hub', [0, 2, 4]], ['Forest', [-12, 3, -43]],
+          ['Canopy', [-12, 4, -67]], ['Courtyard', [-12, 4, -105]],
+          ['Hall', [-12, 4, -123]], ['Cavern', [-12, -5, -174]]]) {
+          await place(at); await steps(60)
+          const contact = probe.scene.getObjectByName('PlayerContactShadow')?.userData.contact
+          record(name + ' contact', contact?.opacity > .1 && contact?.triangles > 0,
+            contact ? `${contact.triangles} receiver triangles; opacity ${round(contact.opacity)}; surface lift ${round(contact.lift)} m` : 'missing receiver')
+        }
+        const shadow = probe.scene.getObjectByName('PlayerContactShadow')
+        const grounded = shadow.userData.contact.opacity
+        key('Space', true); await steps(1); key('Space', false); await steps(15)
+        record('Jump contact fades', shadow.userData.contact.opacity < grounded,
+          `${round(grounded)} → ${round(shadow.userData.contact.opacity)}`)
+        await steps(100)
+        record('Landing restores contact', shadow.userData.contact.opacity > .1,
+          `opacity ${round(shadow.userData.contact.opacity)}`)
+      } else if (kind === 'dynamics') {
         const avatar = probe.scene.getObjectByName('PlayerPresentation')
         if (!avatar?.userData.readDynamics) throw new Error('Secondary rig is unavailable')
         const read = () => avatar.userData.readDynamics()
@@ -257,6 +274,7 @@ export default function MovementReview() {
       <button disabled={busy} onClick={() => run('patch')}>Check forest connector</button>
       <button disabled={busy} onClick={() => run('world')}>Walk connected world</button>
       <button disabled={busy} onClick={() => run('return')}>Check cavern return</button>
+      <button disabled={busy} onClick={() => run('contact')}>Check world contact shading</button>
     </>}</div>
     <p>{busy ? 'Walking the actual physics scene…' : 'Ready — no performance audit'}</p>
     {results.map(row => <p key={row.name}>{row.pass ? 'PASS' : 'FAIL'} {row.name}: {row.detail}</p>)}

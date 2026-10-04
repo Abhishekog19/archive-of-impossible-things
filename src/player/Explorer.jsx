@@ -10,6 +10,7 @@ import { useGameStore } from '../store'
 import { createExplorerAnimator } from './explorerAnimator'
 import { avatarOpacity, dampFactor } from './cameraMotion'
 import { createExplorerDynamics } from './explorerDynamics'
+import { addOutdoorLighting } from '../scenes/outdoorLighting'
 
 /** Authored Ruin Runner, with fitted skin and constrained secondary motion. */
 export default function Explorer({ controllerRef }) {
@@ -28,6 +29,7 @@ export default function Explorer({ controllerRef }) {
             const material = source.clone()
             // Dithered coverage avoids transparent mesh sorting and extra passes.
             material.alphaHash = true
+            addOutdoorLighting(material)
             materials.set(source, material)
           }
           return materials.get(source)

@@ -124,7 +124,13 @@ test('streamed resource preserves marker transforms and releases owned GPU resou
   const matrix = new Matrix4(); instances.getMatrixAt(0, matrix)
   assert.deepEqual(new Vector3().setFromMatrixPosition(matrix).toArray(), [-8, 2, -9])
   assert.equal(template.visible, false)
-  assert.equal(stone.material.customProgramCacheKey(), 'world-stone-detail-v1')
+  assert.equal(stone.material.customProgramCacheKey(), 'world-stone-detail-v1-outdoor-light-v1')
+  // Composing the light field must retain the existing close-range detail hook.
+  const shader = { uniforms: {}, vertexShader: '#include <common>\n#include <begin_vertex>\n#include <project_vertex>',
+    fragmentShader: '#include <common>\n#include <color_fragment>' }
+  stone.material.onBeforeCompile(shader)
+  assert(shader.uniforms.stoneGrain.value.isTexture)
+  assert(shader.fragmentShader.includes('woodlandLight') && shader.fragmentShader.includes('mineral'))
   instances.addEventListener('dispose', () => { instanceDisposed = true })
   disposePlaced(resource.scene)
   assert(textureDisposed && geometryDisposed && instanceDisposed)

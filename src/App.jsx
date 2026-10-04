@@ -142,7 +142,7 @@ export default function App() {
         // config/tiers.js; the governor inside the Canvas supplies the evidence.
         dpr={effectiveDpr(tier, dprDrop)}
         // No `shadows`: the project budgets 0 real-time shadow maps
-        // (technical-production-spec §4.2). Contact shadow is a blob decal later.
+        // (technical-production-spec §4.2). Player contact uses a ground receiver.
         // `far` is initial only -- TierGovernor maintains it on tier change,
         // matched to where the tier's fog is ~95% opaque (look-target section 5).
         camera={{ fov: reference ? 53.13 : CAMERA.fov, near: 0.1, far: greyroom ? TIERS[tier].far : 180 }}

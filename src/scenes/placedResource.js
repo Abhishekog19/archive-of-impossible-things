@@ -3,6 +3,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js'
 import { disposeZone } from './zoneResource.js'
 import { addBarkDetail, addStoneDetail } from './stoneDetail.js'
+import { addOutdoorLighting } from './outdoorLighting.js'
 
 export async function loadPlaced(url, signal, anisotropy, detail, cavern = false) {
   const response = await fetch(url, { signal })
@@ -31,6 +32,7 @@ export async function loadPlaced(url, signal, anisotropy, detail, cavern = false
         vertexColors: !original.map && !!node.geometry.attributes.color, side: original.map ? original.side : DoubleSide })
       if (stone && detail) addStoneDetail(material, detail, study)
       else if (bark && detail) addBarkDetail(material, detail, study)
+      addOutdoorLighting(material)
       converted.set(key, { original, material })
     }
     node.material = converted.get(key).material

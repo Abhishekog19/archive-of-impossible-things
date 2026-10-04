@@ -25,7 +25,10 @@ export function updateContactPatch(geometry, origin, sample, feetOffset) {
       if (h.every(v => v !== null) && Math.max(...h) - Math.min(...h) < .32) indices.push(...tri)
     }
   }
-  geometry.setIndex(indices)
+  // Reuse the fixed 32-triangle buffer; replacing it every sample would abandon
+  // uploaded WebGL index buffers until geometry disposal.
+  geometry.index.array.set(indices)
+  geometry.index.needsUpdate = true
   geometry.setDrawRange(0, indices.length)
   positions.needsUpdate = true
   geometry.computeBoundingSphere()

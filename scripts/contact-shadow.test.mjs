@@ -6,6 +6,7 @@ import { updateContactPatch } from '../src/player/contactPatch.js'
 const ground = height => ({ height, normal: { x: 0, y: 1, z: 0 } })
 test('contact receiver follows a slope and fades through a jump', () => {
   const geometry = new PlaneGeometry(1, 1, 4, 4)
+  const indexBuffer = geometry.index
   const sample = x => ground(x * .25)
   const standing = updateContactPatch(geometry, { x: 0, y: 1.05, z: 0 }, sample, 1.05)
   const p = geometry.attributes.position
@@ -14,6 +15,7 @@ test('contact receiver follows a slope and fades through a jump', () => {
   const airborne = updateContactPatch(geometry, { x: 0, y: 2, z: 0 }, sample, 1.05)
   assert(airborne > 0 && airborne < standing)
   assert.equal(updateContactPatch(geometry, { x: 0, y: 3, z: 0 }, sample, 1.05), 0)
+  assert.equal(geometry.index, indexBuffer, 'sampling reuses its GPU index buffer')
   geometry.dispose()
 })
 test('contact triangles never bridge a ledge or missing ground', () => {
@@ -21,8 +23,8 @@ test('contact triangles never bridge a ledge or missing ground', () => {
     const geometry = new PlaneGeometry(1, 1, 4, 4)
     updateContactPatch(geometry, { x: 0, y: 1.05, z: 0 }, sample, 1.05)
     const indices = geometry.index, p = geometry.attributes.position
-    assert(indices.count < 96)
-    for (let i = 0; i < indices.count; i += 3) {
+    assert(geometry.drawRange.count < 96)
+    for (let i = 0; i < geometry.drawRange.count; i += 3) {
       const heights = [0, 1, 2].map(j => p.getY(indices.getX(i + j)))
       assert(Math.max(...heights) - Math.min(...heights) < .32)
     }

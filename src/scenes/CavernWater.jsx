@@ -4,6 +4,7 @@ import { Color, Matrix4, Mesh, ShaderMaterial, UniformsLib, UniformsUtils, Vecto
 import { Reflector } from 'three/addons/objects/Reflector.js'
 import { useGameStore } from '../store'
 import { CAVERN_WATER } from '../config/cavern-water'
+import { cavernWaterView } from '../config/cavern-water-view'
 
 const shader = {
   name: 'CavernPoolStudy',
@@ -120,6 +121,9 @@ export default function CavernWater({ geometry, openingLight = null, shoreline =
     if (size) {
       const reflect = mesh.onBeforeRender
       mesh.onBeforeRender = function (renderer, scene, camera) {
+        const view = cavernWaterView(camera.position, mesh.position, shoreline)
+        mesh.material.uniforms.reflected.value = view.reflect ? 1 : 0
+        if (!view.reflect) return
         // Connected pool reflections draw only cavern art and the player, not
         // all of the outdoor foliage hidden behind the cave walls.
         if (shoreline) this.getReflectionCamera(camera).layers.set(1)
@@ -142,10 +146,9 @@ export default function CavernWater({ geometry, openingLight = null, shoreline =
   }, [geometry, tier, openingLight, shoreline])
   useFrame(({ camera }, delta) => {
     if (water.current) {
-      // The enclosed pool cannot be seen from the outdoor route. Do not request
-      // reflection renders there; low tier never allocates a reflection target.
-      water.current.visible = !shoreline || (camera.position.z < -145 && camera.position.y < 12
-        && camera.position.distanceToSquared(water.current.position) < 60 * 60)
+      // Keep the water surface through the hall portal; distant views use the
+      // existing analytic fallback and never request an extra reflection pass.
+      water.current.visible = cavernWaterView(camera.position, water.current.position, shoreline).visible
       water.current.material.uniforms.time.value += Math.min(delta, .1)
     }
   })

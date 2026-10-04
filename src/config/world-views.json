@@ -84,6 +84,11 @@
     "target": [-12, 2.5, -21],
     "ref": "REF5"
   },
+  "cavern-shore": {
+    "position": [-27, -5.9, -181],
+    "target": [-12, -7.5, -197],
+    "ref": "REF10"
+  },
   "cavern": {
     "position": [
       -26,

@@ -27,15 +27,15 @@ function shorelineLayer(shader) {
     float shoreRadius = 15.5 + 1.2 * sin(3.0 * shoreAngle) + .7 * cos(5.0 * shoreAngle);
     float edge = length(fromPool) - shoreRadius;
     float brokenEdge = sin(cavernPoint.x * 2.3 + sin(cavernPoint.z * 1.7)) * .12;
-    float wetStone = (1.0 - smoothstep(.1, 1.1, edge + brokenEdge))
+    float wetStone = (1.0 - smoothstep(-.15, .8, edge + brokenEdge))
       * (1.0 - smoothstep(-7.25, -6.7, cavernPoint.y));
-    diffuseColor.rgb *= mix(vec3(1.0), vec3(.48, .57, .59), wetStone);
+    diffuseColor.rgb *= mix(vec3(1.0), vec3(.72, .80, .82), wetStone);
     // Broad deposits break uniform colour without adding another texture atlas.
     float deposit = sin(cavernPoint.y * 1.7 + sin(cavernPoint.x * .24) + sin(cavernPoint.z * .31));
     diffuseColor.rgb *= 1.0 + deposit * .065;
   `).replace('#include <roughnessmap_fragment>', `
     #include <roughnessmap_fragment>
-    roughnessFactor = mix(roughnessFactor, .29, wetStone);
+    roughnessFactor = mix(roughnessFactor, .24, wetStone);
   `)
 }
 
@@ -46,7 +46,7 @@ export function CavernSurfaces({ nodes, collision = true }) {
     const copy = nodes.CavernStructure_Rock.material.clone()
     copy.side = DoubleSide
     copy.onBeforeCompile = shorelineLayer
-    copy.customProgramCacheKey = () => 'cavern-wet-stone-v1'
+    copy.customProgramCacheKey = () => 'cavern-wet-stone-v2'
     return copy
   }, [nodes])
   useEffect(() => {

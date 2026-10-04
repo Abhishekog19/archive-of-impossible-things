@@ -61,7 +61,8 @@ export default function CavernLight({ openingGeometry }) {
     </mesh>
     {fogEnabled && <mesh name="Cavern_SkylightShaft" position={setup.centre} quaternion={setup.rotation}
       scale={[1, 1, .72]} layers-mask={WORLD_AND_POOL_LAYERS} renderOrder={1}>
-      <cylinderGeometry args={[1.35, 5.2, setup.length, tier === 'low' ? 16 : 32, 1, true]} />
+      <cylinderGeometry args={[CAVERN_LOOK.shaftTopRadius, CAVERN_LOOK.shaftBottomRadius,
+        setup.length, tier === 'low' ? 16 : 32, 1, true]} />
       <shaderMaterial vertexShader={vertex} fragmentShader={fragment} uniforms={setup.uniforms}
         transparent depthWrite={false} />
     </mesh>}

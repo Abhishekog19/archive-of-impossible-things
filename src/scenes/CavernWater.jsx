@@ -55,22 +55,19 @@ const shader = {
       float shoreAngle = atan(fromPool.y, fromPool.x);
       float shoreRadius = 15.5 + 1.2 * sin(3.0 * shoreAngle) + .7 * cos(5.0 * shoreAngle);
       float depth = max(0.0, shoreRadius - length(fromPool));
-      float shallows = (1.0 - smoothstep(.05, 1.8, depth)) * shoreline;
+      float shallows = (1.0 - smoothstep(.05, 1.25, depth)) * shoreline;
       float submergedStone = sin(worldPoint.x * 7.2 + sin(worldPoint.z * 3.1))
         * sin(worldPoint.z * 5.8 + sin(worldPoint.x * 2.4));
       // Subtle mineral bed at the edge; deep water stays clear and quiet, without
       // a bright foam outline or an opaque green disk.
-      surface = mix(surface, vec3(.095, .125, .13) * (1.0 + submergedStone * .1), shallows * .6);
+      surface = mix(surface, vec3(.035, .055, .065) * (1.0 + submergedStone * .1), shallows * .55);
       if (reflected > .5) {
         vec2 uv = projected.xy / projected.w;
         uv += vec2(wave, sin(worldPoint.z * .83 - worldPoint.x * .21 + time * .24)) * ripple;
-        // Small bounded filter keeps a calm pool from reading as a perfect mirror.
+        // Bilinear sampling already filters this bounded reflection target.
+        // Keep the shore silhouette clear; subtle ripples soften it in motion.
         uv = clamp(uv, vec2(texel * 2.0), vec2(1.0 - texel * 2.0));
-        vec3 reflection = texture2D(tDiffuse, uv).rgb * .4;
-        reflection += texture2D(tDiffuse, uv + vec2(texel, 0.0)).rgb * .15;
-        reflection += texture2D(tDiffuse, uv - vec2(texel, 0.0)).rgb * .15;
-        reflection += texture2D(tDiffuse, uv + vec2(0.0, texel)).rgb * .15;
-        reflection += texture2D(tDiffuse, uv - vec2(0.0, texel)).rgb * .15;
+        vec3 reflection = texture2D(tDiffuse, uv).rgb;
         surface = mix(surface, reflection * vec3(.93, .97, 1.0), (.28 + fresnel * .58) * (1.0 - shallows * .3));
       } else if (openingRadius > 0.0) {
         // Low: analytic reflection of the opening only, no scene render/texture.

@@ -7,7 +7,7 @@ export const CAVERN_WATER = {
   deep: '#111d27',
   grazing: '#475b69',
   reflectionSize: { low: 0, medium: 384, high: 512 },
-  rippleUv: 0.0012,
+  rippleUv: 0.00035,
   opening: { openingPosition: CAVERN_LOOK.openingPosition, openingRadius: 4,
     openingScale: [.55, 1.35], opening: CAVERN_LOOK.opening },
   camera: { position: [-23, -5, -177], target: [-12, -1, -202] },

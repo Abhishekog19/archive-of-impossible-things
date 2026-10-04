@@ -47,7 +47,7 @@
       "keep": 68,
       "draw": 32,
       "url": "/models/placed/approach.glb",
-      "bytes": 3190176,
+      "bytes": 3121936,
       "trianglesBefore": 131566,
       "triangles": 93470
     },
@@ -62,7 +62,7 @@
       "keep": 68,
       "draw": 32,
       "url": "/models/placed/canopy.glb",
-      "bytes": 3252224,
+      "bytes": 3216120,
       "trianglesBefore": 135677,
       "triangles": 97905
     },
@@ -77,7 +77,7 @@
       "keep": 82,
       "draw": 62,
       "url": "/models/placed/exterior.glb",
-      "bytes": 3891600,
+      "bytes": 3675800,
       "trianglesBefore": 111842,
       "triangles": 91052
     },
@@ -92,7 +92,7 @@
       "keep": 58,
       "draw": 35,
       "url": "/models/placed/hall.glb",
-      "bytes": 5083180,
+      "bytes": 4908044,
       "trianglesBefore": 102895,
       "triangles": 102895
     },

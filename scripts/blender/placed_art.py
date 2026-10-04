@@ -81,6 +81,21 @@ def lighting():
     sun.rotation_euler = Vector((-6,8,-12)).to_track_quat('-Z','Y').to_euler()
 
 
+def contact_material(mat):
+    """Bake short-range prop/ground occlusion into the existing diffuse atlas."""
+    shader=mat.node_tree.nodes.get('Principled BSDF')
+    if shader is None:return
+    base=shader.inputs['Base Color']
+    contact=mat.node_tree.nodes.new('ShaderNodeAmbientOcclusion')
+    contact.inputs['Distance'].default_value=.32
+    contact.samples=8
+    if base.is_linked:
+        source=base.links[0].from_socket
+        mat.node_tree.links.new(source,contact.inputs['Color'])
+    else:contact.inputs['Color'].default_value=base.default_value
+    mat.node_tree.links.new(contact.outputs['Color'],base)
+
+
 def bake(targets, output):
     """Bake all source materials before replacing them with exported maps."""
     scene = bpy.context.scene
@@ -98,6 +113,7 @@ def bake(targets, output):
         atlas.file_format = 'PNG'
         for i,original in enumerate(list(obj.data.materials)):
             mat = original.copy()
+            contact_material(mat)
             obj.data.materials[i] = mat
             tex = mat.node_tree.nodes.new('ShaderNodeTexImage')
             tex.image = atlas

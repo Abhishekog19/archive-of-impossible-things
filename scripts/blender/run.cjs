@@ -31,6 +31,7 @@ const scripts = { setup: 'setup.py', blockout: 'hub_blockout.py', corner: 'hub_c
 const args = mode === 'version' ? ['--version'] : [
   '--background', '--factory-startup', '--python-exit-code', '1',
   '--python', path.join(__dirname, scripts[mode] || mode.replaceAll('-', '_')+'.py'), '--', '--output', output,
+  ...process.argv.slice(3),
 ]
 console.log(`Blender: ${executable}`)
 const result = spawnSync(executable, args, { cwd: root, env, windowsHide: true, stdio: 'inherit' })

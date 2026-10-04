@@ -55,8 +55,14 @@ def tint(obj, rgb):
         for i in p.loop_indices:attr.data[i].color=tuple(c*shade for c in rgb)+(1,)
     color_material(obj)
 
-for stem,seed in [('hub-art',1101),('forest-approach',1102),('forest-canopy',1103),
-                   ('archive-exterior',1104),('archive-hall',1105)]:
+assets=[('hub-art',1101),('forest-approach',1102),('forest-canopy',1103),
+        ('archive-exterior',1104),('archive-hall',1105)]
+args=sys.argv[sys.argv.index('--')+1:] if '--' in sys.argv else []
+if '--assets' in args:
+    selected=set(args[args.index('--assets')+1].split(','))
+    assert selected and selected <= {stem for stem,_ in assets}, 'Unknown finish asset'
+    assets=[entry for entry in assets if entry[0] in selected]
+for stem,seed in assets:
     bpy.ops.wm.open_mainfile(filepath=str(ROOT/f'art/source/{stem}.blend'))
     originals=[o for o in bpy.context.selected_objects if o.type in ('MESH','EMPTY')]
     assert originals,stem

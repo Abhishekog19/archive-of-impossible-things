@@ -7,6 +7,8 @@ import sys
 from pathlib import Path
 from mathutils import Vector
 from mathutils.bvhtree import BVHTree
+sys.path.insert(0,str(Path(__file__).parent))
+from placed_art import contact_material
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / '.artifacts/blender'
@@ -355,6 +357,7 @@ for name,objects in [('Stone',stone),('Wood',wood),('Ground',earth)]:
     atlas.file_format = 'PNG'
     for i,original in enumerate(list(target.data.materials)):
         mat = original.copy()
+        contact_material(mat)
         target.data.materials[i] = mat
         tex = mat.node_tree.nodes.new('ShaderNodeTexImage')
         tex.image = atlas

@@ -8,7 +8,7 @@ import bpy
 import numpy as np
 
 
-def stone_material():
+def stone_material(vertex_layer='RockColor'):
     size = 1024
     rng = np.random.default_rng(505)
     yy, xx = np.mgrid[:size, :size].astype(np.float32) / size
@@ -55,7 +55,7 @@ def stone_material():
     mat.use_nodes = True
     nodes, links = mat.node_tree.nodes, mat.node_tree.links
     bsdf = nodes.get('Principled BSDF')
-    vertex = nodes.new('ShaderNodeVertexColor'); vertex.layer_name = 'RockColor'
+    vertex = nodes.new('ShaderNodeVertexColor'); vertex.layer_name = vertex_layer
     albedo = nodes.new('ShaderNodeTexImage'); albedo.image = image('Cavern stone colour 1024', colour, 'sRGB')
     multiply = nodes.new('ShaderNodeMixRGB'); multiply.blend_type = 'MULTIPLY'; multiply.inputs[0].default_value = 1
     links.new(vertex.outputs['Color'], multiply.inputs[1]); links.new(albedo.outputs['Color'], multiply.inputs[2])

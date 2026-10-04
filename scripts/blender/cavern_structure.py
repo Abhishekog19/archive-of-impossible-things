@@ -29,6 +29,7 @@ def mesh(name, points, faces, solid=False, shore=False):
     data.update()
     obj=bpy.data.objects.new(name,data);bpy.context.collection.objects.link(obj)
     colors=data.color_attributes.new(name='RockColor',type='BYTE_COLOR',domain='CORNER')
+    runtime_colors=data.color_attributes.new(name='RuntimeRockColor',type='BYTE_COLOR',domain='CORNER')
     uv=data.uv_layers.new(name='StoneMetres')
     continuous='continuous fractured shell' in name or 'fractured passage' in name
     for poly in data.polygons:
@@ -52,7 +53,18 @@ def mesh(name, points, faces, solid=False, shore=False):
             # radial triangle colour bands seen in the earlier roof screenshot.
             # Separate fracture plates retain crisp edges and face values.
             local_shade=(.72+.42*max(0,min(1,(co.z+8)/27))) if continuous else shade
+            daylight=1
+            if 'Descent' in name:
+                # Enclosed rock receives progressively less hall daylight. Store
+                # this broad occlusion in vertex colour, independent of camera fog.
+                depth=max(0,min(1,(co.y-141)/17))
+                daylight=1-depth*depth*(3-2*depth)
             colors.data[loop].color=tuple(c*local_shade for c in base)+(1,)
+            # The established chamber appearance used the exporter's white
+            # COLOR_0 fallback. Preserve it, and explicitly export the descent
+            # occlusion in the primary colour channel understood by Three.js.
+            value=.24+.66*daylight if 'Descent' in name else 1
+            runtime_colors.data[loop].color=(value,value,value,1)
             pair=(co.y,co.z) if axis==0 else (co.x,co.z) if axis==1 else (co.x,co.y)
             uv.data[loop].uv=(pair[0]/2,pair[1]/2)
     visuals.append(obj)
@@ -229,12 +241,45 @@ for ring in (2,5,9,13):
             inset=(0,.12,.20,.24,.20,.12,0)[j]
             rib.append((x+(inset if x<-12 else -inset),y-inset,z+dz))
     mesh('Descent connected rock seam',rib,[(j,j+7,j+8,j+1) for j in range(6)])
-for i in range(22):
-    za=-141-i*1.5;zb=max(-174,za-1.48)
-    ya=1.65+ (za+141)*9.15/33+.02;yb=1.65+(zb+141)*9.15/33+.02
-    for side in (-1,1):
-        lo,hi=(-14.48,-12.02) if side<0 else (-11.98,-9.52)
-        mesh('Descent worn ledge',[(lo,ya,za),(hi,ya,za),(hi,yb,zb),(lo,yb,zb)],[(0,1,2,3)],shore=True)
+def descent_floor(z):return 1.65+(z+141)*9.15/33
+
+# A buried continuous bed closes the daylight slit below the hall threshold and
+# supports the joints. Visual only: the existing five-metre ramp stays resident.
+za,zb=-140.65,-174.2
+ya,yb=descent_floor(za)+.015,descent_floor(zb)+.015
+mesh('Descent continuous floor bed',
+     [(-14.86,ya,za),(-9.14,ya,za),(-9.14,yb,zb),(-14.86,yb,zb),
+      (-14.86,ya-.38,za),(-9.14,ya-.38,za),(-9.14,yb-.38,zb),(-14.86,yb-.38,zb)],
+     [(0,1,2,3),(0,4,5,1),(3,2,6,7),(0,3,7,4),(1,5,6,2)],shore=True)
+
+# Irregular, staggered bedrock joints replace the straight centre seam. All top
+# points remain on the walkable ramp plane; side skirts bury the outer joins.
+for side in (-1,1):
+    for i in range(23):
+        za=min(-140.7,-140.7-i*1.5+(0 if side<0 else .65))
+        zb=max(-174.15,min(-140.7,-140.7-(i+1)*1.5+(0 if side<0 else .65))+.015)
+        if za<=-174.15:continue
+        mid_a=-12+.26*math.sin(za*.69)
+        mid_b=-12+.26*math.sin(zb*.69)
+        edge_a=-12+side*(2.86+.08*math.sin(za*1.13))
+        edge_b=-12+side*(2.86+.08*math.sin(zb*1.13))
+        pts=[(edge_a,descent_floor(za)+.035,za),(mid_a+side*.012,descent_floor(za)+.035,za),
+             (mid_b+side*.012,descent_floor(zb)+.035,zb),(edge_b,descent_floor(zb)+.035,zb)]
+        mesh('Descent worn ledge',pts,[(0,1,2,3)],shore=True)
+
+# Connected rock toes grow out of the wall and sink below the bed. Their inner
+# edge stays outside the tested 5m lane, with broad planes instead of loose fins.
+for side in (-1,1):
+    for i in range(9):
+        z=-142.2-i*3.65+(0 if side<0 else -.8)
+        za,zb=max(-140.9,z+1.45),max(-174,z-1.55)
+        foot_a,foot_b=descent_floor(za),descent_floor(zb)
+        x=-12+side*2.56;outer=-12+side*3.35
+        top=.55+.23*math.sin(i*1.8+side)
+        mesh('Descent embedded wall toe',[(x,foot_a-.14,za),(x,foot_b-.14,zb),
+             (outer,foot_b-.32,zb),(outer,foot_a-.32,za),
+             (-12+side*2.85,foot_a+top,za-.15),(-12+side*3.02,foot_b+top*.7,zb+.18)],
+             [(0,1,5,4),(0,4,3),(1,2,5),(3,4,5,2)],shore=True)
 
 visual_count=len(visuals)
 # The new chamber/passage skin supplies matching physical boundaries. Flat shore
@@ -245,7 +290,7 @@ for o in solids:
 collision=merge('CavernStructure_Collision',copies)
 collision.data.materials.clear()
 rock=merge('CavernStructure_Rock',visuals)
-rock.data.materials.clear();rock.data.materials.append(stone_material())
+rock.data.materials.clear();rock.data.materials.append(stone_material('RuntimeRockColor'))
 for poly in rock.data.polygons:poly.material_index=0
 # Bright sky beyond the irregular roof slit. The surrounding rock masks this
 # backing surface; it is visual only and belongs to the pool-reflection layer.
@@ -268,7 +313,9 @@ bpy.ops.object.select_all(action='DESELECT')
 for obj in (rock,collision,oculus):obj.select_set(True)
 bpy.ops.wm.save_as_mainfile(filepath=str(ROOT/'art/source/cavern-structure.blend'),compress=True)
 export=ROOT/'public/models/cavern-structure.glb'
-bpy.ops.export_scene.gltf(filepath=str(export),export_format='GLB',use_selection=True)
+bpy.ops.export_scene.gltf(filepath=str(export),export_format='GLB',use_selection=True,
+                         export_vertex_color='NAME',export_vertex_color_name='RuntimeRockColor',
+                         export_all_vertex_colors=False)
 report={'stage':'PD07 continuous bedrock shading and cavern integration','structuralParts':visual_count,'solidParts':len(solids),
         'bytes':export.stat().st_size,'visualTriangles':sum(len(p.vertices)-2 for p in rock.data.polygons),
         'collisionTriangles':sum(len(p.vertices)-2 for p in collision.data.polygons),

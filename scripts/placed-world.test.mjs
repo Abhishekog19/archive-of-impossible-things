@@ -74,6 +74,29 @@ test('resident collision exactly preserves all authored source boundaries', asyn
   assert.equal(hash(actual), hash(expected))
 })
 
+test('descent occlusion survives export in the primary colour channel', async () => {
+  for (const file of ['cavern-structure', 'placed/cavern']) {
+    const doc = await read(file)
+    const rock = doc.getRoot().listNodes().find(n => n.getName() === 'CavernStructure_Rock')
+    let darkest = 1, lightest = 0, passageSamples = 0, chamberSamples = 0
+    for (const p of rock.getMesh().listPrimitives()) {
+      const positions = p.getAttribute('POSITION'), colors = p.getAttribute('COLOR_0')
+      assert(colors, `${file} lost primary vertex colours`)
+      for (let i = 0; i < positions.getCount(); i++) {
+        const [x, y, z] = positions.getElement(i, []), colour = colors.getElement(i, [])
+        if (z < -180) {
+          assert(colour.slice(0, 3).every(v => v > .99), 'chamber colour changed outside the descent scope')
+          chamberSamples++
+        } else if (z < -142 && z > -168 && y > -6 && Math.abs(x + 12) < 3.5) {
+          darkest = Math.min(darkest, colour[0]); lightest = Math.max(lightest, colour[0]); passageSamples++
+        }
+      }
+    }
+    assert(passageSamples > 20 && chamberSamples > 20)
+    assert(darkest < .3 && lightest > .6, `${file} lost the entrance-to-depth shading gradient`)
+  }
+})
+
 test('all compressed packages decode, match manifest and retain required nodes', async () => {
   for (const area of [manifest.resident, ...manifest.zones]) {
     const file = path.join(root, 'public', area.url)

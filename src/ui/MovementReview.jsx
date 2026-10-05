@@ -203,6 +203,10 @@ export default function MovementReview() {
         const route = kind === 'hub' ? [
           ['Hub centre', 0, -5], ['Hub forest exit', -12, -20],
           ['Hub return', 0, -5], ['Arrival return', 0, 6],
+        ] : kind === 'boundary' ? [
+          ['Arrival approach', 0, 24], ['Arrival return', 0, 6],
+          ['East path mouth', 8, -5], ['Overlook approach', 19, -17],
+          ['Overlook return', 8, -5], ['Plaza return', 0, 6],
         ] : kind === 'patch' ? [
           ['Connector middle', -12, -30], ['Connector far end', -12, -39],
           ['Connector return', -12, -20],
@@ -271,6 +275,7 @@ export default function MovementReview() {
       <button disabled={busy} onClick={() => run('terrain')}>Check slopes and steps</button>
     </> : <>
       <button disabled={busy} onClick={() => run('hub')}>Check hub connection</button>
+      <button disabled={busy} onClick={() => run('boundary')}>Check arrival and overlook</button>
       <button disabled={busy} onClick={() => run('patch')}>Check forest connector</button>
       <button disabled={busy} onClick={() => run('world')}>Walk connected world</button>
       <button disabled={busy} onClick={() => run('return')}>Check cavern return</button>

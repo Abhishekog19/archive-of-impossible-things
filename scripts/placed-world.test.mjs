@@ -65,7 +65,7 @@ function collisionTriangles(doc, offset = [0, 0, 0]) {
 
 test('resident collision exactly preserves all authored source boundaries', async () => {
   const expected = []
-  for (const name of ['world-art-context', 'hub-corner', 'forest-patch', 'forest-approach', 'forest-canopy', 'cavern-structure']) {
+  for (const name of ['world-art-context', 'hub-corner', 'forest-patch', 'forest-approach', 'forest-canopy', 'cavern-structure', 'hub-boundaries']) {
     expected.push(...collisionTriangles(await read(name), name === 'hub-corner' ? [-8, 0, -9] : undefined))
   }
   const actual = collisionTriangles(await read('placed/resident'))
@@ -95,6 +95,35 @@ test('descent occlusion survives export in the primary colour channel', async ()
     assert(passageSamples > 20 && chamberSamples > 20)
     assert(darkest < .3 && lightest > .6, `${file} lost the entrance-to-depth shading gradient`)
   }
+})
+
+test('hub boundary replacement keeps its new collision on the remote bank noses', async () => {
+  const doc = await read('hub-boundaries')
+  const names = doc.getRoot().listNodes().map(n => n.getName())
+  for (const name of ['HubBoundary_Stone', 'HubBoundary_Wood', 'HubBoundary_Foliage', 'HubBoundary_Collision']) {
+    assert(names.includes(name), `boundary export lost ${name}`)
+  }
+  const node = doc.getRoot().listNodes().find(n => n.getName() === 'HubBoundary_Collision')
+  const matrix = new Matrix4().fromArray(node.getWorldMatrix()), point = new Vector3()
+  let west = 0, east = 0
+  for (const primitive of node.getMesh().listPrimitives()) {
+    const positions = primitive.getAttribute('POSITION')
+    for (let i = 0; i < positions.getCount(); i++) {
+      point.fromArray(positions.getElement(i, [])).applyMatrix4(matrix)
+      assert(point.z >= -40.001 && point.z <= -35.999, 'new collider extends beyond a bank nose')
+      if (point.x >= -40.001 && point.x <= -30.999) west++
+      else if (point.x >= 6.999 && point.x <= 16.001) east++
+      else assert.fail('new boundary collision enters the existing walking routes')
+    }
+    const indices = primitive.getIndices(), a = new Vector3(), b = new Vector3(), c = new Vector3()
+    for (let i = 0; i < indices.getCount(); i += 3) {
+      a.fromArray(positions.getElement(indices.getScalar(i), [])).applyMatrix4(matrix)
+      b.fromArray(positions.getElement(indices.getScalar(i + 1), [])).applyMatrix4(matrix)
+      c.fromArray(positions.getElement(indices.getScalar(i + 2), [])).applyMatrix4(matrix)
+      assert(b.sub(a).cross(c.sub(a)).y > 0, 'bank nose collision must face upward')
+    }
+  }
+  assert(west > 0 && east > 0, 'both bank noses must have physical support')
 })
 
 test('all compressed packages decode, match manifest and retain required nodes', async () => {

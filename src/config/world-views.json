@@ -13,16 +13,33 @@
     "ref": "REF4"
   },
   "forest": {
-    "position": [
-      -12,
-      4,
-      -43
-    ],
-    "target": [
-      -10,
-      5,
-      -64
-    ],
+    "position": [-12, 4, -43],
+    "target": [-10, 5, -64],
+    "ref": "REF5"
+  },
+  "hub-arrival": {
+    "position": [0, 2.8, 8],
+    "target": [0, 1.4, 31],
+    "ref": "REF4"
+  },
+  "hub-boundary": {
+    "position": [2, 2.8, -8],
+    "target": [1, 2, -19],
+    "ref": "REF4"
+  },
+  "hub-east": {
+    "position": [8, 2.8, -5],
+    "target": [22, 1.8, -20],
+    "ref": "REF4"
+  },
+  "forest-bank-end": {
+    "position": [-12, 3.5, -42],
+    "target": [-29, 3.2, -42],
+    "ref": "REF5"
+  },
+  "forest-bank-east": {
+    "position": [-10, 3.5, -43],
+    "target": [7, 3.4, -42],
     "ref": "REF5"
   },
   "canopy": {

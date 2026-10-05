@@ -115,6 +115,8 @@ const context = await source('world-art-context')
 copy(resident, context, context.getRoot().listScenes()[0].listChildren())
 const finish = await source('world-finish')
 copy(resident, finish, finish.getRoot().listScenes()[0].listChildren())
+const boundaries = await source('hub-boundaries')
+copy(resident, boundaries, boundaries.getRoot().listScenes()[0].listChildren())
 // Distant crowns must remain behind streamed foregrounds, otherwise resident
 // background trunks become bare poles when the neighbouring zone is absent.
 const backdrop = await source('woodland-backdrop')
@@ -153,6 +155,23 @@ for (const zone of definitions) {
   if (zone.id === 'hub') {
     const corner = await source('hub-corner')
     copy(doc, corner, corner.getRoot().listScenes()[0].listChildren().filter(n => /Foliage|Fern/.test(n.getName())), [-8, 0, -9])
+  }
+  if (zone.id === 'approach') {
+    // The old baked moss floor climbs across the bank in large triangles.
+    // Remove only that overlapping outer skin where the boundary export owns
+    // the new rock face; retain the source atlas, route floor and all physics.
+    const ground = doc.getRoot().listNodes().find(n => n.getName() === 'ForestApproach_Ground')
+    for (const p of ground.getMesh().listPrimitives()) {
+      const positions = p.getAttribute('POSITION'), indices = p.getIndices(), retained = []
+      for (let i = 0; i < indices.getCount(); i += 3) {
+        const triangle = [0, 1, 2].map(j => indices.getScalar(i + j))
+        const points = triangle.map(index => positions.getElement(index, []))
+        const covered = points.every(v => v[2] >= -56.01) && points.some(v => v[1] > 1.8) &&
+          (points.every(v => v[0] > 4) || points.every(v => v[0] < -28))
+        if (!covered) retained.push(...triangle)
+      }
+      p.setIndices(doc.createAccessor().setType('SCALAR').setArray(new Uint32Array(retained)).setBuffer(indices.getBuffer()))
+    }
   }
   manifest.zones.push({ ...zone, ...await write(doc, zone.id) })
 }

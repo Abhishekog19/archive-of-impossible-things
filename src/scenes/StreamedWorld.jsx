@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { Html, useGLTF, useTexture } from '@react-three/drei'
 import { RigidBody } from '@react-three/rapier'
-import { DoubleSide, RepeatWrapping } from 'three'
+import { DoubleSide, MeshBasicMaterial, RepeatWrapping } from 'three'
 import manifest from '../config/placed-world.json'
 import { desiredAreas, requiredAreas } from '../config/placed-streaming'
 import { CAVERN_WATER } from '../config/cavern-water'
@@ -10,6 +10,8 @@ import { useGameStore } from '../store'
 import { loadPlaced, disposePlaced } from './placedResource'
 import { CavernSurfaces } from './CavernStructure'
 import CavernWater from './CavernWater'
+import { addBarkDetail, addStoneDetail } from './stoneDetail'
+import { addOutdoorLighting } from './outdoorLighting'
 
 function Area({ area, detail, report, attempt }) {
   const gl = useThree(s => s.gl)
@@ -43,6 +45,14 @@ export default function StreamedWorld({ anchorZ = 6 }) {
     texture.needsUpdate = true
     return texture
   }, [detailSource, gl])
+  const boundaryMaterials = useMemo(() => Object.fromEntries(['Stone', 'Wood', 'Foliage'].map(kind => {
+    const material = new MeshBasicMaterial({ vertexColors: true, side: DoubleSide })
+    if (kind === 'Stone') addStoneDetail(material, detail)
+    if (kind === 'Wood') addBarkDetail(material, detail)
+    addOutdoorLighting(material)
+    return [kind, material]
+  })), [detail])
+  useEffect(() => () => Object.values(boundaryMaterials).forEach(material => material.dispose()), [boundaryMaterials])
   const [active, setActive] = useState(() => desiredAreas(anchorZ, manifest.zones, [], true))
   const [waiting, setWaiting] = useState('loading')
   const [attempt, setAttempt] = useState(0)
@@ -73,7 +83,9 @@ export default function StreamedWorld({ anchorZ = 6 }) {
   // Collision is resident even while a visual package downloads or is evicted.
   return <>
     {residentNodes.filter(n => !/Collision|Pool_study/.test(n.name)).map(node =>
-      <mesh key={node.name} name={node.name} geometry={node.geometry} material={node.material} matrixAutoUpdate={false} matrix={node.matrixWorld}>
+      <mesh key={node.name} name={node.name} geometry={node.geometry}
+        material={node.name.startsWith('HubBoundary_') ? boundaryMaterials[node.name.split('_')[1]] : node.material}
+        matrixAutoUpdate={false} matrix={node.matrixWorld}>
         {node.name.startsWith('WoodlandBackdrop') && <meshBasicMaterial vertexColors side={DoubleSide} />}
       </mesh>)}
     <RigidBody type="fixed" colliders="trimesh" includeInvisible>

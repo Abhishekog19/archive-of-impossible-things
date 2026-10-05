@@ -4,6 +4,7 @@ import bmesh
 import math
 from pathlib import Path
 from mathutils import Vector
+from boundary_layout import boundary_proxy
 ROOT = Path(__file__).resolve().parents[2]
 
 def export_context(include_hub=None):
@@ -23,6 +24,7 @@ def export_context(include_hub=None):
     replaced_sizes = {len(s) for s in replaced_solids}
     include_backdrop = (ROOT/'public/models/woodland-backdrop.glb').exists()
     include_finish = (ROOT/'public/models/world-finish.glb').exists()
+    include_boundaries = (ROOT/'public/models/hub-boundaries.glb').exists()
     def numbered(prefix,index): return prefix+('.'+str(index).zfill(3) if index else '')
     hub_trees = {numbered('Tree trunk',i) for i in (0,1,2,3,4,80,81,82)}
     # Distant trees use three crowns, so their crown indices differ from trunks.
@@ -35,6 +37,15 @@ def export_context(include_hub=None):
             continue
         centre = sum((obj.matrix_world @ Vector(p) for p in obj.bound_box), Vector()) / 8
         x, z = centre.x, -centre.y
+        if include_boundaries and boundary_proxy(obj.name,x,z):
+            removed.append(obj.name);bpy.data.objects.remove(obj,do_unlink=True)
+            continue
+        if include_boundaries and obj.name.startswith('Continuous forest bank'):
+            # The first sixteen metres are dressed in the boundary package.
+            # Collision is an independent mesh and remains unchanged here.
+            bm=bmesh.new();bm.from_mesh(obj.data)
+            covered=[f for f in bm.faces if -(obj.matrix_world@f.calc_center_median()).y>=-56]
+            bmesh.ops.delete(bm,geom=covered,context='FACES');bm.to_mesh(obj.data);bm.free()
         if obj.name.startswith('Collision') and len(obj.data.vertices) in replaced_sizes and signature(obj) in replaced_solids:
             removed.append(obj.name)
             bpy.data.objects.remove(obj,do_unlink=True)

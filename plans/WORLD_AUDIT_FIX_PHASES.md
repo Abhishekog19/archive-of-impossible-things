@@ -292,9 +292,56 @@ logs and geometry fingerprints. The cavern comparison retains the Phase 4 look.
 The first intermediate hall capture is labelled `hall-after-first.png`.
 Evidence is ignored and local to this checkout.
 
-Next focused batch: H01/H02 hub perimeter and reverse arrival, then the linked
-forest bank ends, judged from both reference and player-side views. Keep the
-remaining portal composition item above on the acceptance list.
+### Second focused batch: hub enclosure and forest bank ends, October 5
+
+Implemented a reproducible `hub-boundaries.blend` / GLB package: staggered ruin
+courses replace eight hub wall proxies and the overlook/bridge blocks; the
+arrival ramp receives sloping paving, planted rock ledges and a layered reverse
+woodland. Replaced 28 coarse understory masses. Both forest bank starts now have
+four-metre rounded noses, low planting, roots and background trees. The new
+vertex colours use unlit materials with the existing stone/bark detail and
+regional grading, avoiding a second lighting pass over authored shading.
+
+The side comparison exposed an overlapping baked moss bank in the approach
+package. Derivation now removes only the covered outer skin through Z=-56;
+the source atlas and route floor remain. This fixes the dark patch cutting
+across the new rock face. Added five repeatable review cameras and an actual
+controller route to the arrival boundary and overlook.
+
+Compared REF4/REF5, the main hub framing, reverse arrival, perimeter, overlook,
+both bank ends and reverse connector at 1280 × 720. The inspected khaki wall
+and ramp proxies are replaced, the arrival skyline has woodland depth, and the
+bank caps no longer end abruptly. This completes this production batch, not
+whole-world acceptance: broad ridge facets, the plain east path, regular plaza
+rim, padded column profiles and repeated foliage remain in the full Phase 5 pass.
+
+Validation: 12 focused tests, changed-file ESLint and production build pass.
+All 13 arrival, overlook, hub and connector controller checkpoints pass (maximum
+destination error 0.26 m); the retrieved browser error sample is empty.
+All 21,189 existing collision triangles are preserved; 60 upward-facing triangles
+support the two new bank noses outside the walking routes. Six unrelated area
+geometry fingerprints remain unchanged. Resident geometry is 158,333 triangles /
+4,743,436 bytes; approach is 93,404 triangles / 3,119,872 bytes. Total derived
+packages: 30,045,436 bytes, with no additional texture atlas. These are asset
+counts; hardware/performance checks remain part of the scheduled verification.
+
+Local evidence: `.artifacts/phase5-boundaries-oct05/` contains matching
+`arrival`, `boundary`, `bank-west`, `bank-east`, `hub`, `east` and `connector`
+before/after images; intermediate views are explicitly named `first`. It also
+contains route transcripts, collision/geometry comparisons and generation,
+prepare, build, lint and test logs. Evidence is ignored and local to this checkout.
+
+### Authorized continuation, October 5
+
+The user requested the remaining fixes and two consecutive phases without
+routine approval pauses. Continue Phase 5 with the remaining hub/forest joins,
+canopy tree/ruin intersection, facade roots and courtyard transition, then hall
+portal/rock composition, cavern shore and shared material/foliage corrections.
+Recheck the audit register against fresh affected views rather than close items
+from technical checks alone. Since the audit ends at Phase 5, the next phase is
+a final verification and handoff pass after those corrections: connected routes,
+reviewed reference views, build/tests, asset budgets and the scheduled broader
+checks available on this host. Real-phone results require actual device evidence.
 
 Compare the largest 3–5 remaining mismatches per iteration. Keep character
 acceptance separate. Hardware, sustained performance, deployment and mobile
@@ -327,8 +374,12 @@ regression remain in the weekly batch, not per-art-change checks.
     pushed separately.
 15. `450b64d` — descent threshold/floor, primary colour export, editable source,
     runtime package, regression coverage and review cameras; pushed separately.
-16. Phase 5 first-batch evidence and remaining acceptance priorities;
-    separate documentation push after the verified runtime and asset groups.
+16. `352e07c` — Phase 5 first-batch evidence and remaining acceptance priorities;
+    pushed separately.
+17. `5bb6c7e` — hub boundary generator/source/export, bank overlap removal,
+    resident materials, review cameras/routes and collision checks; separate push.
+18. Phase 5 boundary evidence and authorized continuous-work plan;
+    separate documentation push.
 
 The pre-existing modified `art/source/hub-blockout.blend` is excluded from these
 commits. Private source material remains ignored/untracked and was not read.

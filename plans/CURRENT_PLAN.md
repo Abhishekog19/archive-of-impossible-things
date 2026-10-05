@@ -1,5 +1,19 @@
 # Current plan — Archive of Impossible Things
 
+October 5 Phase 5 boundary batch implemented: replaced hub/overlook wall proxies,
+dressed reverse arrival, added woodland layers and rounded both forest bank ends.
+Removed the overlapping approach bank skin after side-view comparison. Twelve
+focused tests, lint/build and all 13 arrival/overlook/hub/connector checkpoints
+pass; all pre-existing collision triangles are preserved. See the phase tracker
+for asset counts, comparison evidence and the separate push groups.
+
+The user has authorized continuous work through the remaining Phase 5 fixes and
+the following verification/handoff phase without routine confirmation pauses.
+Continue the remaining hub/forest joins, canopy tree/ruin relationship, facade
+roots/courtyard, portal/rock composition and cavern shore; compare affected views
+and complete a final audit pass. Do not equate the completed boundary production
+batch with whole-world visual acceptance or real-phone verification.
+
 October 4 Phase 5 started: first focused hall/descent batch closes the threshold
 light slit, exports passage depth shading correctly, adds embedded floor/rock
 joins and retains water through distant portal sightlines without widening the

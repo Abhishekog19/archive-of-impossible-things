@@ -6,10 +6,13 @@ import { DoubleSide } from 'three'
 import { useGameStore } from '../store'
 import { WORLD_AND_POOL_LAYERS } from '../config/cavern-water'
 import CavernLight from './CavernLight'
+import { cavernShoreGLSL } from '../config/cavern-shore'
+import { cavernFog } from './cavernFog'
 
 // Reuse the Blender PBR textures and metre-scaled UVs. The only runtime layer is
 // water staining, anchored to the authored shore contour instead of UV islands.
 function shorelineLayer(shader) {
+  cavernFog(shader, 'cavernPoint')
   shader.vertexShader = shader.vertexShader.replace('#include <common>', `
     #include <common>
     varying vec3 cavernPoint;
@@ -24,7 +27,7 @@ function shorelineLayer(shader) {
     #include <color_fragment>
     vec2 fromPool = cavernPoint.xz - vec2(-12.0, -195.0);
     float shoreAngle = atan(fromPool.y, fromPool.x);
-    float shoreRadius = 15.5 + 1.2 * sin(3.0 * shoreAngle) + .7 * cos(5.0 * shoreAngle);
+    float shoreRadius = ${cavernShoreGLSL};
     float edge = length(fromPool) - shoreRadius;
     float brokenEdge = sin(cavernPoint.x * 2.3 + sin(cavernPoint.z * 1.7)) * .12;
     float wetStone = (1.0 - smoothstep(-.15, .8, edge + brokenEdge))
@@ -45,8 +48,9 @@ export function CavernSurfaces({ nodes, collision = true }) {
   const material = useMemo(() => {
     const copy = nodes.CavernStructure_Rock.material.clone()
     copy.side = DoubleSide
+    copy.normalScale.set(.6, .6)
     copy.onBeforeCompile = shorelineLayer
-    copy.customProgramCacheKey = () => 'cavern-wet-stone-v2'
+    copy.customProgramCacheKey = () => 'cavern-wet-stone-v3-enclosed-fog'
     return copy
   }, [nodes])
   useEffect(() => {

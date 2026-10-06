@@ -25,7 +25,7 @@ export async function loadPlaced(url, signal, anisotropy, detail, cavern = false
     const original = node.material
     const stone = /Paving|Stone|Ruins|Courtyard|Arcades|Floor|Walls|Limestone|Tower|Perimeter|ForestPatch_Ground/.test(node.name)
     const bark = /Trees|Wood/.test(node.name)
-    const study = node.name.startsWith('ForestPatch_')
+    const study = stone || bark
     const key = original.uuid + (stone ? '-stone' : bark ? '-bark' : '') + (study ? '-study' : '')
     if (!converted.has(key)) {
       const material = new MeshBasicMaterial({ map: original.map, color: original.color,

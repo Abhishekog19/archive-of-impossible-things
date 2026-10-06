@@ -61,6 +61,16 @@ moss.diffuse_color = (.12, .155, .045, 1)
 moss.use_nodes = True
 moss.node_tree.nodes['Principled BSDF'].inputs['Base Color'].default_value = moss.diffuse_color
 moss.node_tree.nodes['Principled BSDF'].inputs['Roughness'].default_value = .95
+nodes,links=moss.node_tree.nodes,moss.node_tree.links
+coords=nodes.new('ShaderNodeNewGeometry')
+noise=nodes.new('ShaderNodeTexNoise');noise.inputs['Scale'].default_value=35
+noise.inputs['Detail'].default_value=2
+links.new(coords.outputs['Position'],noise.inputs['Vector'])
+mix=nodes.new('ShaderNodeMixRGB')
+mix.inputs[1].default_value=(.10,.13,.04,1)
+mix.inputs[2].default_value=(.27,.29,.15,1)
+links.new(noise.outputs['Fac'],mix.inputs[0])
+links.new(mix.outputs[0],nodes['Principled BSDF'].inputs['Base Color'])
 
 def mesh(name, verts, faces, material):
     data = bpy.data.meshes.new(name)
@@ -121,9 +131,9 @@ for x, y in seeds:
     if (math.hypot(x,y)>4 and rng.random()<.55) or rng.random()<.10:
         a,b = rng.choice(list(zip(inset,inset[1:]+inset[:1])))
         cx,cy = (a[0]+b[0])/2,(a[1]+b[1])/2
-        radius = rng.uniform(.28,.85)
-        growth = [(cx+math.cos(i*math.tau/13)*radius*rng.uniform(.6,1.1),
-                   cy+math.sin(i*math.tau/13)*radius*rng.uniform(.6,1.1)) for i in range(13)]
+        radius = rng.uniform(.13,.42)
+        growth = [(cx+math.cos(i*math.tau/23)*radius*rng.uniform(.35,1.2),
+                   cy+math.sin(i*math.tau/23)*radius*rng.uniform(.35,1.2)) for i in range(23)]
         for a,b in zip(inset,inset[1:]+inset[:1]):
             nx,ny = b[1]-a[1],a[0]-b[0]
             growth = clip(growth,nx,ny,nx*a[0]+ny*a[1])

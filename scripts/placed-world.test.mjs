@@ -32,13 +32,13 @@ test('entry loads only its area; hysteresis retains then evicts old areas', () =
 })
 
 test('archive portal sightlines require hall and descent on cold entry', () => {
-  for (const z of [-87, -98, -114, -135, -144]) {
+  for (const z of [-37, -43, -61, -67, -82, -87, -98, -114, -135, -144]) {
     const ids = requiredAreas(z, manifest.zones).map(area => area.id)
     assert(ids.includes('hall'), `hall missing from portal view at ${z}`)
     assert(ids.includes('cavern'), `descent missing from portal view at ${z}`)
     assert.equal(new Set(ids).size, ids.length)
   }
-  assert(!requiredAreas(-67, manifest.zones).some(area => area.id === 'cavern'))
+  assert(!requiredAreas(-36, manifest.zones).some(area => area.id === 'cavern'))
   assert(!requiredAreas(6, manifest.zones).some(area => area.id === 'hall'))
 })
 
@@ -65,7 +65,7 @@ function collisionTriangles(doc, offset = [0, 0, 0]) {
 
 test('resident collision exactly preserves all authored source boundaries', async () => {
   const expected = []
-  for (const name of ['world-art-context', 'hub-corner', 'forest-patch', 'forest-approach', 'forest-canopy', 'cavern-structure', 'hub-boundaries']) {
+  for (const name of ['world-art-context', 'hub-corner', 'forest-patch', 'forest-approach', 'forest-canopy', 'archive-exterior', 'cavern-structure', 'hub-boundaries']) {
     expected.push(...collisionTriangles(await read(name), name === 'hub-corner' ? [-8, 0, -9] : undefined))
   }
   const actual = collisionTriangles(await read('placed/resident'))
@@ -126,6 +126,36 @@ test('hub boundary replacement keeps its new collision on the remote bank noses'
   assert(west > 0 && east > 0, 'both bank noses must have physical support')
 })
 
+test('irregular cavern shoreline exports upward physical ground around the full pool', async () => {
+  const doc = await read('cavern-structure')
+  const node = doc.getRoot().listNodes().find(n => n.getName() === 'CavernStructure_Collision')
+  const matrix = new Matrix4().fromArray(node.getWorldMatrix())
+  const shore = []
+  for (const p of node.getMesh().listPrimitives()) {
+    const positions = p.getAttribute('POSITION'), indices = p.getIndices()
+    for (let i = 0; i < indices.getCount(); i += 3) {
+      const points = [0, 1, 2].map(j => new Vector3().fromArray(positions.getElement(indices.getScalar(i + j), [])).applyMatrix4(matrix))
+      if (!points.every(v => Math.abs(v.y + 7.51) < .001)) continue
+      const normal = points[1].clone().sub(points[0]).cross(points[2].clone().sub(points[0]))
+      assert(normal.y > 0, 'shore ground must face upward')
+      shore.push(points)
+    }
+  }
+  assert.equal(shore.length, 128)
+  const contains = (x, z) => shore.some(points => {
+    const signs = points.map((a, i) => {
+      const b = points[(i + 1) % 3]
+      return (b.x - a.x) * (z - a.z) - (b.z - a.z) * (x - a.x)
+    })
+    return signs.every(v => v >= -.00001) || signs.every(v => v <= .00001)
+  })
+  for (let i = 0; i < 64; i++) {
+    const a = (i + .37) * Math.PI / 32
+    assert(contains(-12 + 21 * Math.cos(a), -195 + 21 * Math.sin(a)), 'shore circuit has no physical support')
+    assert(!contains(-12 + 10 * Math.cos(a), -195 + 10 * Math.sin(a)), 'pool acquired an unintended walking floor')
+  }
+})
+
 test('all compressed packages decode, match manifest and retain required nodes', async () => {
   for (const area of [manifest.resident, ...manifest.zones]) {
     const file = path.join(root, 'public', area.url)
@@ -176,13 +206,13 @@ test('streamed resource preserves marker transforms and releases owned GPU resou
   const matrix = new Matrix4(); instances.getMatrixAt(0, matrix)
   assert.deepEqual(new Vector3().setFromMatrixPosition(matrix).toArray(), [-8, 2, -9])
   assert.equal(template.visible, false)
-  assert.equal(stone.material.customProgramCacheKey(), 'world-stone-detail-v1-outdoor-light-v1')
+  assert.equal(stone.material.customProgramCacheKey(), 'patch-stone-study-v1-outdoor-light-v1')
   // Composing the light field must retain the existing close-range detail hook.
   const shader = { uniforms: {}, vertexShader: '#include <common>\n#include <begin_vertex>\n#include <project_vertex>',
     fragmentShader: '#include <common>\n#include <color_fragment>' }
   stone.material.onBeforeCompile(shader)
   assert(shader.uniforms.stoneGrain.value.isTexture)
-  assert(shader.fragmentShader.includes('woodlandLight') && shader.fragmentShader.includes('mineral'))
+  assert(shader.fragmentShader.includes('woodlandLight') && shader.fragmentShader.includes('mineral') && shader.fragmentShader.includes('pores'))
   instances.addEventListener('dispose', () => { instanceDisposed = true })
   disposePlaced(resource.scene)
   assert(textureDisposed && geometryDisposed && instanceDisposed)

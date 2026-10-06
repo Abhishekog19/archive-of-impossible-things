@@ -7,10 +7,10 @@ export function desiredAreas(z, areas, active, bootstrap = false) {
 
 export function requiredAreas(z, areas) {
   const required = areas.filter(area => distanceToArea(z, area) <= 6)
-  // The archive's aligned doors expose the hall and descent from the courtyard.
+  // The archive's aligned doors expose the hall and descent from the forest.
   // Wait for both visible destinations before releasing the loading gate; a
   // nearby exterior package alone leaves a bright empty portal on a cold entry.
-  if (z >= -144 && z <= -87) {
+  if (z >= -144 && z <= -37) {
     for (const id of ['hall', 'cavern']) {
       const area = areas.find(candidate => candidate.id === id)
       if (area && !required.includes(area)) required.push(area)

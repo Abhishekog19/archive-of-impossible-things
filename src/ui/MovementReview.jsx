@@ -7,10 +7,11 @@ const release = () => ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ShiftLeft', 'Space'].for
 const round = n => Number(n.toFixed(2))
 
 // Explicit development UI: drives the real keyboard/controller/physics path.
-// No FPS audit. Only mounted with ?movement-review=1 in a development build.
+// Movement checks and an opt-in weekly FPS audit; development builds only.
 export default function MovementReview() {
   const [busy, setBusy] = useState(false)
   const [results, setResults] = useState([])
+  const [performanceReport, setPerformanceReport] = useState(null)
   const greyroom = new URLSearchParams(window.location.search).get('scene') === 'greyroom'
 
   async function run(kind) {
@@ -21,6 +22,7 @@ export default function MovementReview() {
       return
     }
     setBusy(true)
+    setPerformanceReport(null)
     const rows = []
     const record = (name, pass, detail) => {
       rows.push({ name, pass, detail })
@@ -43,7 +45,40 @@ export default function MovementReview() {
     try {
       probe.manual(true)
       await yieldUI()
-      if (kind === 'contact') {
+      if (kind === 'performance') {
+        await place([0, 2, 6])
+        probe.manual(false)
+        const route = [[0, -5], [-12, -20], [-12, -43], [-10, -56], [-12, -68],
+          [-15, -82], [-12, -98], [-12, -123], [-12, -141], [-12, -174],
+          [-22, -176], [-30, -181], [-33, -195], [-30, -181], [-22, -176],
+          [-12, -174], [-12, -141], [-12, -123], [-12, -98], [-15, -82],
+          [-12, -68], [-10, -56], [-12, -43], [-12, -20], [0, -5], [0, 6]]
+        const samples = [], start = performance.now()
+        let last = start, frames = 0, total = 0, waypoint = 0, hidden = 0
+        while (performance.now() - start < 180000) {
+          const now = await new Promise(resolve => requestAnimationFrame(resolve))
+          frames++; total++
+          if (document.hidden) hidden++
+          const p = pos(), [x, z] = route[waypoint % route.length]
+          if (Math.hypot(p.x - x, p.z - z) < .8) waypoint++
+          probe.turnTo(Math.atan2(p.x - x, p.z - z) * 180 / Math.PI)
+          key('KeyW', true); key('ShiftLeft', true)
+          if (now - last >= 1000) {
+            samples.push({ seconds: round((now - start) / 1000), fps: round(frames * 1000 / (now - last)),
+              ...Object.fromEntries(['calls', 'triangles', 'geometries', 'textures', 'dpr'].map(k => [k, probe.perf[k]])),
+              x: round(p.x), z: round(p.z), loading: useGameStore.getState().worldLoading })
+            setResults([{ name: 'Live traversal', pass: true, detail: `${Math.floor((now - start) / 1000)} / 180 seconds; ${waypoint} waypoints` }])
+            last = now; frames = 0
+          }
+        }
+        release()
+        const seconds = (performance.now() - start) / 1000
+        const report = { seconds: round(seconds), averageFps: round(total / seconds), hiddenFrames: hidden,
+          waypoints: waypoint, tier: useGameStore.getState().tier, samples }
+        setPerformanceReport(report)
+        record('Three-minute live traversal', hidden === 0 && waypoint >= route.length && report.averageFps >= 30,
+          `${report.averageFps} FPS; ${waypoint} waypoints; ${hidden} hidden frames`)
+      } else if (kind === 'contact') {
         for (const [name, at] of [['Hub', [0, 2, 4]], ['Forest', [-12, 3, -43]],
           ['Canopy', [-12, 4, -67]], ['Courtyard', [-12, 4, -105]],
           ['Hall', [-12, 4, -123]], ['Cavern', [-12, -5, -174]]]) {
@@ -198,9 +233,17 @@ export default function MovementReview() {
             `${round(distance)} m; rise ${round(maxY - start.y)} m; grounded ${Math.round(grounded / samples * 100)}%`)
         }
       } else {
-        await place(kind === 'return' ? [-12, -5.5, -174] : kind === 'patch' ? [-12, 2, -20] : [0, 2, 6])
+        await place(['return', 'shore', 'home'].includes(kind) ? [-12, -5.5, -174] : kind === 'patch' ? [-12, 2, -20] : [0, 2, 6])
         // Connected authored route plus side trips to all four reserved locations.
-        const route = kind === 'hub' ? [
+        const route = kind === 'shore' ? Array.from({ length: 17 }, (_, i) => {
+          const angle = Math.PI / 2 + i * Math.PI / 8
+          return ['Shore sector ' + i, -12 + 21 * Math.cos(angle), -195 + 21 * Math.sin(angle)]
+        }) : kind === 'home' ? [
+          ['Cavern ascent', -12, -159], ['Hall entrance', -12, -138], ['Hall return', -12, -123],
+          ['Archive door', -12, -114], ['Courtyard', -12, -98], ['Deep forest', -15, -82],
+          ['Canopy', -12, -68], ['Forest bend', -10, -56], ['Forest', -12, -43],
+          ['Connector', -12, -20], ['Hub', 0, -5], ['Arrival', 0, 6],
+        ] : kind === 'hub' ? [
           ['Hub centre', 0, -5], ['Hub forest exit', -12, -20],
           ['Hub return', 0, -5], ['Arrival return', 0, 6],
         ] : kind === 'boundary' ? [
@@ -279,9 +322,13 @@ export default function MovementReview() {
       <button disabled={busy} onClick={() => run('patch')}>Check forest connector</button>
       <button disabled={busy} onClick={() => run('world')}>Walk connected world</button>
       <button disabled={busy} onClick={() => run('return')}>Check cavern return</button>
+      <button disabled={busy} onClick={() => run('shore')}>Walk complete shoreline</button>
+      <button disabled={busy} onClick={() => run('home')}>Walk back to hub</button>
       <button disabled={busy} onClick={() => run('contact')}>Check world contact shading</button>
+      <button disabled={busy} onClick={() => run('performance')}>Run weekly 3-minute traversal</button>
     </>}</div>
-    <p>{busy ? 'Walking the actual physics scene…' : 'Ready — no performance audit'}</p>
+    <p>{busy ? 'Walking the actual physics scene…' : 'Ready — choose a check'}</p>
     {results.map(row => <p key={row.name}>{row.pass ? 'PASS' : 'FAIL'} {row.name}: {row.detail}</p>)}
+    {performanceReport && <details><summary>Performance samples</summary><pre>{JSON.stringify(performanceReport, null, 2)}</pre></details>}
   </aside>
 }

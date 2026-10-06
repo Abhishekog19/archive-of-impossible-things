@@ -116,11 +116,11 @@ for i in range(42):
 # Staggered fracture plates interrupt the chamber's radial construction. Each
 # exposes a broad face and chipped side planes, with no common horizontal course.
 for band in range(3):
-    for i in range(24):
-        a=i*math.tau/24+rng.uniform(-.09,.09)
+    for i in range(18):
+        a=i*math.tau/18+rng.uniform(-.09,.09)
         if abs(a-math.pi/2)<.28:continue
         h=(-4,3,10)[band]+rng.uniform(-1.4,1.4)
-        width=rng.uniform(1.2,3.2);height=rng.uniform(5,10)
+        width=rng.uniform(2.5,5.2);height=rng.uniform(5,10)
         # Local U runs around the wall, V rises and D projects into the chamber.
         shape=[(-width,-height*.5,0),(width*.7,-height*.5,.35),
                (width,height*.2,.8),(width*.35,height*.55,.3),
@@ -137,7 +137,8 @@ for band in range(3):
             front.append((cx+r*math.cos(a)-u*math.sin(a),y,cz+zshift+r*math.sin(a)+u*math.cos(a)))
         back=[(x+math.cos(a)*1.1,y,z+math.sin(a)*1.1) for x,y,z in front]
         centre=tuple(sum(p[k] for p in front)/5 for k in range(3))
-        centre=(centre[0]-math.cos(a)*2.2,centre[1]+.4,centre[2]-math.sin(a)*2.2)
+        depth=rng.uniform(.35,.8)
+        centre=(centre[0]-math.cos(a)*depth,centre[1]+.12,centre[2]-math.sin(a)*depth)
         # Broken non-coplanar facets replace the conspicuous flat pasted-on plates.
         mesh('Overlapping rock fracture plate',front+back+[centre],
              [(j,(j+1)%5,10) for j in range(5)]+
@@ -152,7 +153,10 @@ for i in range(18):
          (x+.2,15+rng.uniform(0,2),z+.5),(x,19,z+1.4)],
          [(0,2,1),(0,1,3),(1,2,3),(2,0,3)],True)
 
-def shore_radius(a):return 15.5+1.2*math.sin(3*a)+.7*math.cos(5*a)
+shore_shape=json.loads((ROOT/'src/config/cavern-shore.json').read_text())
+def shore_radius(a):
+    b,c,d=shore_shape['lobes']
+    return shore_shape['radius']+b*math.sin(3*a)+c*math.cos(5*a)+d*math.sin(11*a)
 
 # Discontinuous ledges overhang the pool and break the repeated bank arc; existing
 # continuous walkable ground and its collision remain behind this visual edge.
@@ -173,14 +177,15 @@ for i in range(N):
     a,b=angles[i],(i+1)*math.tau/N
     ra,rb=shore_radius(a),shore_radius(b)
     mesh('Shore continuous ground',[(cx+r*math.cos(t),-7.51,cz+r*math.sin(t))
-         for r,t in ((ra,a),(27,a),(27,b),(rb,b))],[(0,1,2,3)],shore=True)
+         for r,t in ((ra,a),(27,a),(27,b),(rb,b))],[(3,2,1,0)],solid=True,shore=True)
     mesh('Shore fracture lip',[(cx+r*math.cos(t),h,cz+r*math.sin(t))
          for r,t,h in ((ra,a,-7.49),(rb,b,-7.49),(rb+.2,b,-9.1),(ra+.2,a,-9.1))],
          [(0,1,2,3)],shore=True)
+    if i%2:continue
     for band in range(3):
-        step=math.tau/N
+        step=2*math.tau/N
         aa=a+step*(band*.37+.2*math.sin(i*1.3))+.0015
-        bb=b+step*(band*.37+.2*math.sin((i+1)*1.3))-.0015
+        bb=a+step+step*(band*.37+.2*math.sin((i+2)*1.3))-.0015
         def edge(k,t):
             return shore_radius(t)+k*3.2+(0 if k==0 else .55*math.sin(t*11+k*1.7)+.3*math.cos(t*17-k))
         inner_a=edge(band,aa)+.025;inner_b=edge(band,bb)+.025

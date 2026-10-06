@@ -111,14 +111,14 @@ for x in (-19,-5):
         for row in range(11):
             h=2.78+row*.69
             radius=.76-row*.015
-            bpy.ops.mesh.primitive_cylinder_add(vertices=16,radius=radius,depth=.655,location=(x,-z,h))
+            bpy.ops.mesh.primitive_cylinder_add(vertices=16,radius=radius,depth=.685,location=(x,-z,h))
             obj=bpy.context.object
             # Shallow alternating flutes retain a low polygon count and broad highlights.
             for v in obj.data.vertices:
                 angle=math.atan2(v.co.y,v.co.x)
                 if round(angle/(math.tau/16))%2: v.co.x*=.92;v.co.y*=.92
-            obj.rotation_euler.z=(col%2)*.045+rng.uniform(-.014,.014)
-            finish(obj,'Fluted limestone drum',architecture)
+            obj.rotation_euler.z=(col%2)*.045
+            finish(obj,'Fluted limestone drum',architecture,wear=.008)
         block('Column neck',(x,10.12,z),(1.48,.23,1.48))
         block('Broken capital',(x,10.49,z),(1.95,.47,1.95))
     # Longitudinal bays frame the aisle as in REF8; roof is open overhead.

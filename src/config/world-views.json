@@ -55,6 +55,26 @@
     ],
     "ref": "REF6"
   },
+  "canopy-side": {
+    "position": [-12, 3.5, -70],
+    "target": [0, 3.2, -77],
+    "ref": "REF6"
+  },
+  "canopy-clearing": {
+    "position": [-12, 3.5, -70],
+    "target": [-20, 4, -70],
+    "ref": "REF6"
+  },
+  "courtyard-side": {
+    "position": [-12, 3.5, -99],
+    "target": [1, 3, -106],
+    "ref": "REF7"
+  },
+  "hall-window": {
+    "position": [-12, 4, -134],
+    "target": [-22, 6, -142],
+    "ref": "REF8"
+  },
   "exterior": {
     "position": [
       -12,

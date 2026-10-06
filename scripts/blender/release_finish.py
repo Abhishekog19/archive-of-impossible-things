@@ -3,7 +3,7 @@
 Preserves collision and authored UV atlases. Output .blend files use pd11-* names;
 the source hub-blockout.blend (including the user's edit) is never opened/written.
 """
-import bpy, math, random, sys, os
+import bpy, bmesh, math, random, sys, os
 from pathlib import Path
 from mathutils import Vector
 from mathutils.bvhtree import BVHTree
@@ -30,12 +30,15 @@ def leaf_crown(name, centre, radius, seed, count=230, leaf_scale=1):
         a,b,c,d=[old.vertices[i].co.copy() for i in p.vertices]
         axis=(c-a)*.24
         start=len(verts)
-        verts.extend([a,b-axis,b+axis,c,d+axis,d-axis])
-        faces.append(tuple(start+i for i in range(6)))
+        centre=(a+b+c+d)/4
+        verts.extend([centre+(v-centre)*.72 for v in [a,b-axis,b+axis,c,d+axis,d-axis]])
+        verts.append(centre+Vector((0,0,.045*leaf_scale)))
+        faces.extend([(start,start+1,start+2,start+3,start+6),
+                      (start+3,start+4,start+5,start,start+6)])
         colour=old.color_attributes.active_color.data[p.loop_start].color
         elevation=sum(v.z for v in (a,b,c,d))/4-centre[2]
         shade=.40+.35*max(0,min(1,.5+elevation/max(radius[2],.1)))+rng.uniform(-.08,.08)
-        colours.append(tuple(value*shade for value in colour[:3])+(1,))
+        colours.extend([tuple(value*shade*f for value in colour[:3])+(1,) for f in (.9,1.04)])
     data=bpy.data.meshes.new(name+' rounded leaves');data.from_pydata(verts,[],faces);data.update()
     attr=data.color_attributes.new(name='CanopyColor',type='BYTE_COLOR',domain='CORNER')
     for p in data.polygons:
@@ -55,6 +58,33 @@ def tint(obj, rgb):
         for i in p.loop_indices:attr.data[i].color=tuple(c*shade for c in rgb)+(1,)
     color_material(obj)
 
+
+def fold_flat_leaves(obj):
+    """Keep existing attachments/colours while giving ivy and broadleaf depth."""
+    old=obj.data
+    if old.uv_layers or not old.color_attributes.active_color:return
+    verts=[];faces=[];colours=[]
+    for poly in old.polygons:
+        points=[old.vertices[i].co.copy() for i in poly.vertices]
+        colour=old.color_attributes.active_color.data[poly.loop_start].color
+        start=len(verts)
+        if len(points)==4:
+            centre=sum(points,Vector())/4
+            verts.extend([centre+(p-centre)*.82 for p in points])
+            size=max((p-centre).length for p in points)
+            verts.append(centre+poly.normal*size*.19)
+            for j in range(4):
+                faces.append((start+j,start+(j+1)%4,start+4))
+                colours.append(tuple(c*(.9 if j<2 else 1.04) for c in colour[:3])+(1,))
+        else:
+            verts.extend(points);faces.append(tuple(range(start,len(verts))));colours.append(colour)
+    data=bpy.data.meshes.new(obj.name+' folded leaf surfaces')
+    data.from_pydata(verts,[],faces);data.update()
+    attr=data.color_attributes.new(name='FinishColour',type='BYTE_COLOR',domain='CORNER')
+    for poly in data.polygons:
+        for li in poly.loop_indices:attr.data[li].color=colours[poly.index]
+    obj.data=data;color_material(obj)
+
 assets=[('hub-art',1101),('forest-approach',1102),('forest-canopy',1103),
         ('archive-exterior',1104),('archive-hall',1105)]
 args=sys.argv[sys.argv.index('--')+1:] if '--' in sys.argv else []
@@ -66,6 +96,19 @@ for stem,seed in assets:
     bpy.ops.wm.open_mainfile(filepath=str(ROOT/f'art/source/{stem}.blend'))
     originals=[o for o in bpy.context.selected_objects if o.type in ('MESH','EMPTY')]
     assert originals,stem
+    if stem=='forest-canopy':
+        for obj in originals:
+            if obj.type!='MESH' or 'Foliage' not in obj.name:continue
+            bm=bmesh.new();bm.from_mesh(obj.data)
+            obscuring=[]
+            for face in bm.faces:
+                p=obj.matrix_world@face.calc_center_median()
+                if 78<p.y<99 and abs(p.x+12)<9 and 6<p.z<19:obscuring.append(face)
+            bmesh.ops.delete(bm,geom=obscuring,context='FACES')
+            bm.to_mesh(obj.data);bm.free()
+    for obj in originals:
+        if obj.type=='MESH' and ('Foliage' in obj.name or 'PlantPrototype' in obj.name):
+            fold_flat_leaves(obj)
     rng=random.Random(seed);foliage=[];stone=[]
     hub=stem=='hub-art';forest=stem.startswith('forest')
     # Reproducible clusters with pockets of open ground, not evenly spaced scatter.
@@ -121,7 +164,7 @@ for stem,seed in assets:
     # Smaller hanging sprays create an intermediate canopy layer at REF6's exit.
     if stem=='forest-canopy':
         for j in range(9):
-            x=-12+rng.choice((-1,1))*rng.uniform(2.8,5.2);z=-78-j*1.8
+            x=-12+rng.choice((-1,1))*rng.uniform(8,10);z=-78-j*1.8
             foliage.append(leaf_crown('PD11 layered canopy',(x,-z,rng.uniform(8,11)),
                 (2.5,2.1,1.2),1200+j,110,1.0))
     additions=[]

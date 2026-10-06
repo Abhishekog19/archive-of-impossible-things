@@ -17,6 +17,12 @@ const io = new NodeIO().registerExtensions(ALL_EXTENSIONS).registerDependencies(
 })
 const sources = new Map()
 async function replaceExport(target, bytes) {
+  // Avoid replacing identical cloud-backed files, which may be held by sync.
+  try {
+    if ((await fs.readFile(target)).equals(Buffer.from(bytes))) return
+  } catch (error) {
+    if (error.code !== 'ENOENT') throw error
+  }
   const temporary = target + '.next'
   await fs.writeFile(temporary, bytes)
   try {
@@ -121,7 +127,7 @@ copy(resident, boundaries, boundaries.getRoot().listScenes()[0].listChildren())
 // background trunks become bare poles when the neighbouring zone is absent.
 const backdrop = await source('woodland-backdrop')
 copy(resident, backdrop, backdrop.getRoot().listScenes()[0].listChildren())
-for (const name of ['hub-corner', 'forest-patch', 'forest-approach', 'forest-canopy', 'cavern-structure']) {
+for (const name of ['hub-corner', 'forest-patch', 'forest-approach', 'forest-canopy', 'archive-exterior', 'cavern-structure']) {
   const doc = await source(name)
   copy(resident, doc, doc.getRoot().listNodes().filter(collider), name === 'hub-corner' ? [-8, 0, -9] : undefined)
 }
@@ -156,17 +162,17 @@ for (const zone of definitions) {
     const corner = await source('hub-corner')
     copy(doc, corner, corner.getRoot().listScenes()[0].listChildren().filter(n => /Foliage|Fern/.test(n.getName())), [-8, 0, -9])
   }
-  if (zone.id === 'approach') {
+  if (['approach', 'canopy'].includes(zone.id)) {
     // The old baked moss floor climbs across the bank in large triangles.
     // Remove only that overlapping outer skin where the boundary export owns
     // the new rock face; retain the source atlas, route floor and all physics.
-    const ground = doc.getRoot().listNodes().find(n => n.getName() === 'ForestApproach_Ground')
+    const ground = doc.getRoot().listNodes().find(n => n.getName() === (zone.id === 'approach' ? 'ForestApproach_Ground' : 'ForestCanopy_Ground'))
     for (const p of ground.getMesh().listPrimitives()) {
       const positions = p.getAttribute('POSITION'), indices = p.getIndices(), retained = []
       for (let i = 0; i < indices.getCount(); i += 3) {
         const triangle = [0, 1, 2].map(j => indices.getScalar(i + j))
         const points = triangle.map(index => positions.getElement(index, []))
-        const covered = points.every(v => v[2] >= -56.01) && points.some(v => v[1] > 1.8) &&
+        const covered = points.some(v => v[1] > 2.4) &&
           (points.every(v => v[0] > 4) || points.every(v => v[0] < -28))
         if (!covered) retained.push(...triangle)
       }

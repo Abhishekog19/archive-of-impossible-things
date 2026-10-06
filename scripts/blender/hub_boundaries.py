@@ -4,7 +4,7 @@ Derived from world-blockout; never opens/saves the user's hub-blockout source.
 Existing collision is retained. Only the two new bank noses add collision.
 Vertex lighting and shared runtime stone grain avoid another texture atlas.
 """
-import bpy, bmesh, math, random, sys, json
+import bpy, bmesh, math, random, sys, json, os
 from pathlib import Path
 from mathutils import Vector
 from mathutils.bvhtree import BVHTree
@@ -106,30 +106,28 @@ def crown(centre,radius,tint=(.075,.125,.032),leaves=45):
 
 def rough_skin(obj,only_bank=False):
     data=obj.data.copy();bm=bmesh.new();bm.from_mesh(data)
-    if only_bank:
-        outside=[f for f in bm.faces if -(obj.matrix_world@f.calc_center_median()).y<-56]
-        bmesh.ops.delete(bm,geom=outside,context='FACES')
     bmesh.ops.subdivide_edges(bm,edges=list(bm.edges),cuts=2,use_grid_fill=True)
     bmesh.ops.triangulate(bm,faces=list(bm.faces));bm.to_mesh(data);bm.free();data.update()
     points=[]
     for v in data.vertices:
         p=obj.matrix_world@v.co;n=(obj.matrix_world.to_3x3()@v.normal).normalized()
         wave=.035+.19*math.sin(p.x*1.47+p.y*.51)*math.sin(p.z*2.15+p.y*.79)
-        if only_bank:wave*=max(0,min(1,(56-p.y)/4))
+        if only_bank:wave*=max(0,min(1,(116-p.y)/4))
         points.append(p+n*wave)
-    result=mesh('Continuous boundary outcrop',points,[tuple(p.vertices) for p in data.polygons])
+    result=mesh('Continuous boundary outcrop',points,[tuple(p.vertices) for p in data.polygons],
+                tint=(.14,.17,.09) if only_bank else (.23,.255,.17))
     if only_bank:
         colors=result.data.color_attributes['BoundaryColour']
         for loop in result.data.loops:
             p=result.data.vertices[loop.vertex_index].co
-            blend=max(0,min(1,(p.y-50)/6))
+            blend=max(0,min(1,(p.y-110)/6))
             field=.72+.13*math.sin(p.x*.73+p.y*.28)+.12*math.sin(p.y*1.17-p.x*.36)
             old=colors.data[loop.index].color
             colors.data[loop.index].color=tuple(old[k]*(1-blend)+(.033,.046,.012)[k]*field*blend for k in range(3))+(1,)
     bpy.data.meshes.remove(data)
     return result
 
-def outcrop(centre,size):
+def outcrop(centre,size,tint=(.26,.29,.20)):
     # Squat, asymmetric strata interrupt the broad ridge without cube outlines.
     points=[];faces=[];c=Vector(centre)
     offsets=[rng.uniform(.82,1.13) for _ in range(7)]
@@ -142,7 +140,7 @@ def outcrop(centre,size):
         for j in range(7):
             a=i*7+j;b=i*7+(j+1)%7;faces.append((a,b,b+7,a+7))
     faces.append(tuple(range(21,28)))
-    mesh('Split ledge strata',points,faces,tint=(.26,.29,.20))
+    mesh('Split ledge strata',points,faces,tint=tint)
 
 def boundary_tree(x,z,y,h,tint):
     lean=rng.uniform(-1.2,1.2)
@@ -167,7 +165,7 @@ for obj in source:
         rough_skin(obj);ridges.append(obj)
     elif obj.name.startswith('Island understory'):
         islands.append((tuple(c),tuple(obj.dimensions*.5)))
-    elif obj.name.startswith(('Arrival slope','Overgrown path mouth','Overgrown branch roots')):continue
+    elif obj.name.startswith(('Arrival slope','Right branch','Overgrown path mouth','Overgrown branch roots')):continue
     else:
         lo=Vector(tuple(min(v.co[k] for v in obj.data.vertices) for k in range(3)))
         hi=Vector(tuple(max(v.co[k] for v in obj.data.vertices) for k in range(3)))
@@ -203,6 +201,22 @@ for row in range(6):
 for j in range(3):
     branch([(-2.25,17+.2*j,.2),( -1,17+.2*j,.5+j*.28),(1,17+.2*j,.6+j*.2),(2.3,17+.2*j,.08)],
            [.12,.35,.33,.04])
+
+# Dressed east branch retains its ribbon footprint and level collision.
+direction=Vector((.9,1,0)).normalized();across=Vector((-direction.y,direction.x,0))
+for row in range(22):
+    t=row*14/21;centre=Vector((8+.9*t,5+t,0))
+    for col in range(5):
+        p=centre+across*((col-2)*1.08+.22*(row%2))
+        stone_block((p.x,p.y,-.065),(1.04,.85,.18),math.atan2(direction.y,direction.x)-math.pi/2)
+
+# Buried, irregular stones soften the plaza foundation at the ground join.
+for i in range(54):
+    a=i*math.tau/54;x=13.12*math.cos(a);z=13.12*math.sin(a)
+    if (abs(x)<3.7 and z>8) or (-18<x<-5 and z<-8) or (x>7 and z<-2):continue
+    y=min(-.12,height(x,z))
+    outcrop((x,-z,y-.08),(rng.uniform(.7,1.15),rng.uniform(.7,1.15),.36))
+    if i%3==0:crown((x*1.02,-z*1.02,y+.22),(.7,.6,.3),leaves=22)
 
 # Dress ledges with roots and low planting, seated on the actual ridge surface.
 rv=[];rf=[]
@@ -246,15 +260,38 @@ for side in (-1,1):
         cap=BVHTree.FromPolygons(points,faces)
         hit=cap.ray_cast(Vector((x,-z,20)),Vector((0,0,-1)))[0]
         if hit:crown(hit+Vector((0,0,.25)),(.8,.95,.55),leaves=25)
-    for j in range(5):
-        z=-40-j*2.8
-        crest=5.75+max(0,-z-40)*.018
-        branch([(inner+side*1.4,-z,crest+.4),(inner+side*.54,-z+.25,crest),
-                (inner+side*.28,-z+.4,crest*.5),(inner-side*.03,-z+.6,1.48)], [.28,.24,.14,.015])
-        crown((inner+side*1.3,-z,crest+.5),(1.3,.9,.6),leaves=24)
-    for j in range(8):
-        x=inner+side*(12+(j%2)*4);z=-35-j*3
+    bank=next(o for o in banks if sum((o.matrix_world@v.co).x for v in o.data.vertices)/len(o.data.vertices)*side>0)
+    bank_points=[bank.matrix_world@v.co for v in bank.data.vertices]
+    bank_surface=BVHTree.FromPolygons(bank_points,[tuple(p.vertices) for p in bank.data.polygons])
+    for j in range(25):
+        z=-41-j*3
+        hits=[]
+        for h in (1.8,3.4,4.8):
+            hit=bank_surface.ray_cast(Vector((-12,-z,h)),Vector((side,0,0)),60)[0]
+            if hit:
+                hits.append(hit)
+        # Tall, buried masses meet the ground and overlap the bank. Avoid
+        # evenly spaced floating shelves on the middle of a sheer face.
+        if hits and j%4!=2:
+            foot=hits[0]
+            outcrop(foot+Vector((side*.4,0,-.7)),
+                    (rng.uniform(1.1,1.7),rng.uniform(1.6,2.9),rng.uniform(3.7,5.7)),
+                    (.17,.195,.115))
+        if len(hits)>1:
+            low,high=hits[0],hits[-1]
+            top=bank_surface.ray_cast(Vector((high.x+side*1.1,-z,18)),Vector((0,0,-1)),25)[0]
+            if top:
+                branch([top+Vector((0,0,.1)),high-Vector((side*.08,0,0)),low-Vector((side*.05,0,0))],[.22,.16,.025])
+                crown(top+Vector((0,0,.25)),(1.3,.9,.6),leaves=24)
+    for j in range(18):
+        x=inner+side*(12+(j%2)*4);z=-35-j*6
         boundary_tree(x,z,height(x,z),rng.uniform(10,16),(.1+(j%2)*.04,.16+(j%2)*.04,.065))
+
+# Rear window views look beyond the hall's solid boundaries, away from the
+# descent lane. These rooted silhouettes provide nearby context before fog.
+for i,(x,z) in enumerate([(-34,-151),(-38,-155),(10,-151),(14,-155)]):
+    boundary_tree(x,z,.3,14+i%2*3,(.09,.14,.052))
+    outcrop((x,-z,.15),(3,2,1.3))
 
 for centre,radius in islands:
     for j in range(3):
@@ -278,8 +315,11 @@ collision=merge('HubBoundary_Collision',colliders);collision.data.materials.clea
 bpy.ops.object.select_all(action='DESELECT')
 for obj in exports:obj.select_set(True)
 bpy.ops.wm.save_as_mainfile(filepath=str(ROOT/'art/source/hub-boundaries.blend'),compress=True)
-bpy.ops.export_scene.gltf(filepath=str(ROOT/'public/models/hub-boundaries.glb'),export_format='GLB',use_selection=True,
+target=ROOT/'public/models/hub-boundaries.glb'
+temporary=target.with_name('hub-boundaries.next.glb')
+bpy.ops.export_scene.gltf(filepath=str(temporary),export_format='GLB',use_selection=True,
                          export_vertex_color='NAME',export_vertex_color_name='BoundaryColour',export_all_vertex_colors=False)
+os.replace(temporary,target)
 report={'replaced':replaced,'bankNoses':2,'triangles':sum(len(p.vertices)-2 for o in exports for p in o.data.polygons),
         'collisionTriangles':sum(len(p.vertices)-2 for p in collision.data.polygons),'newAtlases':0}
 (ROOT/'.artifacts/blender/hub-boundaries-report.json').write_text(json.dumps(report,indent=2)+'\n')

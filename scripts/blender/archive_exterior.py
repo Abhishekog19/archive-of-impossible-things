@@ -10,6 +10,7 @@ from mathutils import Vector
 sys.path.insert(0,str(Path(__file__).parent))
 from placed_art import merge, leaf_crown, color_material, lighting, bake
 from archive_surface import damp_material, root_tendril, ivy_ribbon
+from natural_foliage import layered_crown
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT/'.artifacts/blender'
 bpy.ops.object.select_all(action='SELECT')
@@ -31,13 +32,13 @@ wood_material = kit['Author_Tree_Tall'].data.materials[0]
 stone_variants = [damp_material(stone_material,'Archive damp limestone '+str(i),m) for i,m in enumerate((.12,.32,.65,.85))]
 stone,wood,crowns = [],[],[]
 block_count = 0
-def worn(obj,amount=.045):
+def worn(obj,amount=.025):
     bpy.context.view_layer.objects.active = obj
     bevel = obj.modifiers.new('Worn stone edges','BEVEL')
     bevel.width = amount
     bevel.segments = 1
     bpy.ops.object.modifier_apply(modifier=bevel.name)
-    for v in obj.data.vertices: v.co += Vector(tuple(rng.uniform(-.035,.035) for _ in range(3)))
+    for v in obj.data.vertices: v.co += Vector(tuple(rng.uniform(-.014,.014) for _ in range(3)))
 
 for source in sources:
     z = -source.location.y
@@ -48,9 +49,10 @@ for source in sources:
         if not -117<z<-110: continue
     if source.name.startswith(('Hero tree crown','Hero secondary crown')):
         radius = tuple(source.scale)
-        crowns.append(leaf_crown('Hero broadleaf sprays',source.location,radius,len(crowns)+927,1800,leaf_scale=1.5))
+        crowns.append(layered_crown('Hero layered crown',source.location,radius,len(crowns)+927))
         continue
-    if source.name.startswith(('Archive hero tree','Hero spreading limb','Wrapping facade root')):
+    if source.name.startswith('Wrapping facade root'):continue
+    if source.name.startswith(('Archive hero tree','Hero spreading limb')):
         bpy.context.collection.objects.link(source)
         source.data.materials.clear();source.data.materials.append(wood_material)
         wood.append(source)
@@ -89,7 +91,8 @@ for row in range(20):
     z=-96.5-row*.96
     for col in range(19):
         x=-12+(col-9)*1.12
-        if row<3 and abs(x+12)>3:continue
+        shoulder=3+8*min(1,row/7)
+        if abs(x+12)>shoulder+rng.uniform(-.4,.4):continue
         if row>=17 and abs(x+12)>2.8:continue
         if abs(x+12)>4 and rng.random()<.24:continue
         src=kit['Author_Slab_'+str(1+(row+col)%6)]
@@ -100,8 +103,15 @@ for row in range(20):
         obj.data.materials.clear();obj.data.materials.append(rng.choice(stone_variants))
         paving.append(obj)
 # Moss floor between stones, with contextual tree/contact shadows in its bake.
-bpy.ops.mesh.primitive_plane_add(size=1,location=(-12,103,1.625))
-ground=bpy.context.object;ground.name='Courtyard moss earth';ground.scale=(30,22,1)
+points=[]
+for side in (-1,1):
+    rows=range(12) if side<0 else reversed(range(12))
+    for row in rows:
+        z=93+row*1.9
+        width=3.4+11.2*min(1,row/6)**.8+.35*math.sin(row*1.9)
+        points.append((-12+side*width,z,1.625))
+data=bpy.data.meshes.new('Irregular courtyard soil');data.from_pydata(points,[],[tuple(reversed(range(len(points))))]);data.update()
+ground=bpy.data.objects.new('Courtyard moss earth',data);bpy.context.collection.objects.link(ground)
 soil=bpy.data.materials.new('Archive moss soil');soil.use_nodes=True
 nodes,links=soil.node_tree.nodes,soil.node_tree.links
 noise=nodes.new('ShaderNodeTexNoise');noise.inputs['Scale'].default_value=24
@@ -118,14 +128,24 @@ for i in range(54):
     obj.location=(x,-z,1.56);obj.scale=(rng.uniform(.5,1.1),rng.uniform(.5,1.1),rng.uniform(1.4,3.1))
     obj.rotation_euler=(rng.uniform(-.25,.25),rng.uniform(-.2,.2),rng.random()*math.tau)
     obj.data.materials.clear();obj.data.materials.append(stone_variants[i%4]);paving.append(obj)
-# Root fingers leave the main masses at different heights and settle into the courtyard.
-for i in range(12):
-    side=-1 if i<7 else 1
-    x=-22 if side<0 else -4.5
-    z=-110-rng.random()*2
-    wood.append(root_tendril('Grounded root finger',[(x,114,5+rng.random()*4),
-        (x+side*.8,112,3.5),(x+side*1.4,-z,1.95),
-        (x+side*rng.uniform(2,4),-z-rng.uniform(2,5),1.66)],rng.uniform(.13,.3),wood_material))
+# Roots begin inside the trunk or a connected parent and taper into soil/stone.
+# Broad primary flares stay by the left buttress; two thinner roots follow the
+# masonry ledges above the doorway instead of covering the whole facade.
+root_paths=[
+    ([(-22,114,8.8),(-23.2,111.7,6),(-25,110.5,2.3),(-28,105,1.61)],1.05),
+    ([(-22.3,113.8,6),(-21,111.8,4),(-19.4,110.4,2),(-17.9,107.5,1.60)],.7),
+    ([(-20.4,115,13),(-20.6,112.3,12.1),(-16,111.65,11.45),(-10,111.7,11.5),(-5.4,112.2,9.7),(-4.7,112,5),(-3.8,110,1.61)],.68),
+    ([(-18.7,116,18.8),(-18.3,113.8,18.5),(-15,113.5,19),(-10,114,19.5),(-6.1,114,18.8),(-5,114,17.6)],.6),
+    ([(-22.6,114,4.8),(-25,115.2,2.2),(-27,117,1.6)],.5),
+]
+for points,radius in root_paths:
+    wood.append(root_tendril('Attached fluted facade root',points,radius,wood_material))
+for i in range(8):
+    side=-1 if i<4 else 1
+    origin=(-24.8,110.5,2.25) if side<0 else (-19.5,110.5,2.1)
+    wood.append(root_tendril('Buried root branch',[origin,
+        (origin[0]+side*.9,109.8-i*.2,1.85),
+        (origin[0]+side*(1.5+i*.24),108.4-i*.32,1.59)],.18,wood_material))
 # Clinging vines sit on front faces and hang from ledges, not across the doorway.
 for i,(x,y,top,length) in enumerate([(-25,111.46,7,4),(-23.2,111.45,6.7,3.8),
     (-20.5,111.43,10.8,6),(-18.1,111.46,11,3),(-6.5,111.46,10,5),(-3.2,111.44,10,6),
@@ -148,13 +168,16 @@ bm = bmesh.new();bm.from_mesh(stone_obj.data)
 bmesh.ops.recalc_face_normals(bm,faces=list(bm.faces))
 bm.to_mesh(stone_obj.data);bm.free()
 wood_obj = merge('ArchiveExterior_Wood',wood)
+bm=bmesh.new();bm.from_mesh(wood_obj.data)
+bmesh.ops.recalc_face_normals(bm,faces=list(bm.faces))
+bm.to_mesh(wood_obj.data);bm.free()
 # Union the interpenetrating root/limb junctions, preserving the authored silhouette.
 bpy.context.view_layer.objects.active = wood_obj
 sub = wood_obj.modifiers.new('Organic root curves','SUBSURF');sub.levels=2
 bpy.ops.object.modifier_apply(modifier=sub.name)
 remesh = wood_obj.modifiers.new('Joined roots','REMESH');remesh.mode='VOXEL';remesh.voxel_size=.13
 bpy.ops.object.modifier_apply(modifier=remesh.name)
-smooth = wood_obj.modifiers.new('Soft branch junctions','SMOOTH');smooth.factor=.55;smooth.iterations=3
+smooth = wood_obj.modifiers.new('Soft branch junctions','SMOOTH');smooth.factor=.35;smooth.iterations=2
 bpy.ops.object.modifier_apply(modifier=smooth.name)
 dec = wood_obj.modifiers.new('Root detail budget','DECIMATE');dec.ratio=.35
 bpy.ops.object.modifier_apply(modifier=dec.name)
@@ -170,8 +193,10 @@ for obj in (stone_obj,wood_obj,foliage,paving_obj): obj.select_set(True)
 bpy.ops.wm.save_as_mainfile(filepath=str(ROOT/'art/source/archive-exterior.blend'),compress=True)
 export = ROOT/'public/models/archive-exterior.glb'
 bpy.ops.export_scene.gltf(filepath=str(export),export_format='GLB',use_selection=True,export_image_format='JPEG',export_image_quality=92)
-report = {'stage':'PD02 exterior finish','masonryBlocks':block_count,'courtyardPieces':len(paving),'vegetationGroups':len(crowns),'rootFingers':12,'bytes':export.stat().st_size,'atlases':[2048]*3}
+report = {'stage':'Phase 5 connected roots and courtyard','masonryBlocks':block_count,'courtyardPieces':len(paving),'vegetationGroups':len(crowns),'rootFingers':8,'bytes':export.stat().st_size,'atlases':[2048]*3}
 (OUT/'archive-exterior-report.json').write_text(json.dumps(report,indent=2)+'\n')
 from world_art_context import export_context
+from archive_exterior_collision import export_with_collision
+export_with_collision()
 export_context()
 print(json.dumps(report),flush=True)

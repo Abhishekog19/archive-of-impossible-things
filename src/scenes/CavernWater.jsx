@@ -5,8 +5,10 @@ import { Reflector } from 'three/addons/objects/Reflector.js'
 import { useGameStore } from '../store'
 import { CAVERN_WATER } from '../config/cavern-water'
 import { cavernWaterView } from '../config/cavern-water-view'
+import { cavernShoreGLSL } from '../config/cavern-shore'
+import { cavernFog } from './cavernFog'
 
-const shader = {
+const shader = cavernFog({
   name: 'CavernPoolStudy',
   uniforms: {
     ...UniformsLib.fog,
@@ -54,7 +56,7 @@ const shader = {
       vec3 surface = mix(color, grazing, fresnel * .32) * (1.0 + wave * .025);
       vec2 fromPool = worldPoint.xz - vec2(-12.0, -195.0);
       float shoreAngle = atan(fromPool.y, fromPool.x);
-      float shoreRadius = 15.5 + 1.2 * sin(3.0 * shoreAngle) + .7 * cos(5.0 * shoreAngle);
+      float shoreRadius = ${cavernShoreGLSL};
       float depth = max(0.0, shoreRadius - length(fromPool));
       float shallows = (1.0 - smoothstep(.05, 1.25, depth)) * shoreline;
       float submergedStone = sin(worldPoint.x * 7.2 + sin(worldPoint.z * 3.1))
@@ -84,7 +86,7 @@ const shader = {
       #include <fog_fragment>
     }
   `,
-}
+}, 'worldPoint', 'shoreline')
 
 /** Reuses the authored GLB shoreline; owns only its clone and reflection target. */
 export default function CavernWater({ geometry, openingLight = null, shoreline = false }) {

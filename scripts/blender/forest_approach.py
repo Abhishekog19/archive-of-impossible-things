@@ -111,10 +111,12 @@ def block(x,z,base,width,depth,tall,broken=False):
 with bpy.data.libraries.load(str(ROOT/'art/source/world-blockout.blend'),link=False) as (src,dst):
     dst.objects = [n for n in src.objects if n.startswith('Forest ruin remnant')]
 ruin_count = 0
+ruin_centres=[]
 for original in dst.objects:
     x,z = original.location.x,-original.location.y
     if not (-40-SHIFT>z>=(-97 if DEEP else -65)): continue
     if DEEP and in_clearing(x,z): continue
+    ruin_centres.append((x,z))
     ruin_count += 1
     for course in range(5):
         for part in range(2):
@@ -199,6 +201,9 @@ for i,(side,z,offset,tall) in enumerate(tree_specs):
                       ('Broadleaf','Tree_Leaves')][i%3]
     scale = tall/max(v.co.z for v in sources[leaf_name].data.vertices)
     x = road_x(z)+side*offset
+    # Keep the tree and its matching cylinder outside the retained ruin boxes.
+    # Roots may meet a ruin foot, but the trunk must not pass through its courses.
+    while any(abs(x-rx)<1.9 and abs(z-rz)<2.1 for rx,rz in ruin_centres):x+=side*2.3
     yaw = rng.uniform(-math.pi,math.pi)
     trunk = place('Author_Tree_'+kind,'Approach branching trunk',x,z,scale,yaw)
     trunk.scale.x *= .76
@@ -233,12 +238,18 @@ for i,(side,z,offset,tall) in enumerate(tree_specs):
     low,high = min(v.co.z for v in old.vertices),max(v.co.z for v in old.vertices)
     for j in chosen:
         centre = old.vertices[j*9].co
+        world_leaf=crown.matrix_basis@centre
+        if DEEP and -104<-world_leaf.y<-78 and abs(world_leaf.x+12)<5 and 9<world_leaf.z<18:
+            continue  # A canopy opening frames the hero facade from the approach.
         base = len(points)
-        points.extend(tuple(old.vertices[j*9+k].co) for k in range(1,9))
-        polygons.append(tuple(range(base,base+8)))
+        outline=[centre+(old.vertices[j*9+k].co-centre)*.78 for k in range(1,9)]
+        points.extend(tuple(p) for p in outline)
+        points.append(tuple(centre+Vector((0,0,.065))))
+        polygons.extend([(base,base+1,base+2,base+3,base+4,base+8),
+                         (base+4,base+5,base+6,base+7,base,base+8)])
         c = old.color_attributes.active_color.data[old.polygons[j*8].loop_start].color
         shade = .42+.58*(centre.z-low)/max(.01,high-low)
-        tints.append((c[0]*shade,c[1]*shade,c[2]*shade,1))
+        tints.extend([tuple(c[k]*shade*factor for k in range(3))+(1,) for factor in (.91,1.03)])
     data = bpy.data.meshes.new('Approach economical leaves')
     data.from_pydata(points,[],polygons)
     for mat in old.materials: data.materials.append(mat)

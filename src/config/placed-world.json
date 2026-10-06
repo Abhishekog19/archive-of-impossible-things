@@ -1,9 +1,9 @@
 {
   "resident": {
     "url": "/models/placed/resident.glb",
-    "bytes": 4743436,
-    "trianglesBefore": 248319,
-    "triangles": 158333
+    "bytes": 6830244,
+    "trianglesBefore": 295027,
+    "triangles": 206371
   },
   "zones": [
     {
@@ -17,9 +17,9 @@
       "keep": 72,
       "draw": 58,
       "url": "/models/placed/hub.glb",
-      "bytes": 7529784,
-      "trianglesBefore": 225738,
-      "triangles": 197602
+      "bytes": 8508720,
+      "trianglesBefore": 262453,
+      "triangles": 234317
     },
     {
       "id": "patch",
@@ -47,9 +47,9 @@
       "keep": 68,
       "draw": 32,
       "url": "/models/placed/approach.glb",
-      "bytes": 3119872,
-      "trianglesBefore": 131500,
-      "triangles": 93404
+      "bytes": 3614224,
+      "trianglesBefore": 151209,
+      "triangles": 113113
     },
     {
       "id": "canopy",
@@ -62,9 +62,9 @@
       "keep": 68,
       "draw": 32,
       "url": "/models/placed/canopy.glb",
-      "bytes": 3216120,
-      "trianglesBefore": 135677,
-      "triangles": 97905
+      "bytes": 3403196,
+      "trianglesBefore": 137899,
+      "triangles": 100127
     },
     {
       "id": "exterior",
@@ -77,9 +77,9 @@
       "keep": 82,
       "draw": 62,
       "url": "/models/placed/exterior.glb",
-      "bytes": 3675800,
-      "trianglesBefore": 111842,
-      "triangles": 91052
+      "bytes": 3547372,
+      "trianglesBefore": 93978,
+      "triangles": 79654
     },
     {
       "id": "hall",
@@ -92,9 +92,9 @@
       "keep": 58,
       "draw": 35,
       "url": "/models/placed/hall.glb",
-      "bytes": 4908044,
-      "trianglesBefore": 102895,
-      "triangles": 102895
+      "bytes": 6219968,
+      "trianglesBefore": 141529,
+      "triangles": 141529
     },
     {
       "id": "cavern",
@@ -107,9 +107,9 @@
       "keep": 58,
       "draw": 35,
       "url": "/models/placed/cavern.glb",
-      "bytes": 881504,
-      "trianglesBefore": 6126,
-      "triangles": 6126
+      "bytes": 821160,
+      "trianglesBefore": 4350,
+      "triangles": 4350
     }
   ]
 }

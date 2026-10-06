@@ -27,6 +27,7 @@ def damp_material(source, name, moss=.65):
 def root_tendril(name, points, radius, material):
     curve=bpy.data.curves.new(name,'CURVE');curve.dimensions='3D'
     curve.resolution_u=5;curve.bevel_depth=radius;curve.bevel_resolution=1
+    curve.use_fill_caps=True
     spline=curve.splines.new('BEZIER');spline.bezier_points.add(len(points)-1)
     for i,(p,co) in enumerate(zip(spline.bezier_points,points)):
         p.co=co;p.handle_left_type='AUTO';p.handle_right_type='AUTO'

@@ -117,7 +117,7 @@ for start in range(len(adjacency)):
     for i in group:
         v = ruins.data.vertices[i]
         p = rotation@(v.co-centre)
-        p.z += .07*math.sin(p.x*4+p.y*2+centre.z)
+        p.z += .018*math.sin(p.x*4+p.y*2+centre.z)
         v.co = centre+p
 ruins.data.update()
 

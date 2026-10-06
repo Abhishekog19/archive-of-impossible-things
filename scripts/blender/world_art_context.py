@@ -2,6 +2,7 @@
 import bpy
 import bmesh
 import math
+import os
 from pathlib import Path
 from mathutils import Vector
 from boundary_layout import boundary_proxy
@@ -19,8 +20,9 @@ def export_context(include_hub=None):
     include_cavern = (ROOT/'public/models/cavern-structure.glb').exists()
     def signature(obj):
         return tuple(tuple(round(c,4) for c in obj.matrix_world@v.co) for v in obj.data.vertices)
-    replaced_solids = {signature(o) for o in bpy.context.scene.objects
-        if include_cavern and o.type=='MESH' and o.name.startswith(('Cavern wall shell','Continuous descent shell'))}
+    replaced_solids = {signature(o) for o in bpy.context.scene.objects if o.type=='MESH' and
+        ((include_cavern and o.name.startswith(('Cavern wall shell','Continuous descent shell','Cavern shore'))) or
+         (include_exterior and o.name.startswith(('Archive hero tree','Wrapping facade root'))))}
     replaced_sizes = {len(s) for s in replaced_solids}
     include_backdrop = (ROOT/'public/models/woodland-backdrop.glb').exists()
     include_finish = (ROOT/'public/models/world-finish.glb').exists()
@@ -32,6 +34,14 @@ def export_context(include_hub=None):
     hub_trees.update(numbered(prefix,i) for prefix in ('Tree limb','Forest crown') for i in range(25))
     for obj in list(bpy.context.scene.objects):
         if obj.type != 'MESH': continue
+        if include_cavern and obj.name=='Cavern pool':
+            # Extend water under the banks, which own the visible/physical edge.
+            for v in obj.data.vertices:
+                dx,dy=v.co.x+12,v.co.y-195
+                length=math.hypot(dx,dy)
+                if length>0:
+                    v.co.x=-12+dx*21/length
+                    v.co.y=195+dy*21/length
         if include_finish and obj.name.startswith(('Tower shaft','Tower belfry pier','Tower crown')):
             bpy.data.objects.remove(obj,do_unlink=True)
             continue
@@ -41,11 +51,10 @@ def export_context(include_hub=None):
             removed.append(obj.name);bpy.data.objects.remove(obj,do_unlink=True)
             continue
         if include_boundaries and obj.name.startswith('Continuous forest bank'):
-            # The first sixteen metres are dressed in the boundary package.
-            # Collision is an independent mesh and remains unchanged here.
-            bm=bmesh.new();bm.from_mesh(obj.data)
-            covered=[f for f in bm.faces if -(obj.matrix_world@f.calc_center_median()).y>=-56]
-            bmesh.ops.delete(bm,geom=covered,context='FACES');bm.to_mesh(obj.data);bm.free()
+            # The boundary package owns the complete visible bank surface.
+            # Collision is independent and remains resident.
+            bpy.data.objects.remove(obj,do_unlink=True)
+            continue
         if obj.name.startswith('Collision') and len(obj.data.vertices) in replaced_sizes and signature(obj) in replaced_solids:
             removed.append(obj.name)
             bpy.data.objects.remove(obj,do_unlink=True)
@@ -138,6 +147,9 @@ def export_context(include_hub=None):
         obj = bpy.context.object
         obj.name = 'Collision' if mat.name == 'Collision only' else mat.name.replace(' ', '_')
         bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
-    bpy.ops.export_scene.gltf(filepath=str(ROOT / 'public/models/world-art-context.glb'), export_format='GLB', export_texcoords=False)
+    target = ROOT / 'public/models/world-art-context.glb'
+    temporary = target.with_name('world-art-context.next.glb')
+    bpy.ops.export_scene.gltf(filepath=str(temporary), export_format='GLB', export_texcoords=False)
+    os.replace(temporary, target)
 
     return removed

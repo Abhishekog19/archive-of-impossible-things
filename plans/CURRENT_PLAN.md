@@ -1,5 +1,13 @@
 # Current plan — Archive of Impossible Things
 
+October 6 art continuation: the first hub art batch improves crown layering,
+planted plaza erosion and column faces/fractures. Matching REF4/player views,
+10 affected controller checkpoints, nine placed-world tests and the production
+build pass. Collision/resident and other zone packages are byte-for-byte
+unchanged. See [the hub art review](HUB_ART_PASS_2026-10-06.md) for comparisons,
+asset counts and remaining differences. Next art batch: forest/canopy banks,
+vegetation and background depth; whole-world visual acceptance remains open.
+
 October 6 continuation: the broader Phase 5 correction batch is implemented and
 the available local verification pass is complete. Hub moss/rim, full forest banks,
 tree/ruin separation, archive roots/courtyard/framing, hall courses/window context,

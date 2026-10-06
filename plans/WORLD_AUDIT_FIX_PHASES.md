@@ -349,6 +349,16 @@ regression remain in the weekly batch, not per-art-change checks.
 
 ## Push groups — approved GitHub origin/main
 
+### October 6 hub art follow-up
+
+The requested art corrections begin with a focused REF4 pass on plaza edges,
+eight crown silhouettes and seven columns. See [the hub art review](HUB_ART_PASS_2026-10-06.md).
+Ten affected route checkpoints, nine placed-world tests and the build pass;
+resident/collision and unrelated packages are byte-for-byte unchanged. This
+improves H03/H05/H06 without closing their remaining reference differences.
+Art/source/export commit: `ee0454b`; the following documentation commit records
+its comparisons and remaining work. Each group is pushed separately.
+
 ### October 6 broader correction and verification pass
 
 The continuous-work request produced a broader Phase 5 batch spanning hub paving,

@@ -1,5 +1,18 @@
 # Current plan — Archive of Impossible Things
 
+October 6 continuation: the broader Phase 5 correction batch is implemented and
+the available local verification pass is complete. Hub moss/rim, full forest banks,
+tree/ruin separation, archive roots/courtyard/framing, hall courses/window context,
+portal loading/fog and cavern shore/materials have been revised. All 36 tests,
+changed-file lint and production build pass. Connected route, complete shoreline,
+return journey and contact checks pass. A three-minute Medium traversal completes
+85 waypoints at 38.96 average FPS; the 60 FPS target remains open. Production
+entry, narrow-screen Settings and Low/Medium switching pass. See
+[the final review](WORLD_AUDIT_FINAL_REVIEW_2026-10-06.md) for exact evidence and
+remaining visual differences. Whole-world reference quality, character acceptance,
+real-phone testing and deployment parity must not be marked complete from these
+local checks.
+
 October 5 Phase 5 boundary batch implemented: replaced hub/overlook wall proxies,
 dressed reverse arrival, added woodland layers and rounded both forest bank ends.
 Removed the overlapping approach bank skin after side-view comparison. Twelve
@@ -9,10 +22,10 @@ for asset counts, comparison evidence and the separate push groups.
 
 The user has authorized continuous work through the remaining Phase 5 fixes and
 the following verification/handoff phase without routine confirmation pauses.
-Continue the remaining hub/forest joins, canopy tree/ruin relationship, facade
-roots/courtyard, portal/rock composition and cavern shore; compare affected views
-and complete a final audit pass. Do not equate the completed boundary production
-batch with whole-world visual acceptance or real-phone verification.
+The correction and local verification batches are now recorded in the October 6
+review. Next work should target its remaining reference differences and measured
+performance gaps. Do not equate completed production batches with whole-world
+visual acceptance or real-phone verification.
 
 October 4 Phase 5 started: first focused hall/descent batch closes the threshold
 light slit, exports passage depth shading correctly, adds embedded floor/rock

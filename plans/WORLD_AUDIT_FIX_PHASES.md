@@ -349,6 +349,22 @@ regression remain in the weekly batch, not per-art-change checks.
 
 ## Push groups — approved GitHub origin/main
 
+### October 6 broader correction and verification pass
+
+The continuous-work request produced a broader Phase 5 batch spanning hub paving,
+foliage, banks, tree/ruin placement, roots/courtyard, portal continuity, hall
+masonry and cavern shore/fog. Its source/export changes, final counts, tests,
+controller results and honest issue-by-issue disposition are recorded in
+[the final review](WORLD_AUDIT_FINAL_REVIEW_2026-10-06.md).
+The subsequent local verification pass does not close the remaining reference
+artwork differences, separate character work, real-phone or deployment gates.
+All 36 tests, changed-file lint, production build and connected/shore/return
+controller checks pass. The weekly traversal completes 85 waypoints in three
+minutes at 38.96 average FPS on Medium; the 60 FPS target remains open.
+Production entry, narrow-screen Settings and quality switching pass locally.
+
+### Previously pushed groups
+
 1. `498b965` — portal destination loading and regression check; pushed separately.
 2. `35dfc22` — hall/descent generators, editable sources and exports; pushed separately.
 3. `051202a` — representative connector material study, assets and review controls;
@@ -378,8 +394,14 @@ regression remain in the weekly batch, not per-art-change checks.
     pushed separately.
 17. `5bb6c7e` — hub boundary generator/source/export, bank overlap removal,
     resident materials, review cameras/routes and collision checks; separate push.
-18. Phase 5 boundary evidence and authorized continuous-work plan;
+18. `89752b2` — Phase 5 boundary evidence and authorized continuous-work plan;
     separate documentation push.
+19. `866be3c` — broader environment generators, editable sources/exports,
+    portal/cavern runtime, collision regression coverage and review controls;
+    separate push after local validation.
+20. The following documentation-only commit records the October 6 audit
+    disposition, performance samples and remaining acceptance gates;
+    pushed separately from the correction batch.
 
 The pre-existing modified `art/source/hub-blockout.blend` is excluded from these
 commits. Private source material remains ignored/untracked and was not read.

@@ -288,7 +288,7 @@ for cluster in range(44):
         x = road_x(z)+side*width+rng.uniform(-.6,.6)
         if abs(x-road_x(z))<2.45 or in_clearing(x,z): continue
         family = families[(cluster+j)%4]
-        size = rng.uniform(.7,1.45)
+        size = rng.uniform(.52,.95)
         plant = place(family,'Approach plant shadow',x,z,size,rng.random()*math.tau,height(x,z)+.025)
         casters.append(plant)
         marker = bpy.data.objects.new('ApproachPlant_'+family+'_'+str(len(markers)).zfill(3),None)
@@ -307,7 +307,7 @@ for i in range(92):
         x = -31.8 if i%3 else -17.1
         if -72<z<-63: continue
     family = families[(i+1)%4]
-    plant = place(family,'Bank ground-cover shadow',x,z,edge_rng.uniform(.8,1.6),
+    plant = place(family,'Bank ground-cover shadow',x,z,edge_rng.uniform(.55,1.05),
                   edge_rng.random()*math.tau,height(x,z)+.025)
     casters.append(plant)
     marker = bpy.data.objects.new('ApproachPlant_'+family+'_'+str(len(markers)).zfill(3),None)

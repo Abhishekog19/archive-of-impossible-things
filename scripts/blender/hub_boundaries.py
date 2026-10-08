@@ -12,6 +12,7 @@ ROOT=Path(__file__).resolve().parents[2]
 sys.path.insert(0,str(Path(__file__).parent))
 from placed_art import merge, color_material
 from boundary_layout import boundary_proxy
+from natural_foliage import layered_crown
 
 bpy.ops.wm.open_mainfile(filepath=str(ROOT/'art/source/world-blockout.blend'))
 rng=random.Random(51005)
@@ -106,16 +107,20 @@ def crown(centre,radius,tint=(.075,.125,.032),leaves=45):
 
 def rough_skin(obj,only_bank=False):
     data=obj.data.copy();bm=bmesh.new();bm.from_mesh(data)
-    bmesh.ops.subdivide_edges(bm,edges=list(bm.edges),cuts=2,use_grid_fill=True)
+    bmesh.ops.subdivide_edges(bm,edges=list(bm.edges),cuts=4 if only_bank else 2,use_grid_fill=True)
     bmesh.ops.triangulate(bm,faces=list(bm.faces));bm.to_mesh(data);bm.free();data.update()
     points=[]
     for v in data.vertices:
         p=obj.matrix_world@v.co;n=(obj.matrix_world.to_3x3()@v.normal).normalized()
         wave=.035+.19*math.sin(p.x*1.47+p.y*.51)*math.sin(p.z*2.15+p.y*.79)
-        if only_bank:wave*=max(0,min(1,(116-p.y)/4))
+        if only_bank:
+            # Connected strata vary along the bank instead of a flat green wall.
+            # Anchor both ends and the foot; retain the authored collision shell.
+            fade=max(0,min(1,(116-p.y)/4,(p.y-40)/4,(p.z-1.55)/1.5))
+            wave=(.13+.30*math.sin(p.y*.57+p.z*1.4)+.14*math.sin(p.y*1.7-p.z*.9))*fade
         points.append(p+n*wave)
     result=mesh('Continuous boundary outcrop',points,[tuple(p.vertices) for p in data.polygons],
-                tint=(.14,.17,.09) if only_bank else (.23,.255,.17))
+                tint=(.22,.245,.16) if only_bank else (.23,.255,.17))
     if only_bank:
         colors=result.data.color_attributes['BoundaryColour']
         for loop in result.data.loops:
@@ -126,6 +131,34 @@ def rough_skin(obj,only_bank=False):
             colors.data[loop.index].color=tuple(old[k]*(1-blend)+(.033,.046,.012)[k]*field*blend for k in range(3))+(1,)
     bpy.data.meshes.remove(data)
     return result
+
+def bank_crown(centre,radius,seed):
+    obj=layered_crown('Bank layered foliage',centre,radius,seed,woodland=True,near=True)
+    obj.data.color_attributes.active_color.name='BoundaryColour'
+    groups['Foliage'].append(obj)
+
+def bank_creeper(surface,side,y,top,seed):
+    # Small overlapping leaves hug the rock; no opaque spherical cores.
+    local=random.Random(seed);pts=[];faces=[]
+    for step in range(28):
+        h=top-.13*step
+        if h<2.3:break
+        centre_y=y+.22*math.sin(step*.35+seed)
+        for lane in (-1,0,1):
+            if lane and local.random()<.35:continue
+            width=.12+.14*(1-step/28)
+            yy=centre_y+lane*width+local.uniform(-.12,.12)
+            hit,normal,_,_=surface.ray_cast(Vector((-12,yy,h+local.uniform(-.12,.12))),Vector((side,0,0)),60)
+            if hit is None:continue
+            if normal.x*side>0:normal=-normal
+            p=hit+normal*.035
+            u=normal.cross(Vector((0,0,1))).normalized();v=normal.cross(u)
+            angle=local.random()*math.tau
+            u,v=u*math.cos(angle)+v*math.sin(angle),v*math.cos(angle)-u*math.sin(angle)
+            size=local.uniform(.10,.19);base=len(pts)
+            pts.extend([p-u*size,p-v*size*.65,p+u*size,p+v*size*.65,p+normal*.055])
+            faces.extend([(base+k,base+(k+1)%4,base+4) for k in range(4)])
+    if faces:mesh('Bank surface creeper',pts,faces,'Foliage',(.07,.115,.035))
 
 def outcrop(centre,size,tint=(.26,.29,.20)):
     # Squat, asymmetric strata interrupt the broad ridge without cube outlines.
@@ -158,7 +191,7 @@ for obj in source:
     c=sum((obj.matrix_world@Vector(v) for v in obj.bound_box),Vector())/8
     x,z=c.x,-c.y
     if obj.name.startswith('Continuous forest bank'):
-        rough_skin(obj,True);banks.append(obj);continue
+        banks.append(rough_skin(obj,True));continue
     if not boundary_proxy(obj.name,x,z):continue
     replaced.append(obj.name)
     if obj.name.startswith('Woodland rock ridge'):
@@ -275,14 +308,21 @@ for side in (-1,1):
         if hits and j%4!=2:
             foot=hits[0]
             outcrop(foot+Vector((side*.4,0,-.7)),
-                    (rng.uniform(1.1,1.7),rng.uniform(1.6,2.9),rng.uniform(3.7,5.7)),
-                    (.17,.195,.115))
+                    (rng.uniform(1.6,2.4),rng.uniform(2.2,4),rng.uniform(2.2,3.8)),
+                    (.23,.25,.165))
         if len(hits)>1:
             low,high=hits[0],hits[-1]
             top=bank_surface.ray_cast(Vector((high.x+side*1.1,-z,18)),Vector((0,0,-1)),25)[0]
             if top:
-                branch([top+Vector((0,0,.1)),high-Vector((side*.08,0,0)),low-Vector((side*.05,0,0))],[.22,.16,.025])
+                # Trailing growth follows the actual relief. The former long
+                # root chords disappeared inside the bank and left bare stubs.
+                if j%3==0:
+                    bank_creeper(bank_surface,side,-z,top.z,8100+j+(100 if side>0 else 0))
                 crown(top+Vector((0,0,.25)),(1.3,.9,.6),leaves=24)
+                if j%2==0:
+                    # Low connected woodland above the rock breaks pale gaps
+                    # between existing distant trunks, beyond the walkable bank.
+                    bank_crown(top+Vector((side*2.0,.7,1.0)),(3.3,3.0,1.65),7100+j+(100 if side>0 else 0))
     for j in range(18):
         x=inner+side*(12+(j%2)*4);z=-35-j*6
         boundary_tree(x,z,height(x,z),rng.uniform(10,16),(.1+(j%2)*.04,.16+(j%2)*.04,.065))

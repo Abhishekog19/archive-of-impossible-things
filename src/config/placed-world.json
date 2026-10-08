@@ -1,9 +1,9 @@
 {
   "resident": {
     "url": "/models/placed/resident.glb",
-    "bytes": 6830244,
-    "trianglesBefore": 295027,
-    "triangles": 206371
+    "bytes": 7793140,
+    "trianglesBefore": 318783,
+    "triangles": 230127
   },
   "zones": [
     {
@@ -47,7 +47,7 @@
       "keep": 68,
       "draw": 32,
       "url": "/models/placed/approach.glb",
-      "bytes": 3614224,
+      "bytes": 3606612,
       "trianglesBefore": 151209,
       "triangles": 113113
     },
@@ -62,7 +62,7 @@
       "keep": 68,
       "draw": 32,
       "url": "/models/placed/canopy.glb",
-      "bytes": 3403196,
+      "bytes": 3396412,
       "trianglesBefore": 137899,
       "triangles": 100127
     },

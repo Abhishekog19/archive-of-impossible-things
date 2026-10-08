@@ -32,7 +32,8 @@ bpy.ops.object.delete(use_global=False)
 groups = {i:[] for i in range(5)}
 for i,(centre,radius) in enumerate(placements):
     zone = max(0,min(4,int(centre[1]/30)+1))
-    groups[zone].append(layered_crown('Backdrop layered foliage',centre,radius,92700+i))
+    groups[zone].append(layered_crown('Backdrop layered foliage',centre,radius,92700+i,
+                                    woodland=centre[1]>37))
 exports = []
 for zone,objects in groups.items():
     if not objects: continue

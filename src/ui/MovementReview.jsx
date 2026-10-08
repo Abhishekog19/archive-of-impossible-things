@@ -233,7 +233,7 @@ export default function MovementReview() {
             `${round(distance)} m; rise ${round(maxY - start.y)} m; grounded ${Math.round(grounded / samples * 100)}%`)
         }
       } else {
-        await place(['return', 'shore', 'home'].includes(kind) ? [-12, -5.5, -174] : kind === 'patch' ? [-12, 2, -20] : [0, 2, 6])
+        await place(['return', 'shore', 'home'].includes(kind) ? [-12, -5.5, -174] : kind === 'forest' ? [-12, 3, -43] : kind === 'patch' ? [-12, 2, -20] : [0, 2, 6])
         // Connected authored route plus side trips to all four reserved locations.
         const route = kind === 'shore' ? Array.from({ length: 17 }, (_, i) => {
           const angle = Math.PI / 2 + i * Math.PI / 8
@@ -243,6 +243,11 @@ export default function MovementReview() {
           ['Archive door', -12, -114], ['Courtyard', -12, -98], ['Deep forest', -15, -82],
           ['Canopy', -12, -68], ['Forest bend', -10, -56], ['Forest', -12, -43],
           ['Connector', -12, -20], ['Hub', 0, -5], ['Arrival', 0, 6],
+        ] : kind === 'forest' ? [
+          ['Forest bend', -10, -56], ['Canopy entry', -12, -68],
+          ['Reserved clearing', -23, -68], ['Clearing return', -12, -68],
+          ['Deep forest', -15, -82], ['Archive approach', -12, -98],
+          ['Canopy return', -12, -68], ['Forest return', -12, -43],
         ] : kind === 'hub' ? [
           ['Hub centre', 0, -5], ['Hub forest exit', -12, -20],
           ['Hub return', 0, -5], ['Arrival return', 0, 6],
@@ -320,6 +325,7 @@ export default function MovementReview() {
       <button disabled={busy} onClick={() => run('hub')}>Check hub connection</button>
       <button disabled={busy} onClick={() => run('boundary')}>Check arrival and overlook</button>
       <button disabled={busy} onClick={() => run('patch')}>Check forest connector</button>
+      <button disabled={busy} onClick={() => run('forest')}>Check forest and canopy</button>
       <button disabled={busy} onClick={() => run('world')}>Walk connected world</button>
       <button disabled={busy} onClick={() => run('return')}>Check cavern return</button>
       <button disabled={busy} onClick={() => run('shore')}>Walk complete shoreline</button>

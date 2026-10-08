@@ -60,6 +60,11 @@
     "target": [0, 3.2, -77],
     "ref": "REF6"
   },
+  "forest-bank-detail": {
+    "position": [-1, 3.7, -73],
+    "target": [8, 3.8, -80],
+    "ref": "REF6"
+  },
   "canopy-clearing": {
     "position": [-12, 3.5, -70],
     "target": [-20, 4, -70],

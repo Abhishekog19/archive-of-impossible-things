@@ -18,6 +18,10 @@ if (!executable) {
 }
 fs.mkdirSync(output, { recursive: true })
 const env = { ...process.env }
+// glTF image conversion must use a writable project-local temporary directory.
+// Sandboxed Windows sessions can deny Blender's inherited system temp path.
+env.TEMP = env.TMP = path.join(output, 'temp')
+fs.mkdirSync(env.TEMP, { recursive: true })
 for (const [key, folder] of Object.entries({
   BLENDER_USER_CONFIG: 'config', BLENDER_USER_SCRIPTS: 'scripts',
   BLENDER_USER_DATAFILES: 'datafiles', BLENDER_USER_EXTENSIONS: 'extensions',

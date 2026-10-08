@@ -1,5 +1,17 @@
 # Current plan — Archive of Impossible Things
 
+October 8 forest/canopy art batch: smaller plants with matching rebaked shadows,
+broader bank outcrops and relief, low woodland layers, varied distant crowns and
+surface-fitted bank growth are implemented. REF5/REF6 and close bank comparisons,
+all eight affected controller checkpoints, nine placed-world tests, changed-file
+lint and the final production build pass. Collision geometry is unchanged;
+hub, connector, exterior, hall and cavern packages remain byte-for-byte intact.
+See [the forest art review](FOREST_ART_PASS_2026-10-08.md) for evidence, increased
+shared scenery cost and remaining reference gaps. Next focused art batch:
+archive courtyard/facade and hall material/framing corrections, then cavern.
+Broad forest banks and overhead canopy density still need further refinement;
+whole-world visual acceptance remains open.
+
 October 6 art continuation: the first hub art batch improves crown layering,
 planted plaza erosion and column faces/fractures. Matching REF4/player views,
 10 affected controller checkpoints, nine placed-world tests and the production

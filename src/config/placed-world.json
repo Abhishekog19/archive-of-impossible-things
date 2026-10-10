@@ -1,9 +1,9 @@
 {
   "resident": {
     "url": "/models/placed/resident.glb",
-    "bytes": 7793140,
-    "trianglesBefore": 318783,
-    "triangles": 230127
+    "bytes": 7791160,
+    "trianglesBefore": 318384,
+    "triangles": 229728
   },
   "zones": [
     {
@@ -77,9 +77,9 @@
       "keep": 82,
       "draw": 62,
       "url": "/models/placed/exterior.glb",
-      "bytes": 3547372,
-      "trianglesBefore": 93978,
-      "triangles": 79654
+      "bytes": 3591976,
+      "trianglesBefore": 95050,
+      "triangles": 82292
     },
     {
       "id": "hall",
@@ -92,9 +92,9 @@
       "keep": 58,
       "draw": 35,
       "url": "/models/placed/hall.glb",
-      "bytes": 6219968,
-      "trianglesBefore": 141529,
-      "triangles": 141529
+      "bytes": 6238096,
+      "trianglesBefore": 144154,
+      "triangles": 144154
     },
     {
       "id": "cavern",

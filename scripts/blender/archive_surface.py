@@ -5,11 +5,22 @@ from mathutils import Vector
 
 
 def damp_material(source, name, moss=.65):
-    mat = source.copy();mat.name=name
+    # Fresh stone shading keeps mineral colour independent of the kit's broad
+    # relief. The assembled architecture receives its own contact/light bake.
+    mat = bpy.data.materials.new(name);mat.use_nodes=True
+    mat['contact_distance']=.085
     nodes,links=mat.node_tree.nodes,mat.node_tree.links
     shader=nodes.get('Principled BSDF')
-    base=shader.inputs['Base Color'].links[0].from_socket
+    shader.inputs['Roughness'].default_value=.94
     geo=nodes.new('ShaderNodeNewGeometry')
+    grain=nodes.new('ShaderNodeTexNoise');grain.inputs['Scale'].default_value=3.2
+    grain.inputs['Detail'].default_value=2
+    links.new(geo.outputs['Position'],grain.inputs['Vector'])
+    mineral=nodes.new('ShaderNodeMixRGB')
+    mineral.inputs[1].default_value=(.33,.35,.27,1)
+    mineral.inputs[2].default_value=(.49,.49,.38,1)
+    links.new(grain.outputs['Fac'],mineral.inputs[0])
+    base=mineral.outputs[0]
     noise=nodes.new('ShaderNodeTexNoise');noise.inputs['Scale'].default_value=.85
     noise.inputs['Detail'].default_value=2
     links.new(geo.outputs['Position'],noise.inputs['Vector'])
@@ -21,6 +32,25 @@ def damp_material(source, name, moss=.65):
     mix=nodes.new('ShaderNodeMixRGB');mix.inputs[2].default_value=(.13,.175,.047,1)
     links.new(ramp.outputs['Color'],mix.inputs[0]);links.new(base,mix.inputs[1])
     links.new(mix.outputs[0],shader.inputs['Base Color'])
+    return mat
+
+
+def archive_bark():
+    mat=bpy.data.materials.new('Archive continuous bark');mat.use_nodes=True
+    nodes,links=mat.node_tree.nodes,mat.node_tree.links
+    geo=nodes.new('ShaderNodeNewGeometry')
+    scale=nodes.new('ShaderNodeVectorMath');scale.operation='MULTIPLY'
+    scale.inputs[1].default_value=(4,4,.65)
+    links.new(geo.outputs['Position'],scale.inputs[0])
+    noise=nodes.new('ShaderNodeTexNoise');noise.inputs['Scale'].default_value=2
+    noise.inputs['Detail'].default_value=3
+    links.new(scale.outputs[0],noise.inputs['Vector'])
+    colour=nodes.new('ShaderNodeMixRGB')
+    colour.inputs[1].default_value=(.075,.085,.045,1)
+    colour.inputs[2].default_value=(.23,.235,.13,1)
+    links.new(noise.outputs['Fac'],colour.inputs[0])
+    links.new(colour.outputs[0],nodes['Principled BSDF'].inputs['Base Color'])
+    nodes['Principled BSDF'].inputs['Roughness'].default_value=.96
     return mat
 
 

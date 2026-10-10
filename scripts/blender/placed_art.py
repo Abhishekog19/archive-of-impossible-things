@@ -87,7 +87,7 @@ def contact_material(mat):
     if shader is None:return
     base=shader.inputs['Base Color']
     contact=mat.node_tree.nodes.new('ShaderNodeAmbientOcclusion')
-    contact.inputs['Distance'].default_value=.32
+    contact.inputs['Distance'].default_value=mat.get('contact_distance',.32)
     contact.samples=8
     if base.is_linked:
         source=base.links[0].from_socket

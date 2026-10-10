@@ -153,14 +153,8 @@ for stem,seed in assets:
             o.rotation_euler=(rng.uniform(-.2,.2),rng.uniform(-.2,.2),rng.random()*6.28)
             bpy.ops.object.transform_apply(location=True,rotation=True,scale=True)
             tint(o,(.30,.32,.235));stone.append(o)
-    # Texture atlases stay attached while broad roots gain asymmetrical ridges.
-    if stem=='archive-exterior':
-        for o in originals:
-            if o.type=='MESH' and 'Wood' in o.name:
-                for v in o.data.vertices:
-                    p=v.co;amount=.085*math.sin(p.z*1.9+p.x*.65)+.045*math.sin(p.y*3+p.z*.9)
-                    v.co+=v.normal*amount
-                o.data.update()
+    # Archive root relief is authored before its bake and collision generation.
+    # Do not displace the fused surface after baking its contact/shadow atlas.
     # Smaller hanging sprays create an intermediate canopy layer at REF6's exit.
     if stem=='forest-canopy':
         for j in range(9):

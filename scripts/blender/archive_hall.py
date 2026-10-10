@@ -137,6 +137,10 @@ for side in (-1,1):
         width=rng.uniform(3.3,5.7)
         x=(-26.4+width/2) if side<0 else (2.4-width/2)
         block('Broken roof raft',(x,14.05,-119.8-i*1.7),(width,.62,1.63),walls)
+        # Each surviving roof fragment bears on the continuous wall core even
+        # where the upper dressed courses are missing. No floating roof islands.
+        block('Roof bearing masonry',(-26.7 if side<0 else 2.7,12.8,-119.8-i*1.7),
+              (1.38,2.6,1.63),walls,mats[1])
         if i%3==0:
             block('Roof fracture crest',(x,14.65,-119.8-i*1.7),(width*.45,.55,1.18),walls)
 
@@ -193,7 +197,7 @@ for row in range(6):
 for row in range(25):
     z=-115.6-row*1.01
     for col in range(25):
-        x=-12+(col-12)*1.13
+        x=-12+(col-12)*1.13+(row%2)*.48
         if z>-116 and abs(x+12)>2.8:continue
         if abs(x+12)>4 and rng.random()<.13:continue
         src=kit['Author_Slab_'+str(1+(row+col)%6)]

@@ -9,7 +9,7 @@ from pathlib import Path
 from mathutils import Vector
 sys.path.insert(0,str(Path(__file__).parent))
 from placed_art import merge, leaf_crown, color_material, lighting, bake
-from archive_surface import damp_material, root_tendril, ivy_ribbon
+from archive_surface import damp_material, archive_bark, root_tendril, ivy_ribbon
 from natural_foliage import layered_crown
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT/'.artifacts/blender'
@@ -28,7 +28,7 @@ with bpy.data.libraries.load(str(ROOT/'art/source/archive-kit.blend'),link=False
     dst.objects = ['Author_Slab_'+str(i) for i in range(1,7)]+['Author_Tree_Tall']
 kit = {o.name:o for o in dst.objects}
 stone_material = kit['Author_Slab_1'].data.materials[0]
-wood_material = kit['Author_Tree_Tall'].data.materials[0]
+wood_material = archive_bark()
 stone_variants = [damp_material(stone_material,'Archive damp limestone '+str(i),m) for i,m in enumerate((.12,.32,.65,.85))]
 stone,wood,crowns = [],[],[]
 block_count = 0
@@ -49,13 +49,14 @@ for source in sources:
         if not -117<z<-110: continue
     if source.name.startswith(('Hero tree crown','Hero secondary crown')):
         radius = tuple(source.scale)
-        crowns.append(layered_crown('Hero layered crown',source.location,radius,len(crowns)+927))
+        crowns.append(layered_crown('Hero layered crown',source.location,radius,len(crowns)+927,woodland=True,near=True))
         continue
     if source.name.startswith('Wrapping facade root'):continue
-    if source.name.startswith(('Archive hero tree','Hero spreading limb')):
-        bpy.context.collection.objects.link(source)
-        source.data.materials.clear();source.data.materials.append(wood_material)
-        wood.append(source)
+    if source.name.startswith('Hero spreading limb'):continue
+    if source.name.startswith('Archive hero tree'):
+        wood.append(root_tendril('Front wrapped hero trunk',
+            [(-23,110.8,1.65),(-22,111,9),(-20.8,112.2,15),(-19,115.5,20),(-15,118,27)],
+            2.1,wood_material))
         continue
     if source.name.startswith('Archive arch voussoir'):
         bpy.context.collection.objects.link(source)
@@ -90,7 +91,7 @@ paving=[]
 for row in range(20):
     z=-96.5-row*.96
     for col in range(19):
-        x=-12+(col-9)*1.12
+        x=-12+(col-9)*1.12+(row%2)*.48
         shoulder=3+8*min(1,row/7)
         if abs(x+12)>shoulder+rng.uniform(-.4,.4):continue
         if row>=17 and abs(x+12)>2.8:continue
@@ -132,11 +133,16 @@ for i in range(54):
 # Broad primary flares stay by the left buttress; two thinner roots follow the
 # masonry ledges above the doorway instead of covering the whole facade.
 root_paths=[
-    ([(-22,114,8.8),(-23.2,111.7,6),(-25,110.5,2.3),(-28,105,1.61)],1.05),
-    ([(-22.3,113.8,6),(-21,111.8,4),(-19.4,110.4,2),(-17.9,107.5,1.60)],.7),
-    ([(-20.4,115,13),(-20.6,112.3,12.1),(-16,111.65,11.45),(-10,111.7,11.5),(-5.4,112.2,9.7),(-4.7,112,5),(-3.8,110,1.61)],.68),
-    ([(-18.7,116,18.8),(-18.3,113.8,18.5),(-15,113.5,19),(-10,114,19.5),(-6.1,114,18.8),(-5,114,17.6)],.6),
-    ([(-22.6,114,4.8),(-25,115.2,2.2),(-27,117,1.6)],.5),
+    # Tapered canopy limbs replace the blockout's blunt cones. Their tips end
+    # inside the existing crown masses; the door and ground route stay clear.
+    ([(-19,116,20),(-15,116.6,22.5),(-10,117,25),(-7,117,26)],1.2),
+    ([(-19,116,20),(-23,116.8,21),(-26,117.4,22),(-28,118,23)],1.15),
+    ([(-19,116,20),(-17.8,119,23.5),(-17,122,27),(-16,124,30)],1.1),
+    ([(-22,111,8.8),(-23.2,110.4,6),(-25,110.5,2.3),(-28,105,1.61)],1.05),
+    ([(-22.3,110.8,6),(-21,110.4,4),(-19.4,110.4,2),(-17.9,107.5,1.60)],.7),
+    ([(-21,111.8,13),(-20.6,111,12.1),(-16,111.65,11.45),(-10,111.7,11.5),(-5.4,111,9.7),(-4.7,111,5),(-3.8,110,1.61)],.68),
+    ([(-19.3,115,18.8),(-18.3,113.8,18.5),(-15,113.5,19),(-10,114,19.5),(-6.1,114,18.8),(-5,114,17.6)],.6),
+    ([(-22.6,110.8,4.8),(-25,112.2,2.2),(-27,117,1.6)],.5),
 ]
 for points,radius in root_paths:
     wood.append(root_tendril('Attached fluted facade root',points,radius,wood_material))
@@ -154,6 +160,22 @@ for i,(x,y,top,length) in enumerate([(-25,111.46,7,4),(-23.2,111.45,6.7,3.8),
 for i in range(44):
     x=-12+rng.choice((-1,1))*rng.uniform(4.4,13);z=rng.uniform(-112,-96)
     crowns.append(leaf_crown('Courtyard broadleaf cluster',(x,-z,1.8),(.65,.6,.4),92800+i,65,.48))
+# Recessed solid tympanum connects the seal to the upper facade. Its curved top
+# fits inside the existing arch; it is well above the traversable entrance.
+panel_rng=random.Random(100807)
+for row in range(10):
+    bottom=12.35+row*.59;top=bottom+.60
+    width=2.53 if top<=15.9 else math.sqrt(max(0,2.53**2-(top-15.9)**2))
+    if width<.1:continue
+    count=max(1,round(width*2/1.2))
+    for col in range(count):
+        left=-12-width+col*2*width/count;right=left+2*width/count
+        bpy.ops.mesh.primitive_cube_add(size=1,location=((left+right)/2,114.5,(bottom+top)/2))
+        panel=bpy.context.object;panel.name='Recessed seal masonry'
+        panel.scale=(right-left-.008,.55,top-bottom)
+        bpy.ops.object.transform_apply(location=False,rotation=False,scale=True)
+        panel.data.materials.append(stone_variants[panel_rng.randrange(2)])
+        worn(panel,.012);stone.append(panel)
 # Shallow stone medallion under the upper arch echoes REF7's carved archive seal.
 bpy.ops.mesh.primitive_cylinder_add(vertices=32,radius=1.7,depth=.22,location=(-12,114.1,15.7),rotation=(math.pi/2,0,0))
 seal=bpy.context.object;seal.name='Carved archive seal';seal.data.materials.append(stone_variants[1]);worn(seal,.03);stone.append(seal)

@@ -1,5 +1,14 @@
 # Current plan — Archive of Impossible Things
 
+October 10 archive handoff: the October 8–9 facade/hall batch is verified.
+The seal has recessed backing, the hero trunk and lower roots are connected in
+front of the facade, canopy limbs taper, paving rows are staggered, and hall
+roof remnants bear on the wall core. REF7/REF8 comparisons, all ten affected
+controller checkpoints, nine placed-world tests, changed-file lint and the
+production build pass. See [the archive review](ARCHIVE_ART_PASS_2026-10-08.md).
+Masonry softness, facade damage hierarchy and window/descent context remain
+visual gaps. The next cavern batch is in progress; whole-world acceptance stays open.
+
 October 8 forest/canopy art batch: smaller plants with matching rebaked shadows,
 broader bank outcrops and relief, low woodland layers, varied distant crowns and
 surface-fitted bank growth are implemented. REF5/REF6 and close bank comparisons,

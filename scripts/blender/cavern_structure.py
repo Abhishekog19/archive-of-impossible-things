@@ -113,36 +113,32 @@ for i in range(42):
             pts.append((cx+rr*math.cos(a)-tangent*math.sin(a),h,cz+rr*math.sin(a)+tangent*math.cos(a)))
     mesh('Vertical jointed rock face',pts,[(0,1,3,2),(2,3,5,4),(4,5,7,6)],True)
 
-# Staggered fracture plates interrupt the chamber's radial construction. Each
-# exposes a broad face and chipped side planes, with no common horizontal course.
-for band in range(3):
-    for i in range(18):
-        a=i*math.tau/18+rng.uniform(-.09,.09)
-        if abs(a-math.pi/2)<.28:continue
-        h=(-4,3,10)[band]+rng.uniform(-1.4,1.4)
-        width=rng.uniform(2.5,5.2);height=rng.uniform(5,10)
-        # Local U runs around the wall, V rises and D projects into the chamber.
-        shape=[(-width,-height*.5,0),(width*.7,-height*.5,.35),
-               (width,height*.2,.8),(width*.35,height*.55,.3),
-               (-width*.8,height*.42,.1)]
-        front=[]
-        for u,v,d in shape:
-            y=max(-8.8,min(17,h+v))
-            level=next(k for k in range(len(levels)-1) if levels[k][0]<=y<=levels[k+1][0])
-            t=(y-levels[level][0])/(levels[level+1][0]-levels[level][0])
-            # Bury each outline in the shell. The previous constant-radius
-            # panels detached from the narrowing upper walls like pasted tiles.
-            r=levels[level][1]*(1-t)+levels[level+1][1]*t+.6
-            zshift=-10*((level+t)/5)**2
-            front.append((cx+r*math.cos(a)-u*math.sin(a),y,cz+zshift+r*math.sin(a)+u*math.cos(a)))
-        back=[(x+math.cos(a)*1.1,y,z+math.sin(a)*1.1) for x,y,z in front]
-        centre=tuple(sum(p[k] for p in front)/5 for k in range(3))
-        depth=rng.uniform(.35,.8)
-        centre=(centre[0]-math.cos(a)*depth,centre[1]+.12,centre[2]-math.sin(a)*depth)
-        # Broken non-coplanar facets replace the conspicuous flat pasted-on plates.
-        mesh('Overlapping rock fracture plate',front+back+[centre],
-             [(j,(j+1)%5,10) for j in range(5)]+
-             [(j,j+5,(j+1)%5+5,(j+1)%5) for j in range(5)],True)
+# Grounded vertical fracture masses replace stacked wedges. Their lower edges
+# begin beneath the shore, so wall faces cannot read as hanging separate tiles.
+for i in range(26):
+    a=i*math.tau/26+rng.uniform(-.045,.045)
+    if abs(a-math.pi/2)<.28:continue
+    h=-8.8
+    width=rng.uniform(1.8,3.6);height=rng.uniform(13,23)
+    # Local U runs around the wall; V rises from the buried foot.
+    shape=[(-width,0),(width*.7,0),(width*.8,height*.6),
+           (width*.35,height),(-width*.8,height*.92)]
+    front=[]
+    for u,v in shape:
+        y=max(-8.8,min(17,h+v))
+        level=next(k for k in range(len(levels)-1) if levels[k][0]<=y<=levels[k+1][0])
+        t=(y-levels[level][0])/(levels[level+1][0]-levels[level][0])
+        # Bury the outline in the narrowing shell, keeping only the face proud.
+        r=levels[level][1]*(1-t)+levels[level+1][1]*t+.6
+        zshift=-10*((level+t)/5)**2
+        front.append((cx+r*math.cos(a)-u*math.sin(a),y,cz+zshift+r*math.sin(a)+u*math.cos(a)))
+    back=[(x+math.cos(a)*1.1,y,z+math.sin(a)*1.1) for x,y,z in front]
+    centre=tuple(sum(p[k] for p in front)/5 for k in range(3))
+    depth=rng.uniform(.55,1.05)
+    centre=(centre[0]-math.cos(a)*depth,centre[1]+.12,centre[2]-math.sin(a)*depth)
+    mesh('Grounded vertical fracture face',front+back+[centre],
+         [(j,(j+1)%5,10) for j in range(5)]+
+         [(j,j+5,(j+1)%5+5,(j+1)%5) for j in range(5)],True)
 
 # Roof splinters reinforce the asymmetric opening, staying out of the sky hole.
 for i in range(18):
@@ -184,19 +180,19 @@ for i in range(N):
     if i%2:continue
     for band in range(3):
         step=2*math.tau/N
-        aa=a+step*(band*.37+.2*math.sin(i*1.3))+.0015
-        bb=a+step+step*(band*.37+.2*math.sin((i+2)*1.3))-.0015
+        aa=a+step*(band*.37+.2*math.sin(i*1.3))+.0007
+        bb=a+step+step*(band*.37+.2*math.sin((i+2)*1.3))-.0007
         def edge(k,t):
             return shore_radius(t)+k*3.2+(0 if k==0 else .55*math.sin(t*11+k*1.7)+.3*math.cos(t*17-k))
-        inner_a=edge(band,aa)+.025;inner_b=edge(band,bb)+.025
-        outer_a=edge(band+1,aa)-.025;outer_b=edge(band+1,bb)-.025
+        inner_a=edge(band,aa)+.012;inner_b=edge(band,bb)+.012
+        outer_a=edge(band+1,aa)-.012;outer_b=edge(band+1,bb)-.012
         mid=(aa+bb)/2
         # Staggered fracture boundaries avoid continuous radial tile joints.
         coords=[(inner_a,aa),(outer_a,aa),(edge(band+1,mid)-.06,mid+(bb-aa)*.1),
                 (outer_b,bb),(inner_b,bb),(edge(band,mid)+.08,mid-(bb-aa)*.1)]
         top=[(cx+r*math.cos(t),-7.47+rng.uniform(-.012,.012),cz+r*math.sin(t)) for r,t in coords]
         pts=top+[(x,-7.64,z) for x,y,z in top]
-        mesh('Broad shoreline bedrock',pts,[(0,1,2,3,4,5)]+[(j,(j+1)%6,(j+1)%6+6,j+6) for j in range(6)],shore=True)
+        mesh('Broad shoreline bedrock',pts,[(5,4,3,2,1,0)]+[(j,(j+1)%6,(j+1)%6+6,j+6) for j in range(6)],shore=True)
 
 # Large talus masses stay at the outer wall, away from the navigable shore loop.
 for i in range(30):

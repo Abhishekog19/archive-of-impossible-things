@@ -31,7 +31,7 @@ def stone_material(vertex_layer='RockColor'):
     veins *= np.clip((field(8) + .3) * 2, 0, 1)
     mineral = np.clip((broad + medium * .3 - .12) * 2, 0, 1)
     height = .5 + medium * .14 + fine * .034 + grain * .009 - veins * .075
-    tone = np.clip(.78 + broad * .045 + medium * .035 + fine * .012 - veins * .045, .60, .90)
+    tone = np.clip(.78 + broad * .035 + medium * .016 + fine * .006 - veins * .03, .60, .90)
     colour = np.stack((tone + mineral * .018, tone + mineral * .012, tone), axis=-1)
     # Two metres per tile; keep normal relief in millimetres rather than inflating
     # every pore into a boulder. Blender and glTF both use tangent-space +Y normals.

@@ -1,5 +1,18 @@
 # Current plan — Archive of Impossible Things
 
+October 10 cavern handoff: the focused cavern art batch is complete. Grounded
+wall faces replace the stacked fracture wedges; stone colour noise is reduced,
+and broad shore plates have corrected top-face winding and narrower joints.
+REF10/reference/shore comparisons, all 17 shoreline checkpoints, three return
+checkpoints, the uphill jump, nine placed-world tests and the production build
+pass. Other area packages are byte-for-byte unchanged; total derived size falls
+24,172 bytes. See [the cavern review](CAVERN_ART_PASS_2026-10-10.md).
+The archive and cavern batches are now finished. Remaining art work is the
+documented reference gap list: masonry/damage hierarchy and hall context,
+cavern massing/light/shore irregularity, and the earlier hub/forest gaps.
+Whole-world acceptance, performance, real-phone testing and deployment parity
+remain open; completed art batches must not be represented as closing these gates.
+
 October 10 archive handoff: the October 8–9 facade/hall batch is verified.
 The seal has recessed backing, the hero trunk and lower roots are connected in
 front of the facade, canopy limbs taper, paving rows are staggered, and hall

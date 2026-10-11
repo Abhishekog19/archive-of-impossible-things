@@ -1,5 +1,19 @@
 # Current plan — Archive of Impossible Things
 
+October 11 cavern form/light refinement is complete: rising wall ridges replace
+the older folded strips and exposed shelf endings, shore ledges vary in width
+and reach, and the existing light/haze setup spreads across the rear cliff and
+reflection. A dense-ridge trial was rejected in favour of fewer, broader forms.
+REF10/reference/shore comparisons, 17 shore checkpoints, three return checkpoints,
+the uphill jump, changed-file lint, nine placed-world tests and the production
+build pass. Other area packages remain byte-for-byte unchanged. See
+[the form/light review](CAVERN_FORM_LIGHT_PASS_2026-10-11.md).
+Next focused art batch: archive masonry/damage hierarchy and hall window/roof
+context from the October 8–9 review. Cavern dome shape, angular intersections,
+surface repetition and shore segmentation remain visual gaps. The next weekly
+technical review is due October 13, seven days after the completed October 6 run;
+real-phone, deployment parity, performance and overall visual acceptance stay open.
+
 October 10 cavern handoff: the focused cavern art batch is complete. Grounded
 wall faces replace the stacked fracture wedges; stone colour noise is reduced,
 and broad shore plates have corrected top-face winding and narrower joints.

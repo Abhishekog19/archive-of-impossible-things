@@ -48,7 +48,7 @@ export function CavernSurfaces({ nodes, collision = true }) {
   const material = useMemo(() => {
     const copy = nodes.CavernStructure_Rock.material.clone()
     copy.side = DoubleSide
-    copy.normalScale.set(.6, .6)
+    copy.normalScale.set(.22, .22)
     copy.onBeforeCompile = shorelineLayer
     copy.customProgramCacheKey = () => 'cavern-wet-stone-v3-enclosed-fog'
     return copy

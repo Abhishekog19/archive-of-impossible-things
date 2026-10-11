@@ -1,9 +1,9 @@
 {
   "resident": {
     "url": "/models/placed/resident.glb",
-    "bytes": 7788372,
-    "trianglesBefore": 318024,
-    "triangles": 229368
+    "bytes": 7786460,
+    "trianglesBefore": 317815,
+    "triangles": 229159
   },
   "zones": [
     {
@@ -107,9 +107,9 @@
       "keep": 58,
       "draw": 35,
       "url": "/models/placed/cavern.glb",
-      "bytes": 799776,
-      "trianglesBefore": 3990,
-      "triangles": 3990
+      "bytes": 789820,
+      "trianglesBefore": 3768,
+      "triangles": 3768
     }
   ]
 }

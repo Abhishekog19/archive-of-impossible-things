@@ -97,48 +97,42 @@ for k in range(len(levels)-1):
         faces.extend([(k*N+i,(k+1)*N+i,(k+1)*N+j),(k*N+i,(k+1)*N+j,k*N+j)])
 mesh('Cavern continuous fractured shell',points,faces,True)
 
-# Long irregular escarpments follow the chamber walls. Their changing profiles
-# create tall ledges and deep joints, avoiding a repeated brick/block pattern.
-for i in range(42):
-    a=i*math.tau/42+rng.uniform(-.04,.04)
-    if abs(a-math.pi/2)<.24:continue
-    radius=rng.uniform(23.5,25)
-    width=rng.uniform(.8,1.8)
-    height=rng.uniform(7,18)
+def wall_profile(y):
+    level=next(k for k in range(len(levels)-1) if levels[k][0]<=y<=levels[k+1][0])
+    t=(y-levels[level][0])/(levels[level+1][0]-levels[level][0])
+    return levels[level][1]*(1-t)+levels[level+1][1]*t, -10*((level+t)/5)**2
+
+
+def rooted_fracture(name,a,width,height,depth):
+    # Three points across each rising section form a ridge. Bury both side
+    # edges and the tapered head in the shell; never terminate a flat card in air.
     pts=[]
-    for level,(h,dr,w) in enumerate([(-8,.5,1),(-4,-.2,.95),(height*.45-8,-.7,.8),(height-8,1,.45)]):
-        for side in (-1,1):
-            rr=radius+dr+rng.uniform(-.22,.22)
-            tangent=side*width*w
-            pts.append((cx+rr*math.cos(a)-tangent*math.sin(a),h,cz+rr*math.sin(a)+tangent*math.cos(a)))
-    mesh('Vertical jointed rock face',pts,[(0,1,3,2),(2,3,5,4),(4,5,7,6)],True)
+    for fraction,taper,relief in [(0,1,.3),(.28,.95,1),(.62,.8,.85),(1,.18,-1.3)]:
+        y=-8.8+height*fraction
+        radius,shift=wall_profile(y)
+        for side in (-1,0,1):
+            r=radius+(2 if side else -depth*relief)
+            u=side*width*taper
+            pts.append((cx+r*math.cos(a)-u*math.sin(a),y,cz+shift+r*math.sin(a)+u*math.cos(a)))
+    mesh(name,pts,[(j*3+k,j*3+k+1,(j+1)*3+k+1,(j+1)*3+k)
+                  for j in range(3) for k in range(2)],True)
+
+
+# Continuous rising sections replace the old constant-radius cards, including
+# their reversed intermediate heights on short faces and exposed dark ledges.
+for i in range(14):
+    a=i*math.tau/14+rng.uniform(-.1,.1)
+    if abs(a-math.pi/2)<.24:continue
+    width=rng.uniform(1,2.3)
+    rooted_fracture('Rooted vertical joint',a,width,rng.uniform(10,23),rng.uniform(.3,.7))
 
 # Grounded vertical fracture masses replace stacked wedges. Their lower edges
 # begin beneath the shore, so wall faces cannot read as hanging separate tiles.
-for i in range(26):
-    a=i*math.tau/26+rng.uniform(-.045,.045)
+for i in range(19):
+    a=i*math.tau/19+rng.uniform(-.1,.1)
     if abs(a-math.pi/2)<.28:continue
-    h=-8.8
-    width=rng.uniform(1.8,3.6);height=rng.uniform(13,23)
-    # Local U runs around the wall; V rises from the buried foot.
-    shape=[(-width,0),(width*.7,0),(width*.8,height*.6),
-           (width*.35,height),(-width*.8,height*.92)]
-    front=[]
-    for u,v in shape:
-        y=max(-8.8,min(17,h+v))
-        level=next(k for k in range(len(levels)-1) if levels[k][0]<=y<=levels[k+1][0])
-        t=(y-levels[level][0])/(levels[level+1][0]-levels[level][0])
-        # Bury the outline in the narrowing shell, keeping only the face proud.
-        r=levels[level][1]*(1-t)+levels[level+1][1]*t+.6
-        zshift=-10*((level+t)/5)**2
-        front.append((cx+r*math.cos(a)-u*math.sin(a),y,cz+zshift+r*math.sin(a)+u*math.cos(a)))
-    back=[(x+math.cos(a)*1.1,y,z+math.sin(a)*1.1) for x,y,z in front]
-    centre=tuple(sum(p[k] for p in front)/5 for k in range(3))
-    depth=rng.uniform(.55,1.05)
-    centre=(centre[0]-math.cos(a)*depth,centre[1]+.12,centre[2]-math.sin(a)*depth)
-    mesh('Grounded vertical fracture face',front+back+[centre],
-         [(j,(j+1)%5,10) for j in range(5)]+
-         [(j,j+5,(j+1)%5+5,(j+1)%5) for j in range(5)],True)
+    width=rng.uniform(2.6,5);height=rng.uniform(14,25)
+    rooted_fracture('Grounded broad fracture',a,width,height,rng.uniform(1,2.25))
 
 # Roof splinters reinforce the asymmetric opening, staying out of the sky hole.
 for i in range(18):
@@ -157,13 +151,15 @@ def shore_radius(a):
 # Discontinuous ledges overhang the pool and break the repeated bank arc; existing
 # continuous walkable ground and its collision remain behind this visual edge.
 for j in range(19):
-    a=j*math.tau/19+.08*math.sin(j*2.7)
+    a=j*math.tau/19+rng.uniform(-.1,.1)
     if abs(a-math.pi/2)<.32:continue
-    radius=shore_radius(a);r=radius-rng.uniform(.45,1.2)
+    radius=shore_radius(a);r=radius-rng.uniform(.25,1.5)
+    span=rng.uniform(.04,.12)
     pts=[]
-    for offset,rr in [(-.055,radius+1.1),(-.048,r),(.012,r-.25),(.07,r+.3),(.075,radius+1.1)]:
+    for offset,rr in [(-span,radius+1.1),(-span*.8,r),(.012,r-.25),(span*.7,r+.3),(span,radius+1.1)]:
         pts.append((cx+rr*math.cos(a+offset),-7.45+rng.uniform(0,.025),cz+rr*math.sin(a+offset)))
-    lower=[(x,-7.95,z) for x,y,z in pts]
+    # Undercut facets instead of equal-depth rectangular kerbs at the waterline.
+    lower=[(x+math.cos(a)*.28,-7.68-rng.uniform(0,.16),z+math.sin(a)*.28) for x,y,z in pts]
     mesh('Irregular pool edge ledge',pts+lower,[(0,1,2,3,4)]+
          [(k,(k+1)%5,(k+1)%5+5,k+5) for k in range(5)],shore=True)
 

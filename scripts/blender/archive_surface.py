@@ -1,14 +1,32 @@
 """Shared archive stone and organic-detail tools, reusable for the hall."""
 import bpy
+import bmesh
 import math
 from mathutils import Vector
+
+
+def stone_edges(obj, rng, wear=.012, chip_chance=.22):
+    """Keep broad faces planar; clip a few corners before a narrow edge bevel."""
+    bm=bmesh.new();bm.from_mesh(obj.data)
+    if bm.verts and rng.random()<chip_chance:
+        corner=rng.choice(list(bm.verts))
+        shortest=min((edge.calc_length() for edge in corner.link_edges),default=0)
+        if shortest>.1:
+            bmesh.ops.bevel(bm,geom=[corner],offset=min(shortest*.22,.16),
+                            segments=1,affect='VERTICES')
+    if wear:
+        bmesh.ops.bevel(bm,geom=list(bm.edges),offset=wear,segments=1,
+                        affect='EDGES',clamp_overlap=True)
+    bmesh.ops.recalc_face_normals(bm,faces=list(bm.faces))
+    bm.to_mesh(obj.data);bm.free()
+    for face in obj.data.polygons:face.use_smooth=False
 
 
 def damp_material(source, name, moss=.65):
     # Fresh stone shading keeps mineral colour independent of the kit's broad
     # relief. The assembled architecture receives its own contact/light bake.
     mat = bpy.data.materials.new(name);mat.use_nodes=True
-    mat['contact_distance']=.085
+    mat['contact_distance']=.035
     nodes,links=mat.node_tree.nodes,mat.node_tree.links
     shader=nodes.get('Principled BSDF')
     shader.inputs['Roughness'].default_value=.94
@@ -17,8 +35,8 @@ def damp_material(source, name, moss=.65):
     grain.inputs['Detail'].default_value=2
     links.new(geo.outputs['Position'],grain.inputs['Vector'])
     mineral=nodes.new('ShaderNodeMixRGB')
-    mineral.inputs[1].default_value=(.33,.35,.27,1)
-    mineral.inputs[2].default_value=(.49,.49,.38,1)
+    mineral.inputs[1].default_value=(.40,.42,.34,1)
+    mineral.inputs[2].default_value=(.51,.52,.43,1)
     links.new(grain.outputs['Fac'],mineral.inputs[0])
     base=mineral.outputs[0]
     noise=nodes.new('ShaderNodeTexNoise');noise.inputs['Scale'].default_value=.85

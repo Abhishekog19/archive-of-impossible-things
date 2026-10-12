@@ -9,7 +9,7 @@ from pathlib import Path
 from mathutils import Vector
 sys.path.insert(0, str(Path(__file__).parent))
 from placed_art import merge, leaf_crown, color_material, lighting, bake
-from archive_surface import damp_material, ivy_ribbon
+from archive_surface import damp_material, ivy_ribbon, stone_edges
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / '.artifacts/blender'
@@ -25,19 +25,14 @@ mats = [damp_material(base, 'Hall limestone '+str(i), m) for i, m in enumerate((
 walls, architecture, floor, plants = [], [], [], []
 
 
-def finish(obj, name, group, material=None, wear=.025):
+def finish(obj, name, group, material=None, wear=.012):
     obj.name = name
     obj.data.materials.clear()
     obj.data.materials.append(material or rng.choice(mats))
     bpy.context.view_layer.objects.active = obj
     bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
     if wear:
-        mod = obj.modifiers.new('Weathered arris', 'BEVEL')
-        mod.width = wear
-        mod.segments = 1
-        bpy.ops.object.modifier_apply(modifier=mod.name)
-        for v in obj.data.vertices:
-            v.co += Vector(tuple(rng.uniform(-.014, .014) for _ in range(3)))
+        stone_edges(obj,rng,wear,chip_chance=.26)
     group.append(obj)
     return obj
 
@@ -136,13 +131,25 @@ for side in (-1,1):
         if i in ((2,7,10) if side<0 else (0,5,9)):continue
         width=rng.uniform(3.3,5.7)
         x=(-26.4+width/2) if side<0 else (2.4-width/2)
-        block('Broken roof raft',(x,14.05,-119.8-i*1.7),(width,.62,1.63),walls)
+        # A cut-back polygon gives each supported remnant a fractured inner edge.
+        z=-119.8-i*1.7
+        outer=-27 if side<0 else 3
+        inner=outer-side*width
+        outline=[(outer,z+.80),(inner,z+.76),(inner+side*.65,z+.22),
+                 (inner+side*.18,z-.40),(inner+side*1.05,z-.80),(outer,z-.80)]
+        pts=[(xx,-zz,h) for h in (13.74,14.36) for xx,zz in outline]
+        data=bpy.data.meshes.new('Fractured roof remnant')
+        data.from_pydata(pts,[],[tuple(range(5,-1,-1)),tuple(range(6,12))]+
+                        [(j,(j+1)%6,(j+1)%6+6,j+6) for j in range(6)])
+        data.update();obj=bpy.data.objects.new('Fractured roof remnant',data)
+        bpy.context.collection.objects.link(obj)
+        finish(obj,obj.name,walls,wear=.008)
         # Each surviving roof fragment bears on the continuous wall core even
         # where the upper dressed courses are missing. No floating roof islands.
         block('Roof bearing masonry',(-26.7 if side<0 else 2.7,12.8,-119.8-i*1.7),
               (1.38,2.6,1.63),walls,mats[1])
         if i%3==0:
-            block('Roof fracture crest',(x,14.65,-119.8-i*1.7),(width*.45,.55,1.18),walls)
+            block('Roof fracture crest',(outer-side*.65,14.65,z),(1.1,.55,1.18),walls)
 
 # Rear portal stays aligned with the existing descent and its five-metre opening.
 for row in range(14):
@@ -175,6 +182,20 @@ for x in (-14.95,-9.05):
 # portal. It seals base/course gaps without filling any intentional opening.
 for lo,hi in ((-31,-15),(-9,7)):
     block('Rear wall lower core',((lo+hi)/2,2.7,-141),(hi-lo,2.3,.92),walls,mats[1])
+
+# Exterior ruin fragments provide depth through the lancets. Both sit outside
+# the hall boundary and well clear of the five-metre descent corridor.
+for side in (-1,1):
+    centre=-12+side*15
+    for col in range(4):
+        x=centre+(col-1.5)*1.5
+        count=(11,9,7,4)[col if side<0 else 3-col]
+        for row in range(count):
+            block('Window vista ruined course',(x,2.05+row*.82,-145-(col%2)*.55),
+                  (1.48,.80,1.3),walls,mats[1 if row%3 else 2])
+    for j in range(3):
+        plants.append(leaf_crown('Window vista low woodland',(centre+side*(j-1)*2,152+j,3.6+j*.5),
+                                (2.2,1.7,1.5),93610+(side+1)*3+j,90,.65))
 # Entrance returns meet the facade footings below the existing walking plane.
 for x in (-16.1,-7.9):
     block('Entrance buried footing',(x,1.51,-114.8),(2.2,.3,3.0),walls,mats[1])

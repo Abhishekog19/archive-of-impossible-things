@@ -9,7 +9,7 @@ from pathlib import Path
 from mathutils import Vector
 sys.path.insert(0,str(Path(__file__).parent))
 from placed_art import merge, leaf_crown, color_material, lighting, bake
-from archive_surface import damp_material, archive_bark, root_tendril, ivy_ribbon
+from archive_surface import damp_material, archive_bark, root_tendril, ivy_ribbon, stone_edges
 from natural_foliage import layered_crown
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT/'.artifacts/blender'
@@ -32,13 +32,8 @@ wood_material = archive_bark()
 stone_variants = [damp_material(stone_material,'Archive damp limestone '+str(i),m) for i,m in enumerate((.12,.32,.65,.85))]
 stone,wood,crowns = [],[],[]
 block_count = 0
-def worn(obj,amount=.025):
-    bpy.context.view_layer.objects.active = obj
-    bevel = obj.modifiers.new('Worn stone edges','BEVEL')
-    bevel.width = amount
-    bevel.segments = 1
-    bpy.ops.object.modifier_apply(modifier=bevel.name)
-    for v in obj.data.vertices: v.co += Vector(tuple(rng.uniform(-.014,.014) for _ in range(3)))
+def worn(obj,amount=.012):
+    stone_edges(obj,rng,amount)
 
 for source in sources:
     z = -source.location.y
@@ -67,17 +62,19 @@ for source in sources:
     points = [source.matrix_basis@v.co for v in source.data.vertices]
     lo = Vector(tuple(min(p[i] for p in points) for i in range(3)))
     hi = Vector(tuple(max(p[i] for p in points) for i in range(3)))
-    rows = max(1,round((hi.z-lo.z)/.7))
+    rows = max(1,round((hi.z-lo.z)/.9))
     for row in range(rows):
-        count = max(1,round((hi.x-lo.x)/1.4))
-        cuts = [lo.x]+[lo.x+(hi.x-lo.x)*i/count+rng.uniform(-.16,.16) for i in range(1,count)]+[hi.x]
-        for i in range(count):
+        count = max(1,round((hi.x-lo.x)/1.75))
+        inner=[lo.x+(hi.x-lo.x)*(i+(row%2)*.5)/count+rng.uniform(-.10,.10) for i in range(count+1)]
+        cuts = [lo.x]+sorted(c for c in inner if lo.x+.3<c<hi.x-.3)+[hi.x]
+        for i in range(len(cuts)-1):
             # Incomplete upper courses make a broken silhouette, not a neat wall top.
             if row==rows-1 and count>2 and rng.random()<.3: continue
             bpy.ops.mesh.primitive_cube_add(size=1)
             obj = bpy.context.object
             obj.name = 'Facade limestone course'
-            obj.location = ((cuts[i]+cuts[i+1])/2,(lo.y+hi.y)/2+rng.uniform(-.035,.035),lo.z+(row+.5)*(hi.z-lo.z)/rows)
+            setback=.10 if row==rows-1 and i%3==0 else 0
+            obj.location = ((cuts[i]+cuts[i+1])/2,(lo.y+hi.y)/2+rng.uniform(-.035,.035)+setback,lo.z+(row+.5)*(hi.z-lo.z)/rows)
             obj.scale = (cuts[i+1]-cuts[i]-.035,hi.y-lo.y-.025,(hi.z-lo.z)/rows-.035)
             if row==rows-1:obj.scale.z*=rng.uniform(.55,1)
             obj.rotation_euler.y=rng.uniform(-.012,.012)

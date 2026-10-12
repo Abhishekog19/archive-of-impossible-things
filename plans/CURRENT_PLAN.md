@@ -1,5 +1,20 @@
 # Current plan — Archive of Impossible Things
 
+October 12 archive masonry/context batch is complete: larger staggered facade
+courses, planar stone finishing with selected chipped corners, cut-back hall roof
+remnants and visible ruined courses beyond the rear windows. The close-window
+comparison prompted a placement correction after a height-only revision failed.
+REF7/REF8 and before/final comparisons, all ten archive/hall controller checkpoints,
+nine placed-world tests and the production build pass. Resident/collision and
+all other area packages are byte-for-byte unchanged. See
+[the masonry/context review](ARCHIVE_MASONRY_CONTEXT_PASS_2026-10-11.md).
+Remaining archive gaps include soft baked shading, repeated courses, facade/root
+hierarchy and landscape/descent depth. Next focused art work returns to REF4 hub
+woodland depth, terrain forms and trunk/branch silhouettes using the production
+generators; preserve the pre-existing hub-blockout source edit. The weekly
+technical review remains due October 13. Whole-world visual, real-phone,
+performance and deployment acceptance remain open.
+
 October 11 cavern form/light refinement is complete: rising wall ridges replace
 the older folded strips and exposed shelf endings, shore ledges vary in width
 and reach, and the existing light/haze setup spreads across the rear cliff and

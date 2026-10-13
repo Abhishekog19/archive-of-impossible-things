@@ -6,6 +6,7 @@ Never opens or saves hub-blockout.blend.
 import bpy, bmesh, math, random, sys, os, json
 from pathlib import Path
 from mathutils import Vector, Matrix
+from mathutils.bvhtree import BVHTree
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(Path(__file__).parent))
@@ -90,6 +91,7 @@ def finish_mesh(name):
     verts.clear(); faces.clear(); colours.clear()
     return obj
 
+branch_tips = []
 trees = [(-18,-2,.140054,12), (18,-4,.491365,13), (-17,-13,.980715,12),
          (-17,9,.666705,13), (17,12,.590452,14), (-23,2,1.532772,15),
          (23,5,.717884,16), (-22,-12,1.022115,14)]
@@ -103,6 +105,7 @@ for x,z,ground,height in trees:
         centre = (x+math.cos(a)*ring, -z+math.sin(a)*ring,
                   ground+height*(.94 if j == 0 else rng.uniform(.74,.91)))
         crown_lobe(centre,(rng.uniform(2.2,3.1),rng.uniform(2.0,2.9),rng.uniform(1.1,1.6)))
+        branch_tips.append(((x,-z,ground),height,centre))
 crowns = finish_mesh('PD12_Hub_Foliage_Crowns')
 bpy.data.objects['HubArt_Foliage'].hide_render = True
 bpy.data.objects['HubArt_Foliage'].hide_set(True)
@@ -223,9 +226,95 @@ for j in range(11):
     crown_lobe((x,-z,.45+rng.uniform(0,.25)),(1.15,.9,.6),24)
 dressing = finish_mesh('PD12_Hub_Foliage_Creepers')
 
+# Keep the earlier seeded stone/plant layout independent of this composition pass.
+composition_rng = random.Random(131013)
+def tapered_branch(points, radii):
+    rings=[]
+    for i,point in enumerate(points):
+        p=Vector(point)
+        tangent=(Vector(points[min(i+1,len(points)-1)])-Vector(points[max(0,i-1)])).normalized()
+        u=tangent.cross(Vector((0,0,1)))
+        if u.length<.1:u=tangent.cross(Vector((1,0,0)))
+        u.normalize();v=tangent.cross(u)
+        rings.append([p+radii[i]*(u*math.cos(j*math.tau/7)+v*math.sin(j*math.tau/7)) for j in range(7)])
+    for a,b in zip(rings,rings[1:]):
+        for j in range(7):
+            points=[a[j],a[(j+1)%7],b[(j+1)%7],b[j]]
+            normal=(points[1]-points[0]).cross(points[2]-points[0]).normalized()
+            light=.65+.35*max(0,normal.dot(sun))
+            face(points,(.115*light,.125*light,.073*light,1))
+    face(list(reversed(rings[0])),(.075,.085,.045,1))
+    face(rings[-1],(.115,.125,.073,1))
+
+# Branches emerge inside the established trunks and taper into leaf sprays.
+# Their high junctions leave all ground collision and route clearances intact.
+for base,height,tip in branch_tips:
+    p=Vector(base);t=Vector(tip);delta=t-p
+    a=p+Vector((delta.x*.08,delta.y*.08,height*.46))
+    b=p+Vector((delta.x*.35,delta.y*.35,height*.64))
+    c=p+Vector((delta.x*.72,delta.y*.72,delta.z*.91))
+    tapered_branch([a,b,c,t],[.24,.17,.08,.018])
+    fork=t+Vector((composition_rng.uniform(-.9,.9),composition_rng.uniform(-.9,.9),.4))
+    tapered_branch([b,c*.35+t*.65,fork],[.10,.047,.012])
+branches=finish_mesh('PD13_Hub_Wood_CrownBranches')
+
+# Read only the shared terrain, never the user's protected hub blockout source.
+with bpy.data.libraries.load(str(ROOT/'art/source/world-blockout.blend'),link=False) as (src,dst):
+    dst.objects=[n for n in src.objects if n.startswith(('Continuous terrain','Forest extension ground'))]
+ground_points=[];ground_faces=[]
+for obj in dst.objects:
+    offset=len(ground_points)
+    ground_points.extend(obj.matrix_world@v.co for v in obj.data.vertices)
+    ground_faces.extend(tuple(offset+i for i in f.vertices) for f in obj.data.polygons)
+ground=BVHTree.FromPolygons(ground_points,ground_faces)
+def ground_height(x,z):
+    hit=ground.ray_cast(Vector((x,-z,30)),Vector((0,0,-1)))[0]
+    assert hit is not None, 'Hub composition outside shared terrain'
+    return hit.z
+
+# Broad, low shoulders are decorative and stay beyond the walkable route mouths.
+for x,z,rx,rz,rise in [(-2,-19,4.5,3.3,.48),(5,-26,4.2,5,.65),(-21,-23,3.2,4.8,.55)]:
+    rings=[]
+    for row in range(5):
+        radius=row/4
+        ring=[]
+        for j in range(16):
+            angle=j*math.tau/16
+            xx=x+math.cos(angle)*rx*radius;zz=z+math.sin(angle)*rz*radius
+            h=ground_height(xx,zz)+.012+rise*(1-radius*radius)**2
+            ring.append(Vector((xx,-zz,h)))
+        rings.append(ring)
+    for row in range(4):
+        for j in range(16):
+            shade=.88+.12*math.sin(j*1.7+row*.6)
+            # Browser Z is inverted in Blender; wind upward-facing surfaces.
+            face([rings[row][j],rings[row+1][j],rings[row+1][(j+1)%16],rings[row][(j+1)%16]][::-1],
+                 (.060*shade,.083*shade,.030*shade,1))
+shoulders=finish_mesh('PD13_Hub_Earth_WoodlandShoulders')
+
+woodland=[(-3,-21,6.4),(3,-23,7.6),(7,-28,6.8),(-20,-21,7.2),(-24,-27,8.3),(0,-30,8.6)]
+canopies=[]
+for index,(x,z,height) in enumerate(woodland):
+    h=ground_height(x,z)-.06
+    lean=composition_rng.uniform(-.7,.7)
+    base=Vector((x,-z,h));fork=base+Vector((lean,.2,height*.60))
+    tapered_branch([base,base+Vector((lean*.3,0,height*.3)),fork],[.26,.19,.10])
+    for j in range(3):
+        a=index*.8+j*2.3
+        tip=base+Vector((math.cos(a)*1.8+lean,math.sin(a)*1.5,height*(.82+j*.075)))
+        tapered_branch([fork,(fork+tip)*.5+Vector((0,0,.35)),tip],[.11,.055,.014])
+        canopies.append((tip,(2.0,1.65,.9)))
+middle_wood=finish_mesh('PD13_Hub_Wood_MiddleLayer')
+for centre,radius in canopies:
+    # Small sprays keep the middle layer economical and avoid opaque round crowns.
+    for j in range(3):
+        a=j*2.4
+        crown_lobe(Vector(centre)+Vector((math.cos(a)*.7,math.sin(a)*.6,0)),
+                   (1.25,1.05,.72),24)
+middle_leaves=finish_mesh('PD13_Hub_Foliage_MiddleLayer')
 
 bpy.ops.object.select_all(action='DESELECT')
-for o in originals+[crowns,dressing,edge_plants,edge_soil]: o.select_set(True)
+for o in originals+[crowns,dressing,edge_plants,edge_soil,branches,shoulders,middle_wood,middle_leaves]: o.select_set(True)
 bpy.context.view_layer.objects.active = crowns
 bpy.ops.wm.save_as_mainfile(filepath=str(ROOT/'art/source/pd12-hub-art.blend'),compress=True)
 target = ROOT/'public/models/hub-art.glb'

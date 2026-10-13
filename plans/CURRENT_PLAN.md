@@ -1,5 +1,23 @@
 # Current plan — Archive of Impossible Things
 
+October 13 hub depth pass is implemented and locally checked: tapered crown
+branches, six middle-layer trees and three low terrain shoulders improve the
+REF4 composition. Before/after reference and player-height comparisons, ten
+hub/arrival/overlook checkpoints, all 36 tests and the production build pass.
+Resident/collision and all six other area packages are byte-for-byte unchanged.
+See [the hub depth review](HUB_DEPTH_PASS_2026-10-13.md).
+
+Today's weekly local measurement **fails performance acceptance**: 28.51 average
+FPS over 180.03 seconds / 67 waypoints on Medium, with zero hidden frames.
+Peaks are 309 calls and 799,919 triangles; forest loading and return views need
+priority. Production entry and narrow-screen quality switching pass. See
+[the weekly review](WEEKLY_REVIEW_2026-10-13.md). Next work is performance fixes
+before further art expansion; the next routine weekly review is October 20.
+Six further batches are planned after this focused hub pass; the explicit scope
+and remaining hub acceptance gaps are in [the remaining-work tracker](REMAINING_MILESTONE_WORK.md).
+Character likeness, whole-world visuals, actual-phone behavior and deployment
+parity remain open. Preserve the pre-existing hub-blockout source edit.
+
 October 12 archive masonry/context batch is complete: larger staggered facade
 courses, planar stone finishing with selected chipped corners, cut-back hall roof
 remnants and visible ruined courses beyond the rear windows. The close-window

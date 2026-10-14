@@ -17,13 +17,17 @@ export function addStoneDetail(material, texture, study = false) {
       varying vec3 stonePoint, stoneNormal;
     `).replace('#include <color_fragment>', `
       #include <color_fragment>
+      // Beyond the existing fade these samples and pores contribute exactly
+      // zero. Skip them for distant scenery without changing its appearance.
+      float detailDistance = distance(cameraPosition, stonePoint);
+      if (detailDistance < 38.0) {
       vec3 weights = pow(abs(normalize(stoneNormal)), vec3(4.0));
       weights /= max(dot(weights, vec3(1.0)), .001);
       vec3 samples = vec3(texture2D(stoneGrain, stonePoint.yz * .5).r,
         texture2D(stoneGrain, stonePoint.xz * .5).r,
         texture2D(stoneGrain, stonePoint.xy * .5).r);
       float mineral = dot(samples, weights);
-      float closeDetail = 1.0 - smoothstep(18.0, 38.0, distance(cameraPosition, stonePoint));
+      float closeDetail = 1.0 - smoothstep(18.0, 38.0, detailDistance);
       diffuseColor.rgb *= 1.0 + (mineral - .78) * .75 * closeDetail;
       ${study ? `
       // Fine mineral pores use metre-scale cells, independent of atlas density.
@@ -34,13 +38,14 @@ export function addStoneDetail(material, texture, study = false) {
       float radius = length(fract(poreUv) - (.18 + vec2(seed, seedY) * .64));
       float aa = max(length(fwidth(poreUv)), .035);
       float pores = (1.0 - smoothstep(.055, .055 + aa, radius)) * step(.58, seed);
-      float nearSurface = 1.0 - smoothstep(5.0, 12.0, distance(cameraPosition, stonePoint));
+      float nearSurface = 1.0 - smoothstep(5.0, 12.0, detailDistance);
       float resolved = 1.0 - smoothstep(.22, .6, aa);
       diffuseColor.rgb *= 1.0 - pores * .22 * nearSurface * resolved * weights.y;
       ` : ''}
+      }
     `)
   }
-  material.customProgramCacheKey = () => study ? 'patch-stone-study-v1' : 'world-stone-detail-v1'
+  material.customProgramCacheKey = () => study ? 'patch-stone-study-v2' : 'world-stone-detail-v2'
 }
 
 // A narrow, metre-scaled directional layer keeps large baked trunk atlases
@@ -62,11 +67,13 @@ export function addBarkDetail(material, texture, study = false) {
       varying vec3 barkPoint, barkNormal;
     `).replace('#include <color_fragment>', `
       #include <color_fragment>
+      float detailDistance = distance(cameraPosition, barkPoint);
+      if (detailDistance < 28.0) {
       vec3 n = abs(normalize(barkNormal));
       float grainX = texture2D(barkGrain, barkPoint.zy * vec2(3.4, .16)).r;
       float grainZ = texture2D(barkGrain, barkPoint.xy * vec2(3.4, .16)).r;
       float grain = (grainX * n.x + grainZ * n.z) / max(n.x+n.z, .001);
-      float fade = (1.0-smoothstep(12.0, 28.0, distance(cameraPosition,barkPoint))) * (1.0-n.y);
+      float fade = (1.0-smoothstep(12.0, 28.0, detailDistance)) * (1.0-n.y);
       diffuseColor.rgb *= 1.0 + (grain-.78) * .55 * fade;
       ${study ? `
       // Broken longitudinal fissures remain sharp at player distance while the
@@ -82,7 +89,8 @@ export function addBarkDetail(material, texture, study = false) {
       float broken = smoothstep(.68, .86, texture2D(barkGrain, barkPoint.xy * vec2(.8, 1.8)).r);
       diffuseColor.rgb *= 1.0 - furrow * broken * .24 * fade * (1.0 - smoothstep(.4, .8, n.y));
       ` : ''}
+      }
     `)
   }
-  material.customProgramCacheKey = () => study ? 'patch-bark-study-v1' : 'world-bark-detail-v1'
+  material.customProgramCacheKey = () => study ? 'patch-bark-study-v2' : 'world-bark-detail-v2'
 }

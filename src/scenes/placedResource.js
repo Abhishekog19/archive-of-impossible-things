@@ -4,12 +4,24 @@ import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js'
 import { disposeZone } from './zoneResource.js'
 import { addBarkDetail, addStoneDetail } from './stoneDetail.js'
 import { addOutdoorLighting } from './outdoorLighting.js'
+import { shorelineLayer } from './cavernMaterial.js'
 
-export async function loadPlaced(url, signal, anisotropy, detail, cavern = false) {
+// GLTFLoader uses decodeGltfBufferAsync, but without a worker that API still
+// decompresses on the render thread. One shared worker bounds CPU/memory use.
+if (typeof Worker !== 'undefined' && MeshoptDecoder.supported) {
+  // This decoder API is not a React hook despite its upstream name.
+  const configureWorkers = MeshoptDecoder.useWorkers
+  try { configureWorkers(1) }
+  catch { configureWorkers(0) } // Retain loading on browsers/CSPs without workers.
+}
+
+export async function loadPlaced(url, signal, anisotropy, detail, cavern = false, onStage = () => {}) {
+  onStage('download')
   const response = await fetch(url, { signal })
   if (!response.ok) throw new Error(`Area request failed (${response.status})`)
   const data = await response.arrayBuffer()
   signal.throwIfAborted()
+  onStage('decode')
   const gltf = await new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).parseAsync(data, '/models/placed/')
   if (signal.aborted) { disposeZone(gltf.scene); signal.throwIfAborted() }
   gltf.scene.updateMatrixWorld(true)
@@ -21,7 +33,16 @@ export async function loadPlaced(url, signal, anisotropy, detail, cavern = false
     for (const texture of Object.values(node.material).filter(v => v?.isTexture)) {
       texture.anisotropy = anisotropy; texture.needsUpdate = true
     }
-    if (cavern || /Collision/.test(node.name)) return
+    if (cavern) {
+      if (node.name === 'CavernStructure_Rock') {
+        node.material.side = DoubleSide
+        node.material.normalScale.set(.22, .22)
+        node.material.onBeforeCompile = shorelineLayer
+        node.material.customProgramCacheKey = () => 'cavern-wet-stone-v3-enclosed-fog'
+      }
+      return
+    }
+    if (/Collision/.test(node.name)) return
     const original = node.material
     const stone = /Paving|Stone|Ruins|Courtyard|Arcades|Floor|Walls|Limestone|Tower|Perimeter|ForestPatch_Ground/.test(node.name)
     const bark = /Trees|Wood/.test(node.name)
@@ -50,8 +71,13 @@ export async function loadPlaced(url, signal, anisotropy, detail, cavern = false
       instances.instanceMatrix.needsUpdate = true
       instances.computeBoundingSphere()
       gltf.scene.add(instances)
+      // Markers are authoring data, not runtime objects. Their world transforms
+      // are now in the instance buffer; avoid walking them on every render.
+      placements.forEach(node => node.removeFromParent())
     }
   }
+  gltf.scene.updateMatrixWorld(true)
+  gltf.scene.traverse(node => { node.matrixAutoUpdate = false; node.matrixWorldAutoUpdate = false })
   return { ...gltf, nodes }
 }
 

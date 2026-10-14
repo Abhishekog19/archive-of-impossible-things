@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
-import { Html, useGLTF, useTexture } from '@react-three/drei'
+import { useGLTF, useTexture } from '@react-three/drei'
 import { RigidBody } from '@react-three/rapier'
 import { DoubleSide, MeshBasicMaterial, RepeatWrapping } from 'three'
 import manifest from '../config/placed-world.json'
-import { desiredAreas, requiredAreas } from '../config/placed-streaming'
+import { desiredAreas, requiredAreas, startupAreas } from '../config/placed-streaming'
 import { CAVERN_WATER } from '../config/cavern-water'
 import { useGameStore } from '../store'
 import { loadPlaced, disposePlaced } from './placedResource'
@@ -12,23 +12,47 @@ import { CavernSurfaces } from './CavernStructure'
 import CavernWater from './CavernWater'
 import { addBarkDetail, addStoneDetail } from './stoneDetail'
 import { addOutdoorLighting } from './outdoorLighting'
+import { prepareScene } from './prepareScene'
+import ScreenOverlay from '../ui/ScreenOverlay'
 
 function Area({ area, detail, report, attempt }) {
   const gl = useThree(s => s.gl)
+  const camera = useThree(s => s.camera)
+  const scene = useThree(s => s.scene)
   const [resource, setResource] = useState(null)
   useEffect(() => {
     const abort = new AbortController()
     const statuses = report.current
-    let owned
-    loadPlaced(area.url, abort.signal, Math.min(4, gl.capabilities.getMaxAnisotropy()), detail, area.id === 'cavern')
-      .then(value => { owned = value; setResource(value); statuses[area.id] = 'ready' })
-      .catch(() => { if (!abort.signal.aborted) statuses[area.id] = 'failed' })
-    return () => { abort.abort(); delete statuses[area.id]; if (owned) disposePlaced(owned.scene) }
-  }, [area, detail, gl, report, attempt])
+    let owned, preparing = true
+    const onStage = stage => { if (!abort.signal.aborted) statuses[area.id] = stage }
+    const cavern = area.id === 'cavern'
+    const anisotropy = Math.min(gl.capabilities.getMaxAnisotropy(), cavern ? useGameStore.getState().tier === 'low' ? 2 : 8 : 4)
+    async function prepare() {
+      try {
+        owned = await loadPlaced(area.url, abort.signal, anisotropy, detail, cavern, onStage)
+        await prepareScene(gl, owned.scene, camera, scene, abort.signal, onStage, [detail])
+        abort.signal.throwIfAborted()
+        setResource(owned)
+        onStage('ready')
+      } catch {
+        onStage('failed')
+      } finally {
+        preparing = false
+        if (abort.signal.aborted && owned) disposePlaced(owned.scene)
+      }
+    }
+    prepare()
+    return () => {
+      abort.abort(); delete statuses[area.id]
+      // compileAsync still polls the material's program. Keep it alive until
+      // preparation settles, even when travel/retry unmounts this area early.
+      if (!preparing && owned) disposePlaced(owned.scene)
+    }
+  }, [area, detail, gl, camera, scene, report, attempt])
   // Mesh-cell frustum culling handles visibility. Keep a retained area visible
   // until eviction instead of switching its whole silhouette at a second radius.
   return <group name={`Area_${area.id}`} dispose={null}>
-    {resource && (area.id === 'cavern' ? <CavernSurfaces nodes={resource.nodes} collision={false} />
+    {resource && (area.id === 'cavern' ? <CavernSurfaces nodes={resource.nodes} collision={false} prepared />
       : <primitive object={resource.scene} />)}
   </group>
 }
@@ -53,8 +77,9 @@ export default function StreamedWorld({ anchorZ = 6 }) {
     return [kind, material]
   })), [detail])
   useEffect(() => () => Object.values(boundaryMaterials).forEach(material => material.dispose()), [boundaryMaterials])
-  const [active, setActive] = useState(() => desiredAreas(anchorZ, manifest.zones, [], true))
-  const [waiting, setWaiting] = useState('loading')
+  const entry = useMemo(() => startupAreas(anchorZ, manifest.zones), [anchorZ])
+  const [active, setActive] = useState(() => startupAreas(anchorZ, manifest.zones))
+  const [waiting, setWaiting] = useState({ status: 'loading', ready: 0, total: 1, stage: 'download', entered: false })
   const [attempt, setAttempt] = useState(0)
   const report = useRef({})
   const bootstrapped = useRef(false)
@@ -69,9 +94,17 @@ export default function StreamedWorld({ anchorZ = 6 }) {
     if (timer.current < .15) return
     timer.current = 0
     const required = requiredAreas(camera.position.z, manifest.zones)
+    if (!bootstrapped.current) for (const id of entry) {
+      const area = manifest.zones.find(a => a.id === id)
+      if (!required.includes(area)) required.push(area)
+    }
     const ready = required.every(a => report.current[a.id] === 'ready')
     const status = ready ? '' : required.some(a => report.current[a.id] === 'failed') ? 'failed' : 'loading'
-    setWaiting(previous => previous === status ? previous : status)
+    const finished = required.filter(a => report.current[a.id] === 'ready').length
+    const stage = report.current[required.find(a => report.current[a.id] !== 'ready')?.id] || 'download'
+    const entered = bootstrapped.current || ready
+    setWaiting(previous => previous.status === status && previous.ready === finished && previous.total === required.length && previous.stage === stage && previous.entered === entered
+      ? previous : { status, ready: finished, total: required.length, stage, entered })
     if (useGameStore.getState().worldLoading !== !ready) useGameStore.setState({ worldLoading: !ready })
     if (ready) bootstrapped.current = true
     setActive(previous => {
@@ -95,10 +128,12 @@ export default function StreamedWorld({ anchorZ = 6 }) {
     {active.map(id => <Area key={`${id}-${attempt}`} area={manifest.zones.find(a => a.id === id)}
       detail={detail} report={report} attempt={attempt} />)}
     <CavernWater geometry={nodes.Pool_study.geometry} shoreline openingLight={CAVERN_WATER.opening} />
-    {waiting && <Html fullscreen style={{ pointerEvents: 'none' }}><div style={{ position: 'absolute', bottom: 28,
-      left: '50%', transform: 'translateX(-50%)', padding: '12px 18px', borderRadius: 8, background: '#202c36ed',
-      color: '#eef0e8', font: '14px system-ui', pointerEvents: 'auto', textAlign: 'center' }}>
-      {waiting === 'failed' ? <>This area couldn’t load. <button onClick={() => { report.current = {}; setAttempt(n => n + 1) }}>Retry</button></> : 'Preparing this area…'}
-    </div></Html>}
+    {/* Loading UI stays in screen space while the third-person camera settles. */}
+    {waiting.status && <ScreenOverlay><div className={`world-loading ${waiting.entered ? 'world-loading-travel' : ''}`} role="status" aria-live="polite">
+      <strong>{waiting.entered ? 'Preparing the path ahead' : 'Entering the Archive'}</strong>
+      {waiting.status === 'failed' ? <><p>This area couldn’t load.</p><button onClick={() => { report.current = {}; setAttempt(n => n + 1) }}>Retry</button></>
+        : <><p>{{ download: 'Loading the landscape…', decode: 'Unpacking the scenery…', textures: 'Preparing textures…', shaders: 'Preparing light and materials…' }[waiting.stage] || 'Preparing the landscape…'}</p>
+          <span>{waiting.ready} of {waiting.total} nearby areas ready</span></>}
+    </div></ScreenOverlay>}
   </>
 }

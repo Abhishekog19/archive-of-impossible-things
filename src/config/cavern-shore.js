@@ -1,4 +1,4 @@
-import shape from './cavern-shore.json'
+import shape from './cavern-shore.json' with { type: 'json' }
 
 // Blender reads the same coefficients for the visible bank and its collider.
 export const cavernShoreGLSL = `${shape.radius.toFixed(2)} + ${shape.lobes[0].toFixed(2)} * sin(3.0 * shoreAngle)

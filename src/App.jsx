@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
-import { Html } from '@react-three/drei'
+import ScreenOverlay from './ui/ScreenOverlay'
 import { Physics } from '@react-three/rapier'
 import { CAMERA, FOG, PALETTE, TIERS } from './config/look'
 import { effectiveDpr } from './config/tiers'
@@ -156,7 +156,9 @@ export default function App() {
             the cheapest possible stand-in for warm light against cool shade. */}
         {!patch && <hemisphereLight layers-mask={WORLD_AND_POOL_LAYERS} args={[PALETTE.sky, PALETTE.ground, greyroom ? 2.2 : 1.6]} />}
 
-        <Suspense fallback={<Html center><div className="scene-loading" role="status">Preparing the Archive…</div></Html>}>
+        <Suspense fallback={<ScreenOverlay><div className="world-loading" role="status">
+          <strong>Entering the Archive</strong><p>Loading the landscape…</p>
+        </div></ScreenOverlay>}>
           <Physics paused={!movementActive}>
             {cavernStudy ? <CavernStudy reference={reference} view={view} /> : zones ? <ZoneLoading playerRef={playerRef} reference={reference} view={view} /> : kit ? <AssetKit reference={reference} /> : greyroom ? <GreyRoom playerRef={playerRef} /> : <HubBlockout reference={reference} cornerView={cornerView} view={view} legacy={params.get('scene') === 'hub'} waterStudy={waterStudy} patch={patch} />}
             {!reference && <Player ref={playerRef} active={movementActive} recoverFalls={!greyroom} recoverToStart={cavernStudy} cornerStart={!kit && !zones && !waterStudy && !cavernStudy && cornerStart} start={cavernStudy ? 'cavern' : greyroom || kit || zones ? undefined : params.get('start') || (waterStudy ? 'cavern' : undefined)} />}

@@ -10,7 +10,7 @@ import { MeshoptDecoder } from 'meshoptimizer'
 import { BoxGeometry, Group, Matrix4, Mesh, MeshBasicMaterial, Object3D, Texture, Vector3 } from 'three'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import { loadPlaced, disposePlaced } from '../src/scenes/placedResource.js'
-import { desiredAreas, requiredAreas } from '../src/config/placed-streaming.js'
+import { desiredAreas, requiredAreas, startupAreas } from '../src/config/placed-streaming.js'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const manifest = JSON.parse(await fs.readFile(path.join(root, 'src/config/placed-world.json')))
@@ -21,9 +21,18 @@ const read = name => io.read(path.join(root, 'public/models', `${name}.glb`))
 test('entry loads only its area; hysteresis retains then evicts old areas', () => {
   assert.deepEqual(desiredAreas(6, manifest.zones, [], true), ['hub'])
   assert.deepEqual(desiredAreas(-195, manifest.zones, [], true), ['cavern'])
+  assert.deepEqual(startupAreas(6, manifest.zones), ['hub', 'patch'])
+  assert.deepEqual(startupAreas(-195, manifest.zones), ['cavern'])
+  for (const area of requiredAreas(-43, manifest.zones)) assert(startupAreas(-43, manifest.zones).includes(area.id))
   const aroundHub = desiredAreas(-30, manifest.zones, ['hub'])
   assert(aroundHub.includes('hub') && aroundHub.includes('approach'))
   assert(!desiredAreas(-195, manifest.zones, aroundHub).includes('hub'))
+  assert(!desiredAreas(6, manifest.zones, []).includes('cavern'))
+  assert(!desiredAreas(-12, manifest.zones, [], true).includes('hall'))
+  for (const z of [-12, -25, -36, -80, -144]) {
+    const prepared = desiredAreas(z, manifest.zones, [])
+    assert(prepared.includes('hall') && prepared.includes('cavern'), `portal not prepared ahead at ${z}`)
+  }
   for (const z of [30, 6, -20, -55, -80, -105, -135, -170, -220]) {
     const needed = requiredAreas(z, manifest.zones)
     assert(needed.length > 0)
@@ -206,7 +215,10 @@ test('streamed resource preserves marker transforms and releases owned GPU resou
   const matrix = new Matrix4(); instances.getMatrixAt(0, matrix)
   assert.deepEqual(new Vector3().setFromMatrixPosition(matrix).toArray(), [-8, 2, -9])
   assert.equal(template.visible, false)
-  assert.equal(stone.material.customProgramCacheKey(), 'patch-stone-study-v1-outdoor-light-v1')
+  assert.equal(stone.material.customProgramCacheKey(), 'patch-stone-study-v2-outdoor-light-v1')
+  assert.equal(marker.parent, null, 'authoring marker remains in the render traversal')
+  assert.equal(stone.matrixWorldAutoUpdate, false)
+  assert.equal(instances.matrixAutoUpdate, false)
   // Composing the light field must retain the existing close-range detail hook.
   const shader = { uniforms: {}, vertexShader: '#include <common>\n#include <begin_vertex>\n#include <project_vertex>',
     fragmentShader: '#include <common>\n#include <color_fragment>' }

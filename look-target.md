@@ -291,13 +291,22 @@ Extends spec §5 with the values this document introduces.
 
 | | High | Medium (baseline) | Low |
 |---|---|---|---|
-| DPR | 1.5 | 1.25 | 1.0 |
+| DPR | 1.5 | 1.0 | 1.0 |
 | Fog density | 0.030 | 0.038 | 0.050 |
 | Canopy layers | 3 | 2 | 2 |
 | Scatter density | 100% | 60% | 30% |
 | Postprocessing | Vignette + LUT + light bloom | Vignette + LUT | None |
 | Dust motes | Yes | Reduced | No |
 | Wind sway | Yes | Yes | Yes (it's free) |
+
+October 14 performance override: the user's working target is **50–55 FPS**.
+Medium starts at native resolution (DPR 1.0), reducing pixel work by 36% relative
+to DPR 1.25 at the same viewport. When the five-second average falls below
+50 FPS, reduce DPR by 0.125, down to 0.75, with an eight-second cooldown. Loading, settings, hidden pages and
+manual test stepping do not count. Automatic effects tiers may step down only
+after resolution reaches its floor; pinned tiers retain their effects. Reload
+or selecting quality resets resolution. This is a target, not a 55 FPS cap or
+a claim of device acceptance. Dated measurements below retain their original settings.
 
 **Scatter density is the best knob** — it scales continuously and needs no asset
 variants. Wind sway stays on at every tier because it costs nothing and its absence

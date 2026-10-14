@@ -8,6 +8,7 @@
  * read that fast. The probe writes here, the HUD samples on a timer.
  */
 export const perf = {
+  frames: 0,
   fps: 0,
   frameMs: 0,
   calls: 0,

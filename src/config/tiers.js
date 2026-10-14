@@ -20,16 +20,14 @@ import { TIERS } from './look'
  *    exactly at the thermal boundary. Promotion paths are a fresh session
  *    (which starts from the saved tier) or the user override.
  *
- * 3. SUSTAINED EVIDENCE. A demotion needs fps below the tier's floor
- *    continuously for WINDOW seconds -- an instantaneous dip (shader compile,
- *    GC, a texture upload) never moves the tier. Any healthy reading resets
- *    the accumulator, and a cooldown after each action stops one long stall
- *    from cascading straight through two tiers.
+ * 3. SUSTAINED EVIDENCE. The five-second average must fall below 50 FPS.
+ *    Individual healthy readings cannot hide an alternating fast/slow frame
+ *    pattern. Loading and pauses reset the probe; an eight-second cooldown
+ *    follows each action. performance.js owns the sampling policy.
  *
- * 4. BELOW LOW THERE IS NO TIER. Low is the floor; past it the governor sheds
- *    resolution instead, stepping the DPR down toward DPR_FLOOR. Thinning
- *    resolution is continuous and reversible-by-reload; there is nothing
- *    coarser left to cut.
+ * 4. RESOLUTION FIRST. Reduce DPR in small steps before changing effects.
+ *    At the resolution floor, an automatic tier can move down. Demotion keeps
+ *    the current resolution, so it never makes the next frame more expensive.
  *
  * 5. OVERRIDE FREEZES THE TIER, NOT THE GOVERNOR. A user who pins High has
  *    asked for High's assets and effects and gets them -- but DPR shedding
@@ -44,24 +42,7 @@ import { TIERS } from './look'
 export const TIER_ORDER = ['high', 'medium', 'low']
 
 export const PROBE = {
-  // Ignore the first seconds after load: WASM init, shader compile and the
-  // first texture uploads all produce garbage fps that says nothing about the
-  // device.
-  graceSeconds: 5,
-  // How long fps must stay below the floor, continuously, to act.
-  windowSeconds: 10,
-  // Healthy readings need to clear the floor by this margin to reset the
-  // accumulator -- readings inside the band neither charge nor reset it.
-  recoverMargin: 4,
-  // After any demotion or DPR step, wait this long before judging again: the
-  // scene just changed cost, so the old readings are about a different frame.
-  cooldownSeconds: 20,
-  // Per-tier fps floors. High exists for headroom effects -- if it cannot stay
-  // comfortably above the 30 floor there is no headroom and Medium's cheaper
-  // frame is strictly better. Medium and Low share the project's hard 30 fps
-  // floor (spec section 2), with a small allowance for measurement noise.
-  demoteBelow: { high: 45, medium: 28, low: 28 },
-  // Resolution shedding, once there is no tier left to drop.
+  // Resolution shedding before changing effects or while the tier is pinned.
   dprStep: 0.125,
   dprFloor: 0.75,
 }

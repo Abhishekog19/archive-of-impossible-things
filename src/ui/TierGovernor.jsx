@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { TIERS } from '../config/look'
-import { PROBE } from '../config/tiers'
+import { PROBE, effectiveDpr } from '../config/tiers'
+import { createFrameProbe, sampleFrameBudget, budgetAction } from '../config/performance'
 import { useGameStore } from '../store'
 import { perf } from './perf'
 
@@ -12,9 +13,8 @@ import { perf } from './perf'
  * authority for resolution and no fight between a prop and an imperative call.
  *
  * The rules it implements are numbered in config/tiers.js. In short: after a
- * grace period, fps continuously below the tier's floor for WINDOW seconds
- * demotes one tier (rule 2/3); on Low, or under a user override, it sheds DPR
- * instead (rules 4/5). Every action is followed by a cooldown, and hidden-tab
+ * grace period, sustained FPS below 50 sheds resolution, then reduces effects
+ * if automatic quality is already at the DPR floor. Every action has a cooldown; hidden-tab
  * frames are discarded -- the visibility pause makes their deltas meaningless.
  */
 export default function TierGovernor({ farOverride }) {
@@ -23,21 +23,18 @@ export default function TierGovernor({ farOverride }) {
   const demoteTier = useGameStore((s) => s.demoteTier)
   const shedDpr = useGameStore((s) => s.shedDpr)
 
-  const clock = useRef(0)
-  const badTime = useRef(0)
-  const holdUntil = useRef(PROBE.graceSeconds)
+  const probe = useRef(createFrameProbe())
   const skipFrame = useRef(false)
 
   useEffect(() => {
     const reset = () => {
-      badTime.current = 0
-      holdUntil.current = clock.current + PROBE.graceSeconds
+      probe.current = createFrameProbe()
       skipFrame.current = true
     }
     reset()
     document.addEventListener('visibilitychange', reset)
     const unsubscribe = useGameStore.subscribe((state, previous) => {
-      if (state.settingsOpen !== previous.settingsOpen) reset()
+      if (state.settingsOpen !== previous.settingsOpen || state.worldLoading !== previous.worldLoading) reset()
     })
     return () => { document.removeEventListener('visibilitychange', reset); unsubscribe() }
   }, [tier, tierOverride])
@@ -58,38 +55,13 @@ export default function TierGovernor({ farOverride }) {
 
     // A hidden tab pauses physics and rAF; whatever perf.fps says around that
     // boundary is about the pause, not the device.
-    if (document.hidden || useGameStore.getState().settingsOpen || skipFrame.current) {
-      badTime.current = 0
-      skipFrame.current = false
-      return
-    }
-    clock.current += delta
-    if (clock.current < holdUntil.current) return
-
-    const fps = perf.fps
-    if (fps <= 0) return // probe not warmed up yet
-
-    const floor = PROBE.demoteBelow[tier]
-    if (fps < floor) {
-      badTime.current += delta
-    } else if (fps > floor + PROBE.recoverMargin) {
-      // Healthy by a clear margin: the dip ended. Readings inside the band
-      // neither charge nor reset, so hovering at the floor still accumulates.
-      badTime.current = 0
-    }
-
-    if (badTime.current < PROBE.windowSeconds) return
-
-    // Sustained undershoot -- act once, then hold judgement while the scene
-    // settles at its new cost.
-    badTime.current = 0
-    holdUntil.current = clock.current + PROBE.cooldownSeconds
-
-    if (tierOverride || tier === 'low') {
-      shedDpr() // rules 4 and 5: nothing coarser left to cut, or tier pinned
-    } else {
-      demoteTier()
-    }
+    const game = useGameStore.getState()
+    const paused = document.hidden || game.settingsOpen || game.worldLoading || game.physicsForced || skipFrame.current
+    skipFrame.current = false
+    if (!sampleFrameBudget(probe.current, delta, perf.fps, paused)) return
+    const action = budgetAction(effectiveDpr(tier, game.dprDrop), PROBE.dprFloor, tierOverride, tier)
+    if (action === 'resolution') shedDpr()
+    else if (action === 'tier') demoteTier()
   })
 
   return null

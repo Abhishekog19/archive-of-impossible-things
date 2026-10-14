@@ -10,6 +10,9 @@ export function addOutdoorLighting(material) {
       varying vec3 lightWorldPoint;
     `).replace('#include <project_vertex>', `
       vec4 lightPoint = vec4(transformed, 1.0);
+      #ifdef USE_BATCHING
+        lightPoint = batchingMatrix * lightPoint;
+      #endif
       #ifdef USE_INSTANCING
         lightPoint = instanceMatrix * lightPoint;
       #endif
@@ -40,5 +43,5 @@ export function addOutdoorLighting(material) {
       diffuseColor.rgb *= mix(vec3(1.0), mix(vec3(.78, .84, .87), vec3(1.05, 1.03, .97), nave), hall);
     `)
   }
-  material.customProgramCacheKey = () => previousKey + '-outdoor-light-v1'
+  material.customProgramCacheKey = () => previousKey + '-outdoor-light-v2'
 }

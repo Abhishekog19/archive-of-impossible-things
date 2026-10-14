@@ -8,6 +8,7 @@ import {
   persistAutoTier,
   persistOverride,
   tierBelow,
+  effectiveDpr,
 } from './config/tiers'
 
 // Resolved once, at module load, so the first Canvas mount already renders at
@@ -81,8 +82,7 @@ export const useGameStore = create((set, get) => ({
   tier: initialTier.tier,
   tierSource: initialTier.source,
   tierOverride: initialTier.source === 'override' ? initialTier.tier : null,
-  // Resolution shed by the governor once there is no tier left below (or the
-  // tier is pinned), in DPR units. Never persisted -- it describes a thermal
+  // Resolution shed before changing effects, in DPR units. Never persisted -- it describes a thermal
   // state, not the device.
   dprDrop: 0,
 
@@ -92,7 +92,8 @@ export const useGameStore = create((set, get) => ({
     const next = tierBelow(s.tier)
     if (!next) return
     persistAutoTier(next) // next session starts here instead of re-failing
-    set({ tier: next, tierSource: 'demoted', dprDrop: 0 })
+    set({ tier: next, tierSource: 'demoted',
+      dprDrop: Math.max(0, TIERS[next].dpr - effectiveDpr(s.tier, s.dprDrop)) })
   },
 
   shedDpr: () =>

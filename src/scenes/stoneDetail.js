@@ -8,8 +8,12 @@ export function addStoneDetail(material, texture, study = false) {
       varying vec3 stonePoint, stoneNormal;
     `).replace('#include <begin_vertex>', `
       #include <begin_vertex>
-      stonePoint = (modelMatrix * vec4(position, 1.0)).xyz;
-      stoneNormal = normalize(mat3(modelMatrix) * normal);
+      mat4 stoneMatrix = modelMatrix;
+      #ifdef USE_BATCHING
+        stoneMatrix = modelMatrix * batchingMatrix;
+      #endif
+      stonePoint = (stoneMatrix * vec4(position, 1.0)).xyz;
+      stoneNormal = normalize(mat3(stoneMatrix) * normal);
     `)
     shader.fragmentShader = shader.fragmentShader.replace('#include <common>', `
       #include <common>
@@ -45,7 +49,7 @@ export function addStoneDetail(material, texture, study = false) {
       }
     `)
   }
-  material.customProgramCacheKey = () => study ? 'patch-stone-study-v2' : 'world-stone-detail-v2'
+  material.customProgramCacheKey = () => study ? 'patch-stone-study-v3' : 'world-stone-detail-v3'
 }
 
 // A narrow, metre-scaled directional layer keeps large baked trunk atlases
@@ -58,8 +62,12 @@ export function addBarkDetail(material, texture, study = false) {
       varying vec3 barkPoint, barkNormal;
     `).replace('#include <begin_vertex>', `
       #include <begin_vertex>
-      barkPoint = (modelMatrix * vec4(position, 1.0)).xyz;
-      barkNormal = normalize(mat3(modelMatrix) * normal);
+      mat4 barkMatrix = modelMatrix;
+      #ifdef USE_BATCHING
+        barkMatrix = modelMatrix * batchingMatrix;
+      #endif
+      barkPoint = (barkMatrix * vec4(position, 1.0)).xyz;
+      barkNormal = normalize(mat3(barkMatrix) * normal);
     `)
     shader.fragmentShader = shader.fragmentShader.replace('#include <common>', `
       #include <common>
@@ -92,5 +100,5 @@ export function addBarkDetail(material, texture, study = false) {
       }
     `)
   }
-  material.customProgramCacheKey = () => study ? 'patch-bark-study-v2' : 'world-bark-detail-v2'
+  material.customProgramCacheKey = () => study ? 'patch-bark-study-v3' : 'world-bark-detail-v3'
 }

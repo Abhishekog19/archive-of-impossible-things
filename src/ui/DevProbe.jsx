@@ -236,7 +236,10 @@ export default function DevProbe({ playerRef }) {
           new PointerEvent('pointermove', { pointerId: 1, clientX: px, bubbles: true }),
         )
         el.dispatchEvent(new PointerEvent('pointerup', { pointerId: 1, bubbles: true }))
-        handle.step(2)
+        // Live traversal already advances through rAF. Extra manual frames here
+        // render the world three times per display frame and feed synthetic
+        // deltas into the FPS governor. Only stepped movement tests need this.
+        if (getState().frameloop === 'never') handle.step(2)
         return handle.state().cameraYaw
       },
 

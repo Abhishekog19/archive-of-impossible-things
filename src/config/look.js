@@ -1,3 +1,5 @@
+import { PERFORMANCE } from './performance.js'
+
 /**
  * The numbers from look-target.md, in code, once.
  *
@@ -135,7 +137,7 @@ export const CANOPY_UNDERSIDE =
 
 export const TIERS = {
   high: { dpr: 1.5, fogDensity: FOG.density.high, far: FOG.opaqueAt.high },
-  medium: { dpr: 1.25, fogDensity: FOG.density.medium, far: FOG.opaqueAt.medium },
+  medium: { dpr: 1.0, fogDensity: FOG.density.medium, far: FOG.opaqueAt.medium },
   low: { dpr: 1.0, fogDensity: FOG.density.low, far: FOG.opaqueAt.low },
 }
 
@@ -143,4 +145,4 @@ export const TIERS = {
 // Watched by the dev HUD from M1 onward so a regression is visible the session
 // it happens, not at M13.
 
-export const BUDGET = { drawCalls: 150, triangles: 300_000, fps: 30 }
+export const BUDGET = { drawCalls: 150, triangles: 300_000, fps: PERFORMANCE.minimumFps }

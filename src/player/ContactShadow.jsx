@@ -33,14 +33,20 @@ export default function ContactShadow({ controllerRef }) {
       receivers.current.elapsed = 0
       receivers.current.meshes = []
       scene.traverse(node => {
-        if (node.isMesh && node.visible && !/Collision|Prototype/.test(node.name)
+        if (node.isMesh && !node.isBatchedMesh && (node.visible || node.userData.batchedSurface) && !/Collision|Prototype/.test(node.name)
           && /Paving|Forest(?:Patch|Approach|Canopy)_(?:Stone|Ground)|Courtyard|ArchiveHall_Floor|CavernStructure_Rock/.test(node.name)) {
           receivers.current.meshes.push(node)
         }
       })
     }
     visualRay.ray.origin.set(origin.x, origin.y + .3, origin.z)
-    const visual = visualRay.intersectObjects(receivers.current.meshes, false)[0]
+    // A cached receiver can outlive an evicted area by half a second. Ignore
+    // detached surfaces; batched originals keep the same cheap per-cell raycast.
+    const attached = receivers.current.meshes.filter(node => {
+      for (let parent = node.parent; parent; parent = parent.parent) if (parent === scene) return true
+      return false
+    })
+    const visual = visualRay.intersectObjects(attached, false)[0]
     ray.origin.x = origin.x; ray.origin.y = origin.y + .3; ray.origin.z = origin.z
     const centre = world.castRayAndGetNormal(ray, 3.3, true, rapier.QueryFilterFlags.EXCLUDE_SENSORS,
       undefined, undefined, body)

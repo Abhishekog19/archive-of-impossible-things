@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useGameStore } from '../store'
+import { PERFORMANCE, summarizeFrameTimes } from '../config/performance'
 
 const yieldUI = () => new Promise(resolve => setTimeout(resolve, 20))
 const key = (code, down) => window.dispatchEvent(new KeyboardEvent(down ? 'keydown' : 'keyup', { code }))
@@ -45,7 +46,8 @@ export default function MovementReview() {
     try {
       probe.manual(true)
       await yieldUI()
-      if (kind === 'performance') {
+      if (kind === 'performance' || kind === 'performance-quick') {
+        const duration = kind === 'performance-quick' ? 60000 : 180000
         await place([0, 2, 6])
         probe.manual(false)
         const route = [[0, -5], [-12, -20], [-12, -43], [-10, -56], [-12, -68],
@@ -53,10 +55,14 @@ export default function MovementReview() {
           [-22, -176], [-30, -181], [-33, -195], [-30, -181], [-22, -176],
           [-12, -174], [-12, -141], [-12, -123], [-12, -98], [-15, -82],
           [-12, -68], [-10, -56], [-12, -43], [-12, -20], [0, -5], [0, 6]]
-        const samples = [], start = performance.now()
+        const samples = [], frameTimes = [], start = performance.now()
+        const firstRenderFrame = probe.perf.frames
+        let previousFrame = start
         let last = start, frames = 0, total = 0, waypoint = 0, hidden = 0
-        while (performance.now() - start < 180000) {
+        while (performance.now() - start < duration) {
           const now = await new Promise(resolve => requestAnimationFrame(resolve))
+          frameTimes.push(now - previousFrame)
+          previousFrame = now
           frames++; total++
           if (document.hidden) hidden++
           const p = pos(), [x, z] = route[waypoint % route.length]
@@ -67,16 +73,20 @@ export default function MovementReview() {
             samples.push({ seconds: round((now - start) / 1000), fps: round(frames * 1000 / (now - last)),
               ...Object.fromEntries(['calls', 'triangles', 'geometries', 'textures', 'dpr'].map(k => [k, probe.perf[k]])),
               x: round(p.x), z: round(p.z), loading: useGameStore.getState().worldLoading })
-            setResults([{ name: 'Live traversal', pass: true, detail: `${Math.floor((now - start) / 1000)} / 180 seconds; ${waypoint} waypoints` }])
+            setResults([{ name: 'Live traversal', pass: true, detail: `${Math.floor((now - start) / 1000)} / ${duration / 1000} seconds; ${waypoint} waypoints` }])
             last = now; frames = 0
           }
         }
         release()
         const seconds = (performance.now() - start) / 1000
         const report = { seconds: round(seconds), averageFps: round(total / seconds), hiddenFrames: hidden,
-          waypoints: waypoint, tier: useGameStore.getState().tier, samples }
+          waypoints: waypoint, tier: useGameStore.getState().tier,
+          renderFrames: probe.perf.frames - firstRenderFrame, animationFrames: total,
+          targetFps: PERFORMANCE.minimumFps, ...summarizeFrameTimes(frameTimes), samples }
         setPerformanceReport(report)
-        record('Three-minute live traversal', hidden === 0 && waypoint >= route.length && report.averageFps >= 30,
+        const singleRender = Math.abs(report.renderFrames - report.animationFrames) <= 2
+        record(`${duration / 1000}-second live traversal`, hidden === 0 && singleRender &&
+          (duration === 60000 || waypoint >= route.length) && report.averageFps >= PERFORMANCE.minimumFps,
           `${report.averageFps} FPS; ${waypoint} waypoints; ${hidden} hidden frames`)
       } else if (kind === 'contact') {
         for (const [name, at] of [['Hub', [0, 2, 4]], ['Forest', [-12, 3, -43]],
@@ -339,6 +349,7 @@ export default function MovementReview() {
       <button disabled={busy} onClick={() => run('shore')}>Walk complete shoreline</button>
       <button disabled={busy} onClick={() => run('home')}>Walk back to hub</button>
       <button disabled={busy} onClick={() => run('contact')}>Check world contact shading</button>
+      <button disabled={busy} onClick={() => run('performance-quick')}>Run 60-second rendering check</button>
       <button disabled={busy} onClick={() => run('performance')}>Run weekly 3-minute traversal</button>
     </>}</div>
     <p>{busy ? 'Walking the actual physics scene…' : 'Ready — choose a check'}</p>

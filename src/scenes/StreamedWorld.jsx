@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { useGLTF, useTexture } from '@react-three/drei'
 import { RigidBody } from '@react-three/rapier'
-import { DoubleSide, MeshBasicMaterial, RepeatWrapping } from 'three'
+import { DoubleSide, Group, Mesh, MeshBasicMaterial, RepeatWrapping } from 'three'
 import manifest from '../config/placed-world.json'
 import { desiredAreas, requiredAreas, startupAreas } from '../config/placed-streaming'
 import { CAVERN_WATER } from '../config/cavern-water'
@@ -14,6 +14,7 @@ import { addBarkDetail, addStoneDetail } from './stoneDetail'
 import { addOutdoorLighting } from './outdoorLighting'
 import { prepareScene } from './prepareScene'
 import ScreenOverlay from '../ui/ScreenOverlay'
+import { batchStaticMeshes } from './staticBatches'
 
 function Area({ area, detail, report, attempt }) {
   const gl = useThree(s => s.gl)
@@ -29,7 +30,7 @@ function Area({ area, detail, report, attempt }) {
     const anisotropy = Math.min(gl.capabilities.getMaxAnisotropy(), cavern ? useGameStore.getState().tier === 'low' ? 2 : 8 : 4)
     async function prepare() {
       try {
-        owned = await loadPlaced(area.url, abort.signal, anisotropy, detail, cavern, onStage)
+        owned = await loadPlaced(area.url, abort.signal, anisotropy, detail, cavern, onStage, gl.extensions.has('WEBGL_multi_draw'))
         await prepareScene(gl, owned.scene, camera, scene, abort.signal, onStage, [detail])
         abort.signal.throwIfAborted()
         setResource(owned)
@@ -77,6 +78,32 @@ export default function StreamedWorld({ anchorZ = 6 }) {
     return [kind, material]
   })), [detail])
   useEffect(() => () => Object.values(boundaryMaterials).forEach(material => material.dispose()), [boundaryMaterials])
+  const residentRoot = useRef(null)
+  useEffect(() => {
+    const parent = residentRoot.current, group = new Group()
+    const backdrop = new MeshBasicMaterial({ vertexColors: true, side: DoubleSide })
+    for (const node of residentNodes.filter(n => !/Collision|Pool_study/.test(n.name))) {
+      const material = node.name.startsWith('HubBoundary_') ? boundaryMaterials[node.name.split('_')[1]]
+        : node.name.startsWith('WoodlandBackdrop') ? backdrop : node.material
+      const mesh = new Mesh(node.geometry, material)
+      mesh.name = node.name
+      mesh.matrix.copy(node.matrixWorld)
+      mesh.matrixAutoUpdate = false
+      group.add(mesh)
+    }
+    // Without multi-draw, keep ordinary meshes instead of adding vertex-texture
+    // work for the same number of submissions on a less capable browser.
+    const batches = gl.extensions.has('WEBGL_multi_draw') ? batchStaticMeshes(group) : []
+    group.updateMatrixWorld(true)
+    group.traverse(node => { node.matrixAutoUpdate = false; node.matrixWorldAutoUpdate = false })
+    parent.add(group)
+    return () => {
+      parent.remove(group)
+      batches.forEach(batch => batch.dispose())
+      backdrop.dispose()
+      // Original resident geometry/materials belong to the useGLTF cache.
+    }
+  }, [residentNodes, boundaryMaterials, gl])
   const entry = useMemo(() => startupAreas(anchorZ, manifest.zones), [anchorZ])
   const [active, setActive] = useState(() => startupAreas(anchorZ, manifest.zones))
   const [waiting, setWaiting] = useState({ status: 'loading', ready: 0, total: 1, stage: 'download', entered: false })
@@ -115,12 +142,7 @@ export default function StreamedWorld({ anchorZ = 6 }) {
   })
   // Collision is resident even while a visual package downloads or is evicted.
   return <>
-    {residentNodes.filter(n => !/Collision|Pool_study/.test(n.name)).map(node =>
-      <mesh key={node.name} name={node.name} geometry={node.geometry}
-        material={node.name.startsWith('HubBoundary_') ? boundaryMaterials[node.name.split('_')[1]] : node.material}
-        matrixAutoUpdate={false} matrix={node.matrixWorld}>
-        {node.name.startsWith('WoodlandBackdrop') && <meshBasicMaterial vertexColors side={DoubleSide} />}
-      </mesh>)}
+    <group ref={residentRoot} dispose={null} />
     <RigidBody type="fixed" colliders="trimesh" includeInvisible>
       {residentNodes.filter(n => /Collision/.test(n.name)).map(node =>
         <mesh key={node.name} geometry={node.geometry} visible={false} matrixAutoUpdate={false} matrix={node.matrixWorld} />)}

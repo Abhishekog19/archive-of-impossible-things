@@ -215,7 +215,7 @@ test('streamed resource preserves marker transforms and releases owned GPU resou
   const matrix = new Matrix4(); instances.getMatrixAt(0, matrix)
   assert.deepEqual(new Vector3().setFromMatrixPosition(matrix).toArray(), [-8, 2, -9])
   assert.equal(template.visible, false)
-  assert.equal(stone.material.customProgramCacheKey(), 'patch-stone-study-v2-outdoor-light-v1')
+  assert.equal(stone.material.customProgramCacheKey(), 'patch-stone-study-v3-outdoor-light-v2')
   assert.equal(marker.parent, null, 'authoring marker remains in the render traversal')
   assert.equal(stone.matrixWorldAutoUpdate, false)
   assert.equal(instances.matrixAutoUpdate, false)

@@ -5,6 +5,7 @@ import { disposeZone } from './zoneResource.js'
 import { addBarkDetail, addStoneDetail } from './stoneDetail.js'
 import { addOutdoorLighting } from './outdoorLighting.js'
 import { shorelineLayer } from './cavernMaterial.js'
+import { batchStaticMeshes, disposeStaticBatches } from './staticBatches.js'
 
 // GLTFLoader uses decodeGltfBufferAsync, but without a worker that API still
 // decompresses on the render thread. One shared worker bounds CPU/memory use.
@@ -15,7 +16,7 @@ if (typeof Worker !== 'undefined' && MeshoptDecoder.supported) {
   catch { configureWorkers(0) } // Retain loading on browsers/CSPs without workers.
 }
 
-export async function loadPlaced(url, signal, anisotropy, detail, cavern = false, onStage = () => {}) {
+export async function loadPlaced(url, signal, anisotropy, detail, cavern = false, onStage = () => {}, batching = true) {
   onStage('download')
   const response = await fetch(url, { signal })
   if (!response.ok) throw new Error(`Area request failed (${response.status})`)
@@ -76,12 +77,14 @@ export async function loadPlaced(url, signal, anisotropy, detail, cavern = false
       placements.forEach(node => node.removeFromParent())
     }
   }
+  if (!cavern && batching) batchStaticMeshes(gltf.scene)
   gltf.scene.updateMatrixWorld(true)
   gltf.scene.traverse(node => { node.matrixAutoUpdate = false; node.matrixWorldAutoUpdate = false })
   return { ...gltf, nodes }
 }
 
 export function disposePlaced(scene) {
+  disposeStaticBatches(scene)
   scene.traverse(node => { if (node.isInstancedMesh) node.dispose() })
   disposeZone(scene)
 }

@@ -23,6 +23,7 @@ export default function PerfProbe() {
   const window_ = useRef({ frames: 0, elapsed: 0 })
 
   useFrame((_, delta) => {
+    perf.frames++
     const w = window_.current
     w.frames += 1
     w.elapsed += delta

@@ -1,4 +1,4 @@
-# Remaining environment milestone work — October 13, 2026
+# Remaining environment milestone work — October 14, 2026
 
 The five original audit implementation phases have been delivered. Their remaining
 art and acceptance gaps are grouped below; these are work groups, not new numbered
@@ -26,3 +26,11 @@ The October 13 local weekly review is recorded separately: 28.51 average FPS fai
 the performance gate. Optimization therefore takes priority over further art
 expansion. The next routine review is October 20. Desktop browser results do not
 establish actual-phone behavior or deployment parity.
+
+October 14 handoff: the focused loading pass is implemented. The final targeted
+October 13 run averaged 38.84 FPS with no sampled area-loading pauses; draw and
+triangle budgets and the 60 FPS goal still fail. Entry shader/texture preparation,
+earlier portal loading and a decoder worker are in place. See
+[the loading review](LOADING_PERFORMANCE_PASS_2026-10-14.md). The count remains
+six open work groups, with performance still first; cold-start transfer, resource
+stability, real-phone and live Vercel evidence remain outstanding.

@@ -1,5 +1,22 @@
 # Current plan — Archive of Impossible Things
 
+October 14 loading/performance handoff: entry preparation now covers the first
+adjacent area, uploads textures across frames, compiles shaders before releasing
+streamed areas and decompresses geometry in a worker. Portal preparation starts
+earlier; static marker/matrix and distant detail work are reduced. All 39 tests,
+changed-JavaScript lint and the production build pass. The final October 13
+targeted traversal averaged 38.84 FPS / 87 waypoints, with zero hidden frames and
+zero samples reporting area loading. The 60 FPS goal and visible geometry/draw
+budgets still fail. All 20 connected-route checkpoints, production entry,
+narrow-screen quality switching and deliberately delayed loading pass; the
+loader's camera-relative positioning was corrected during this final check.
+Next work remains rendering cost and cold-start/resource
+verification before more art expansion. See
+[the loading review](LOADING_PERFORMANCE_PASS_2026-10-14.md) and
+[Vercel deployment notes](VERCEL_DEPLOYMENT.md). Six work groups remain open;
+this loading pass does not close the performance group. Preserve the existing
+hub-blockout source edit. Routine weekly review remains October 20.
+
 October 13 hub depth pass is implemented and locally checked: tapered crown
 branches, six middle-layer trees and three low terrain shoulders improve the
 REF4 composition. Before/after reference and player-height comparisons, ten
@@ -7,7 +24,7 @@ hub/arrival/overlook checkpoints, all 36 tests and the production build pass.
 Resident/collision and all six other area packages are byte-for-byte unchanged.
 See [the hub depth review](HUB_DEPTH_PASS_2026-10-13.md).
 
-Today's weekly local measurement **fails performance acceptance**: 28.51 average
+The October 13 pre-fix weekly measurement **fails performance acceptance**: 28.51 average
 FPS over 180.03 seconds / 67 waypoints on Medium, with zero hidden frames.
 Peaks are 309 calls and 799,919 triangles; forest loading and return views need
 priority. Production entry and narrow-screen quality switching pass. See

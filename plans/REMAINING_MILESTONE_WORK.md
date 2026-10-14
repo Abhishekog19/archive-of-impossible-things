@@ -1,5 +1,12 @@
 # Remaining environment milestone work — October 14, 2026
 
+Latest rendering pass: **59.31 FPS** over a corrected 60-second local check,
+with 65 peak rendering submissions. The user's target is now **50–55 FPS**.
+Earlier traversal FPS figures below used a faulty extra-render steering helper
+and are not normal-play rates. Sustained, geometry/resource, phone and deployment
+acceptance remain open; the count is still six groups. See
+[the rendering review](RENDER_COST_PASS_2026-10-14.md).
+
 The five original audit implementation phases have been delivered. Their remaining
 art and acceptance gaps are grouped below; these are work groups, not new numbered
 audit phases or a promise that one iteration will close each group.
@@ -11,7 +18,7 @@ audit phases or a promise that one iteration will close each group.
 | Archive and hall | REF7/REF8 soft stone shading, repeated courses, facade/root hierarchy and window/descent landscape depth. |
 | Cavern | REF10 dome and wall massing, angular joins, repeated surfaces and shore segmentation. |
 | Character | Approved Ruin Runner likeness, face/hair, garment silhouette and wear, plus final deformation/animation acceptance. |
-| Performance | Visible geometry/draw budgets, the 60 FPS goal, startup transfer and resource stability; use weekly measurements to select fixes. |
+| Performance | Sustain the new 50–55 FPS target, visible geometry budgets, startup transfer and resource stability; use corrected measurements to select fixes. |
 | Final acceptance | Whole-world reference/player comparisons, connected roaming, production/deployment parity and actual phone evidence. |
 
 Seven work groups were open at the start of October 13. The focused hub depth pass

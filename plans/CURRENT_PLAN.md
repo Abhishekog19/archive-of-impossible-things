@@ -1,5 +1,17 @@
 # Current plan — Archive of Impossible Things
 
+October 14 rendering-cost update: the user selected a **50–55 FPS working target**.
+Static multi-draw batching and native-resolution Medium rendering are implemented;
+the governor reacts to a five-second average below 50 before reducing effects.
+The corrected local 60-second check averaged **59.31 FPS**, p95 16.8 ms, with
+65 peak submissions and matching render/animation-frame counts. All 44 tests,
+changed-file lint, build and eight contact checks pass. A benchmark bug forced
+extra manual frames during live steering: earlier traversal FPS figures below
+are historical diagnostics, not valid normal-play rates. Sustained/phone/Vercel,
+resource/startup and triangle-budget acceptance remain open. See
+[the rendering review](RENDER_COST_PASS_2026-10-14.md). Six work groups remain;
+the next routine broad review stays October 20.
+
 October 14 loading/performance handoff: entry preparation now covers the first
 adjacent area, uploads textures across frames, compiles shaders before releasing
 streamed areas and decompresses geometry in a worker. Portal preparation starts

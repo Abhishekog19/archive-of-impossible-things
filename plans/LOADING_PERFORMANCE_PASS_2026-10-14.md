@@ -1,5 +1,10 @@
 # Loading and performance pass — October 14, 2026
 
+**Later October 14 correction:** the live traversal forced extra manual renders
+and reset the render clock on steering. Its FPS figures below are historical
+diagnostics, not normal-play rates. Loading/UI checks remain valid. See the
+[corrected rendering review](RENDER_COST_PASS_2026-10-14.md).
+
 The loading implementation and targeted measurements were completed October 13;
 the final production review and handoff continued October 14 after an automatic
 approval-review usage limit interrupted browser access. Performance acceptance

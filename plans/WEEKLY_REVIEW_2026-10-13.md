@@ -1,5 +1,10 @@
 # Weekly local technical review — October 13, 2026
 
+**October 14 correction:** the live traversal forced two extra manual renders on
+each steering update. Its FPS figures below do not represent normal play. Keep
+this historical trace for diagnosis; use the corrected runner and
+[rendering review](RENDER_COST_PASS_2026-10-14.md) for current performance evidence.
+
 The local review is recorded after the hub depth pass. The performance gate fails;
 the next batch should address rendering/loading cost before adding more scenery.
 

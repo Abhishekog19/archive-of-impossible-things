@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from 'react'
-import { Color, Object3D, Quaternion, Vector3 } from 'three'
+import { Color, CylinderGeometry, MeshBasicMaterial, Object3D, Quaternion, ShaderMaterial, Vector3 } from 'three'
 import { CAVERN_LOOK } from '../config/cavern-look'
 import { WORLD_AND_POOL_LAYERS } from '../config/cavern-water'
 import { useGameStore } from '../store'
@@ -48,6 +48,20 @@ export default function CavernLight({ openingGeometry }) {
       uniforms: { tint: { value: new Color(CAVERN_LOOK.shaft) }, strength: { value: CAVERN_LOOK.shaftOpacity } },
     }
   }, [])
+  // Streamed areas disable automatic disposal to protect their owned GLB data.
+  // These generated resources have a separate owner and must leave with the light.
+  const openingMaterial = useMemo(() => new MeshBasicMaterial({
+    color: CAVERN_LOOK.opening, toneMapped: false, fog: false,
+  }), [])
+  const shaftGeometry = useMemo(() => new CylinderGeometry(CAVERN_LOOK.shaftTopRadius,
+    CAVERN_LOOK.shaftBottomRadius, setup.length, tier === 'low' ? 16 : 32, 1, true), [setup, tier])
+  const shaftMaterial = useMemo(() => new ShaderMaterial({
+    vertexShader: vertex, fragmentShader: fragment, uniforms: setup.uniforms,
+    transparent: true, depthWrite: false,
+  }), [setup])
+  useEffect(() => () => openingMaterial.dispose(), [openingMaterial])
+  useEffect(() => () => shaftGeometry.dispose(), [shaftGeometry])
+  useEffect(() => () => shaftMaterial.dispose(), [shaftMaterial])
   useEffect(() => { setup.target.updateMatrixWorld() }, [setup])
   return <>
     <primitive object={setup.target} />
@@ -56,15 +70,10 @@ export default function CavernLight({ openingGeometry }) {
       angle={CAVERN_LOOK.keyAngle} penumbra={.8} distance={55} decay={2} />
     <pointLight layers-mask={WORLD_AND_POOL_LAYERS} position={CAVERN_LOOK.fillPosition}
       color={CAVERN_LOOK.keyColour} intensity={CAVERN_LOOK.fillIntensity} distance={48} decay={2} />
-    <mesh name="Cavern_Oculus" geometry={openingGeometry} layers-mask={WORLD_AND_POOL_LAYERS}>
-      <meshBasicMaterial color={CAVERN_LOOK.opening} toneMapped={false} fog={false} />
-    </mesh>
+    <mesh name="Cavern_Oculus" geometry={openingGeometry} material={openingMaterial}
+      layers-mask={WORLD_AND_POOL_LAYERS} dispose={null} />
     {fogEnabled && <mesh name="Cavern_SkylightShaft" position={setup.centre} quaternion={setup.rotation}
-      scale={[1, 1, .72]} layers-mask={WORLD_AND_POOL_LAYERS} renderOrder={1}>
-      <cylinderGeometry args={[CAVERN_LOOK.shaftTopRadius, CAVERN_LOOK.shaftBottomRadius,
-        setup.length, tier === 'low' ? 16 : 32, 1, true]} />
-      <shaderMaterial vertexShader={vertex} fragmentShader={fragment} uniforms={setup.uniforms}
-        transparent depthWrite={false} />
-    </mesh>}
+      scale={[1, 1, .72]} layers-mask={WORLD_AND_POOL_LAYERS} renderOrder={1}
+      geometry={shaftGeometry} material={shaftMaterial} dispose={null} />}
   </>
 }

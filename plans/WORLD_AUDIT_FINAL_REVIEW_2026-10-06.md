@@ -1,5 +1,11 @@
 # World audit correction and verification review — October 6, 2026
 
+Measurement correction, October 15: live traversal FPS figures in this historical
+review used a steering helper that forced extra manual renders. They are not
+valid normal-play FPS rates. The helper is fixed; the current corrected sustained
+result is 58.64 FPS. See [the final verification](ENVIRONMENT_FINAL_VERIFICATION_2026-10-15.md)
+for current results, reference differences and acceptance limits.
+
 The October 5–6 correction pass extends Phase 5 across all six environment areas.
 The local verification pass follows it in the same authorized session. This is
 not an 80% similarity score, final character acceptance or real-phone approval.

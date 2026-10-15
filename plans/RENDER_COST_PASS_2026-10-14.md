@@ -1,5 +1,11 @@
 # Rendering cost pass — October 14, 2026
 
+October 15 follow-up: the corrected three-minute check now passes at 58.64 FPS.
+The final-verification pass also fixed a cavern light resource leak and verified
+stable counts on repeated visits. See [the final report](ENVIRONMENT_FINAL_VERIFICATION_2026-10-15.md)
+for complete metrics and remaining acceptance limits. Pending sustained checks
+described below record the earlier state.
+
 The working target is now **50–55 FPS**, as requested. This is a target rather
 than a cap. The corrected local 60-second traversal averaged **59.31 FPS** on
 Medium at 1280 × 720 / DPR 1.0. This meets the short-check target, not sustained

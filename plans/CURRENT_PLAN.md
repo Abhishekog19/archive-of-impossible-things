@@ -1,5 +1,17 @@
 # Current plan — Archive of Impossible Things
 
+October 15 final verification: the current environment is the handoff baseline.
+The sustained local run passes at **58.64 FPS** over 180 seconds / 55 waypoints,
+with matching render counts and zero hidden frames. A cavern light resource leak
+found during this check is fixed; repeated visits now return to matching resource
+counts. All 61 movement/contact checkpoints, 44 tests, changed-file lint and the
+production build pass. Production entry, narrow settings and six reference views
+are checked. See [the final verification](ENVIRONMENT_FINAL_VERIFICATION_2026-10-15.md).
+No further art batch is started by this handoff. Concept/character acceptance,
+triangle/startup budgets, actual-phone behavior and live Vercel verification remain
+explicitly open; they are not silently waived. Older work scheduling and FPS
+figures below are historical. The routine review date remains October 20.
+
 October 14 rendering-cost update: the user selected a **50–55 FPS working target**.
 Static multi-draw batching and native-resolution Medium rendering are implemented;
 the governor reacts to a five-second average below 50 before reducing effects.

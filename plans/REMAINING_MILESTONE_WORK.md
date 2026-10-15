@@ -1,4 +1,16 @@
-# Remaining environment milestone work — October 14, 2026
+# Remaining environment milestone work — October 15, 2026
+
+Final local verification is complete for the current handoff baseline: **58.64 FPS**
+over three minutes, 61 movement/contact checkpoints, stable repeat-visit resource
+counts after the cavern cleanup fix, 44 tests, lint and build pass. See
+[the final verification and comparison results](ENVIRONMENT_FINAL_VERIFICATION_2026-10-15.md).
+
+The user requested final verification of the current environment. No next art
+batch is automatically scheduled. The six groups below remain an acceptance-gap
+inventory, not six newly required implementation phases. Sustained local FPS and
+the observed resource leak are now resolved within the tested conditions. Visual
+reference/character approval, triangle/startup budgets, real-phone and live Vercel
+evidence remain open. The historical updates below do not override this status.
 
 Latest rendering pass: **59.31 FPS** over a corrected 60-second local check,
 with 65 peak rendering submissions. The user's target is now **50–55 FPS**.

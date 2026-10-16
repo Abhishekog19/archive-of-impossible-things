@@ -1,5 +1,13 @@
 # Current plan — Archive of Impossible Things
 
+October 16 Vercel check: the public site is
+https://archive-of-impossible-things.vercel.app/. Deployment/asset delivery and
+build parity pass, as do live hub → cavern → hub travel and narrow Settings.
+HUD readings initially reach about 60 FPS, but later flatten near 30 while the
+browser panel reports hidden. Controlled live FPS acceptance is inconclusive;
+do not substitute the local result. See [the live report](VERCEL_CHECK_2026-10-16.md).
+Await the user's visual/play feedback; no runtime or art changes in this check.
+
 October 15 final verification: the current environment is the handoff baseline.
 The sustained local run passes at **58.64 FPS** over 180 seconds / 55 waypoints,
 with matching render counts and zero hidden frames. A cavern light resource leak

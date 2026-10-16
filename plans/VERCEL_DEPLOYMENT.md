@@ -1,5 +1,13 @@
 # Vercel deployment
 
+Public production URL: **https://archive-of-impossible-things.vercel.app/**
+
+October 16 live verification: deployment of `8c83cb0` is successful, the public
+alias works without login, checked runtime/world assets match the local build,
+and live travel through the cavern and back passes. Sustained live FPS remains
+inconclusive because browser panel visibility could not be maintained. See
+[the live check](VERCEL_CHECK_2026-10-16.md) for observations and user test steps.
+
 The intended host is Vercel Hobby. This repository builds a static Vite site;
 the environment, physics and graphics preparation run in the visitor's browser.
 No server function, database or paid rendering service is required by this build.
@@ -20,9 +28,8 @@ The loader prepares entry-area textures and shaders, then loads ahead along the
 route. It does not pin the entire world in GPU memory. Hosting delivers the files;
 draw calls, pixels, geometry and device memory still determine sustained FPS.
 
-Once the deployment URL is available, verify a new visit and a repeat visit,
-GLB/texture responses, entry-to-playable transfer, portal/return travel, worker
-loading, and actual phone controls/thermals. Local preview results do not prove
+Further acceptance should measure cold entry-to-playable transfer, controlled
+foreground FPS, repeat visits and actual phone controls/thermals. Local preview results do not prove
 deployment performance. The current working target is 50–55 FPS. The October 15
 local three-minute check passed at 58.64 FPS; this does not establish deployment
 or physical-device performance. Startup transfer and visible-triangle budgets

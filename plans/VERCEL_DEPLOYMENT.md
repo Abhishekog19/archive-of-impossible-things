@@ -2,6 +2,12 @@
 
 Public production URL: **https://archive-of-impossible-things.vercel.app/**
 
+October 18 follow-up: 181 live HUD readings were **54–61 FPS** on Medium at DPR 1.0
+over the hub → cavern entry → hub route. Visibility was confirmed for 81 readings;
+the other 100 reported hidden while still near 60 FPS. The earlier 30 FPS plateau
+did not recur; fully controlled sustained acceptance remains open. See
+[the follow-up](VERCEL_RECHECK_2026-10-18.md) for the evidence and limits.
+
 October 16 live verification: deployment of `8c83cb0` is successful, the public
 alias works without login, checked runtime/world assets match the local build,
 and live travel through the cavern and back passes. Sustained live FPS remains

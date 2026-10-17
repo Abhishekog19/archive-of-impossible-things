@@ -1,5 +1,13 @@
 # Current plan — Archive of Impossible Things
 
+October 18 Vercel follow-up: 181 live HUD readings across hub → cavern entry → hub
+range from **54–61 FPS** on Medium at DPR 1.0 / 1280 × 720, with no sampled reading
+below 50. Visibility is confirmed for 81 readings; the remaining 100 report the
+panel hidden despite FPS staying near 60. The earlier 30 FPS plateau did not recur,
+but a fully visible sustained live trace remains unverified. See
+[the follow-up report](VERCEL_RECHECK_2026-10-18.md). No runtime/art changes; await
+the user's foreground-browser feedback on the public URL below.
+
 October 16 Vercel check: the public site is
 https://archive-of-impossible-things.vercel.app/. Deployment/asset delivery and
 build parity pass, as do live hub → cavern → hub travel and narrow Settings.

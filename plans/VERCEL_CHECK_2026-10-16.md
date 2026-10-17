@@ -1,5 +1,9 @@
 # Live Vercel verification — October 16, 2026
 
+Follow-up: [October 18 live samples](VERCEL_RECHECK_2026-10-18.md) reached 54–61 FPS
+on Medium/DPR 1.0 across the connected route. The 30 FPS plateau below did not
+recur, though visibility was confirmed for only part of that follow-up.
+
 Public test URL: **https://archive-of-impossible-things.vercel.app/**
 
 The public production alias works without login. GitHub reports successful Vercel

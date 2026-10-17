@@ -1,5 +1,12 @@
 # Remaining environment milestone work — October 15, 2026
 
+October 18 deployment update: delivery/build parity and live connected travel
+pass. The follow-up recorded 181 HUD readings at 54–61 FPS on Medium/DPR 1.0;
+81 readings had confirmed panel visibility. Fully visible sustained live FPS,
+cold startup and real-phone evidence remain open. See
+[the Vercel follow-up](VERCEL_RECHECK_2026-10-18.md). No additional art batch is
+scheduled by this verification.
+
 Final local verification is complete for the current handoff baseline: **58.64 FPS**
 over three minutes, 61 movement/contact checkpoints, stable repeat-visit resource
 counts after the cavern cleanup fix, 44 tests, lint and build pass. See

@@ -26,7 +26,7 @@ export default function FollowCamera({ bodyRef }) {
     const onDown = e => {
       const state = useGameStore.getState()
       if (e.button !== undefined && e.button !== 0) return
-      if (dragging.current !== null || state.settingsOpen || state.worldLoading) return
+      if (dragging.current !== null || state.settingsOpen || state.interactionOpen || state.worldLoading) return
       dragging.current = e.pointerId
       lastX.current = e.clientX
       domElement.setPointerCapture?.(e.pointerId)
@@ -45,7 +45,7 @@ export default function FollowCamera({ bodyRef }) {
     window.addEventListener('blur', reset)
     document.addEventListener('visibilitychange', reset)
     const unsubscribe = useGameStore.subscribe((s, previous) => {
-      if (s.settingsOpen !== previous.settingsOpen || s.worldLoading !== previous.worldLoading) reset()
+      if (s.settingsOpen !== previous.settingsOpen || s.interactionOpen !== previous.interactionOpen || s.worldLoading !== previous.worldLoading) reset()
     })
     return () => {
       reset()
@@ -63,7 +63,7 @@ export default function FollowCamera({ bodyRef }) {
   useFrame((_, delta) => {
     const body = bodyRef.current?.body
     const state = useGameStore.getState()
-    if (!body || state.settingsOpen || (document.hidden && !state.physicsForced)) return
+    if (!body || state.settingsOpen || state.interactionOpen || (document.hidden && !state.physicsForced)) return
     if (!scratchRef.current) scratchRef.current = {
       pivot: new Vector3(), smooth: new Vector3(), dir: new Vector3(), offset: new Vector3(),
       shape: new rapier.Ball(0.2), initialised: false, recovery: -1, distance: 0,

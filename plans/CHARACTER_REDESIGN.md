@@ -1,4 +1,13 @@
-# Character redesign — approved direction, September 29
+# Character redesign — production history and current direction
+
+October 18: the user now selects **Forest Archivist × Ruin Runner**, retaining and
+improving the current explorer. A short moss-green hooded cloak, slim athletic
+build, messy dark hair and agile expressive exploration are the current target.
+See [the updated character brief](CHARACTER_EXPLORER_2026-10-18.md) and its first
+turnaround concept. This supersedes the Ruin Runner-only costume restriction below;
+earlier visual/animation checks do not constitute approval of the new direction.
+
+## September 29–October 2 history
 
 The user rejected the PD08 explorer design and current locomotion. PD08 is reopened.
 Image 3 (Ruin Runner turnaround) is the selected reference, locally preserved at

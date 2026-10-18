@@ -1,0 +1,31 @@
+{
+  "name": "Abhishek Pandey",
+  "roles": ["Electronics and Telecommunication Engineering student", "Full-stack developer", "Technology enthusiast"],
+  "introduction": "I enjoy turning interesting ideas into working products.",
+  "statement": "I explore ideas, combine tools, solve problems, and continuously learn through building.",
+  "qualities": ["Curiosity", "Versatility", "Creative problem-solving", "Experimentation"],
+  "skills": [
+    { "name": "Full-stack development", "technologies": ["React", "Next.js", "Node.js"] },
+    { "name": "Python and Computer Vision", "technologies": [] },
+    { "name": "AI integration", "technologies": [] },
+    { "name": "Embedded systems and robotics", "technologies": [] }
+  ],
+  "projects": [
+    {
+      "id": "worker-client-platform",
+      "title": "Worker–Client Platform",
+      "description": "A service marketplace connecting workers with clients through intelligent matching, communication, and payments."
+    },
+    {
+      "id": "saansation",
+      "title": "Saansation",
+      "description": "An interactive air-quality dashboard featuring pollutant visualizations and environmental insights."
+    },
+    {
+      "id": "smart-music-player",
+      "title": "Smart Music Player",
+      "description": "A personal music platform combining local libraries, playlists, Spotify integration, and offline functionality."
+    }
+  ],
+  "audiences": ["Recruiters", "Fellow developers", "Potential collaborators"]
+}

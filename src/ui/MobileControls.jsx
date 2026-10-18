@@ -8,6 +8,7 @@ const cap = { width: 56, height: 56, background: 'rgba(18,21,15,.7)', color: '#e
 
 export default function MobileControls() {
   const settingsOpen = useGameStore((s) => s.settingsOpen)
+  const interactionOpen = useGameStore((s) => s.interactionOpen)
   const [touch, setTouch] = useState(() => window.matchMedia('(any-pointer: coarse)').matches || navigator.maxTouchPoints > 0)
   const [epoch, setEpoch] = useState(0)
 
@@ -33,7 +34,7 @@ export default function MobileControls() {
     }
   }, [])
 
-  if (!touch || settingsOpen) return null
+  if (!touch || settingsOpen || interactionOpen) return null
   return (
     <div className="touch-controls" key={epoch}>
       <div className="movement-control" aria-label="Touch movement joystick">

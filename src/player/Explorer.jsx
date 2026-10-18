@@ -72,7 +72,7 @@ export default function Explorer({ controllerRef }) {
   useFrame(({ camera }, delta) => {
     const state = useGameStore.getState()
     const c = controllerRef.current
-    if (!c || !animator.current || state.worldLoading || state.settingsOpen || (document.hidden && !state.physicsForced)) return
+    if (!c || !animator.current || state.worldLoading || state.settingsOpen || state.interactionOpen || (document.hidden && !state.physicsForced)) return
     if (recovery.current !== state.recoveryCount) {
       animator.current.reset()
       dynamics.current.reset()

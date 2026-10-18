@@ -1,6 +1,6 @@
 # Archive of Impossible Things
 
-- Current milestone: environment and third-person roaming only; do not build Archive gameplay yet.
+- Current milestone: interactive portfolio and Archive gameplay, authorized October 18, 2026. Treat the environment as the accepted production backdrop. The user accepts the explorer concept and parks character implementation; prioritize game ideation and playable experiments in the existing environment. Follow plans/PORTFOLIO_GAME_PHASES_2026-10-18.md; mechanics remain proposals until selected through playtesting.
 - Target approximately 80% visual match to the approved hub concept (`concept/REF4.png`), judged through comparison rather than an invented similarity score.
 - Art direction: stylized natural ruins and forest; no futuristic, neon, or machinery elements.
 - Pipeline: Blender → GLB → React Three Fiber.

@@ -20,6 +20,10 @@ import worldViews from './config/world-views.json'
 import { CAVERN_STUDY } from './config/cavern-study'
 import { WORLD_AND_POOL_LAYERS } from './config/cavern-water'
 import ConnectedAtmosphere from './scenes/ConnectedAtmosphere'
+import './story/story.css'
+const SpringScene = lazy(() => import('./story/SpringScene'))
+const SpringUI = lazy(() => import('./story/SpringUI'))
+const Portfolio = lazy(() => import('./ui/Portfolio'))
 const AssetKit = lazy(() => import('./scenes/AssetKit'))
 const ZoneLoading = lazy(() => import('./scenes/ZoneLoading'))
 const CavernStudy = lazy(() => import('./scenes/CavernStudy'))
@@ -29,8 +33,7 @@ const MovementReview = import.meta.env.DEV ? lazy(() => import('./ui/MovementRev
  * Does this browser support WebGL2?
  *
  * Design doc §14 requires that a device which can't run the game gets the plain
- * professional portfolio rather than a black screen. Still a placeholder — the
- * real fallback is built at M12.
+ * professional portfolio rather than a black screen.
  */
 function hasWebGL2() {
   try {
@@ -112,10 +115,12 @@ export default function App() {
   const visible = usePageVisible()
   const [webglSupported] = useState(hasWebGL2)
   const settingsOpen = useGameStore((s) => s.settingsOpen)
+  const interactionOpen = useGameStore((s) => s.interactionOpen)
   const worldLoading = useGameStore((s) => s.worldLoading)
   // Dev stepping overrides the visibility pause — see store.js.
   const physicsForced = useGameStore((s) => s.physicsForced)
-  const movementActive = !worldLoading && !settingsOpen && (visible || physicsForced)
+  const movementActive = !worldLoading && !settingsOpen && !interactionOpen && (visible || physicsForced)
+  const spring = patch && !reference && params.get('chapter') === 'spring'
   // The detected/overridden tier and whatever resolution the governor has shed
   // past it. Computed here and passed as a prop so <Canvas dpr> is the single
   // authority on resolution -- TierGovernor never calls setDpr imperatively.
@@ -123,15 +128,7 @@ export default function App() {
   const dprDrop = useGameStore((s) => s.dprDrop)
 
   if (!webglSupported) {
-    return (
-      <div className="fallback">
-        <h1>Archive of Impossible Things</h1>
-        <p>
-          This browser can&apos;t display the 3D environment. Try a browser with
-          WebGL2 and hardware acceleration enabled.
-        </p>
-      </div>
-    )
+    return <Suspense fallback={<p>Opening the portfolio…</p>}><Portfolio /></Suspense>
   }
 
   return (
@@ -163,6 +160,7 @@ export default function App() {
             {cavernStudy ? <CavernStudy reference={reference} view={view} /> : zones ? <ZoneLoading playerRef={playerRef} reference={reference} view={view} /> : kit ? <AssetKit reference={reference} /> : greyroom ? <GreyRoom playerRef={playerRef} /> : <HubBlockout reference={reference} cornerView={cornerView} view={view} legacy={params.get('scene') === 'hub'} waterStudy={waterStudy} patch={patch} />}
             {!reference && <Player ref={playerRef} active={movementActive} recoverFalls={!greyroom} recoverToStart={cavernStudy} cornerStart={!kit && !zones && !waterStudy && !cavernStudy && cornerStart} start={cavernStudy ? 'cavern' : greyroom || kit || zones ? undefined : params.get('start') || (waterStudy ? 'cavern' : undefined)} />}
             {!reference && <FollowCamera bodyRef={playerRef} />}
+            {spring && <Suspense fallback={null}><SpringScene /></Suspense>}
             {/* Dev-only scene handle for stepping the loop and running the M1
                 audit. Inside <Physics> because it raycasts against the same
                 world the camera does; dropped from production by this branch. */}
@@ -177,6 +175,8 @@ export default function App() {
       {!reference && <DevHud hub={!greyroom} label={patch ? 'Archive · connected environment' : cavernStudy ? 'Phase B · cavern light study' : waterStudy ? 'Phase B · water-only study' : zones ? 'Phase B · zone loading' : kit ? 'Phase B · asset preview' : undefined} />}
       {!reference && <MobileControls />}
       {!reference && <Settings />}
+      {!reference && <nav className="world-links" aria-label="Explore and portfolio"><a href="?portfolio=1">Abhishek · Portfolio</a>{!spring && <a href="?chapter=spring&start=forest">Try story experiment</a>}</nav>}
+      {spring && <Suspense fallback={null}><SpringUI /></Suspense>}
       {import.meta.env.DEV && params.get('movement-review') === '1' &&
         <Suspense fallback={null}><MovementReview /></Suspense>}
     </>

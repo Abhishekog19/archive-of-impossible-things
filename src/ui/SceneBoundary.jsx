@@ -11,6 +11,7 @@ export default class SceneBoundary extends Component {
       <h1>The Archive couldn’t open</h1>
       <p>Some scenery couldn’t load. Check your connection and try again.</p>
       <button className="scene-retry" onClick={() => window.location.reload()}>Reload environment</button>
+      <p><a href="?portfolio=1">Read Abhishek’s portfolio</a></p>
     </main>
     return this.props.children
   }

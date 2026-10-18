@@ -1,5 +1,40 @@
 # Current plan — Archive of Impossible Things
 
+October 18 game-first steering: the user accepts the Forest Archivist × Ruin Runner
+concept but explicitly defers character implementation. The active work is now
+game ideation and integration into the existing environment. The first playable
+experiment, **The Remembering Spring**, is available at
+`?chapter=spring&start=forest`; normal environment entry stays available.
+Water learns curve/lift behaviors from leaves/stones, then combines them at a
+root. A Saansation connection leads to the direct portfolio at `?portfolio=1`,
+which now renders the supplied public profile and all three project summaries.
+This is a simple-art mechanic prototype for feedback, not a finished Archive.
+See [the prototype review](SPRING_PROTOTYPE_2026-10-18.md). Earlier character-first
+ordering and notes that portfolio content is not rendered are superseded.
+
+October 18 personal/character direction: public profile content is recorded in
+`src/content/portfolio.json` from the user's supplied text (Abhishek Pandey;
+Worker–Client Platform, Saansation, Smart Music Player). It is not yet rendered
+by the site. The updated character is **Forest Archivist × Ruin Runner**, keeping
+the existing explorer and improving appearance/movement. See
+[the character brief and concept](CHARACTER_EXPLORER_2026-10-18.md).
+No new runtime page, model or animation has been implemented in this concept pass.
+Project links, personal contributions and measured outcomes remain unspecified;
+do not invent them. Continue with character silhouette and a focused locomotion
+comparison, then the first playable chapter and direct portfolio integration.
+
+October 18 milestone change: the user accepts the current environment as the
+production backdrop and authorizes game ideation/building, personal portfolio
+integration, character movement/appearance improvements, audio and interstitial
+animation. Environment expansion is parked; existing measured performance and
+device limits remain documented. The active plan is
+[Portfolio game phases](PORTFOLIO_GAME_PHASES_2026-10-18.md).
+Start with character feel and one complete playable chapter that connects to one
+real public project. The chapter ideas and shorter pacing below are proposals,
+not approved mechanics or invented biographical claims. Public profile/project
+details and character identity preference have been requested. Earlier statements
+restricting work to environment-only are historical and superseded by this request.
+
 October 18 Vercel follow-up: 181 live HUD readings across hub → cavern entry → hub
 range from **54–61 FPS** on Medium at DPR 1.0 / 1280 × 720, with no sampled reading
 below 50. Visibility is confirmed for 81 readings; the remaining 100 report the

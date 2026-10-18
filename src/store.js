@@ -71,6 +71,8 @@ export const useGameStore = create((set, get) => ({
   toggleHud: () => set((s) => ({ hudVisible: !s.hudVisible })),
   settingsOpen: false,
   setSettingsOpen: (settingsOpen) => set({ settingsOpen }),
+  interactionOpen: false,
+  setInteractionOpen: (interactionOpen) => set({ interactionOpen }),
 
   // --- Tiers (M2) --------------------------------------------------------------
   //

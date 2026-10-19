@@ -1,5 +1,16 @@
 # The Remembering Spring — first playable experiment
 
+October 19 live handoff: Vercel reports successful production deployment of
+`70b8b8482cad3b4e022aa4ac9d6ec8c481d7371b` (deployment `7155647203`).
+Public experiment: https://archive-of-impossible-things.vercel.app/?chapter=spring&start=forest
+Public portfolio: https://archive-of-impossible-things.vercel.app/?portfolio=1
+
+The public production site was checked directly: entry, E/open, premature root
+feedback, both lessons and combined root payoff work. The Saansation panel links
+to the public portfolio. No captured application errors in this bounded live
+check. Evidence: `.artifacts/spring-oct19/vercel-payoff.png`. This confirms the
+prototype flow, not its final art quality, enjoyment or sustained FPS.
+
 The user explicitly prioritizes game ideation/environment integration and parks
 the accepted explorer concept. This experiment tests one small idea before a full
 Archive is built: an ordinary natural material learns behaviors and combines them.

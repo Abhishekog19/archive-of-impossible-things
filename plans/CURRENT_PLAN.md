@@ -1,5 +1,12 @@
 # Current plan — Archive of Impossible Things
 
+October 19: the first spring experiment and direct portfolio are deployed and
+checked on the public Vercel site at `70b8b84`. Entry, lesson combination, root
+payoff and Saansation-to-portfolio navigation pass. See
+[the live prototype handoff](SPRING_PROTOTYPE_2026-10-18.md).
+Next is playtest feedback on the mechanic before final art or expansion to another
+chapter. Character work remains explicitly deferred by the user.
+
 October 18 game-first steering: the user accepts the Forest Archivist × Ruin Runner
 concept but explicitly defers character implementation. The active work is now
 game ideation and integration into the existing environment. The first playable
